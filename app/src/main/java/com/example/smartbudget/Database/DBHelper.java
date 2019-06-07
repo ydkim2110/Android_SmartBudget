@@ -34,7 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_CATEGORY_TABLE =
             "CREATE TABLE " + Category.TABLE_NAME + " (" +
-                    Category._ID + " INTERGER PRIMARY KEY," +
+                    Category._ID + " INTEGER PRIMARY KEY," +
                     Category.COL_NAME + " TEXT," +
                     Category.COL_ICON + " INTEGER)";
 

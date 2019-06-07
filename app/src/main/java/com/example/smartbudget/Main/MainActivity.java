@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
         getAllCategoryAsync.execute();
 
-        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
-        getAllAccountAsync.execute();
+//        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
+//        getAllAccountAsync.execute();
     }
 
     @Override
@@ -150,8 +150,8 @@ public class MainActivity extends AppCompatActivity
             try {
                 do {
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Category._ID));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("category_name"));
-                    String icon = cursor.getString(cursor.getColumnIndexOrThrow("category_icon"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Category.COL_NAME));
+                    String icon = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Category.COL_ICON));
                     Log.d("GetAllCategoryAsync", "id: " + id);
                     Log.d("GetAllCategoryAsync", "name: " + name);
                     Log.d("GetAllCategoryAsync", "icon: " + icon);
@@ -171,11 +171,13 @@ public class MainActivity extends AppCompatActivity
             Cursor cursor = dbHelper.getAllAccounts();
             try {
                 do {
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
                     String name = cursor.getString(cursor.getColumnIndexOrThrow("account_name"));
                     String amount = cursor.getString(cursor.getColumnIndexOrThrow("account_amount"));
                     String type = cursor.getString(cursor.getColumnIndexOrThrow("account_type"));
                     String create_at = cursor.getString(cursor.getColumnIndexOrThrow("account_create_at"));
                     String currency = cursor.getString(cursor.getColumnIndexOrThrow("account_currency"));
+                    Log.d("GetAllAccountAsync", "id: " + id);
                     Log.d("GetAllAccountAsync", "name: " + name);
                     Log.d("GetAllAccountAsync", "amount: " + amount);
                     Log.d("GetAllAccountAsync", "type: " + type);
