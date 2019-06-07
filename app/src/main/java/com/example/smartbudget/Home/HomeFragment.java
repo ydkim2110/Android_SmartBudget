@@ -1,18 +1,24 @@
-package com.example.smartbudget.home;
+package com.example.smartbudget.Home;
 
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.smartbudget.R;
-import com.example.smartbudget.overview.OverviewActivity;
+import com.example.smartbudget.Overview.OverviewActivity;
+import com.example.smartbudget.Utils.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +27,8 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment
+    implements RecyclerItemClickListener {
 
     public HomeFragment() {
         // Required empty public constructor
@@ -32,8 +39,10 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView transactionRecyclerview;
     private TransactionAdapter transactionAdapter;
+    private ProgressBar progressBar;
 
     private ConstraintLayout clickableArea;
 
@@ -50,6 +59,21 @@ public class HomeFragment extends Fragment {
                 getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
             }
         });
+
+        swipeRefreshLayout = view.findViewById(R.id.refresh_home_fragment);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setMax(4000000);
+        ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, 1000000);
+        progressAnim.setDuration(500);
+        progressAnim.setInterpolator(new LinearInterpolator());
+        progressAnim.start();
 
         transactionRecyclerview = view.findViewById(R.id.transaction_recyclerview);
         transactionRecyclerview.setHasFixedSize(true);
@@ -96,6 +120,8 @@ public class HomeFragment extends Fragment {
         transactionRecyclerview.setAdapter(transactionAdapter);
         transactionAdapter.notifyDataSetChanged();
 
+        transactionAdapter.setListener(this);
+
         return view;
     }
 
@@ -123,4 +149,8 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(getContext(), "Position: "+position, Toast.LENGTH_SHORT).show();
+    }
 }

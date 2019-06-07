@@ -1,4 +1,4 @@
-package com.example.smartbudget.budget;
+package com.example.smartbudget.Budget;
 
 
 import android.os.Bundle;

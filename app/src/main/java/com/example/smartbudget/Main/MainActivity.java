@@ -1,11 +1,13 @@
-package com.example.smartbudget.main;
+package com.example.smartbudget.Main;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,20 +18,31 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.widget.Toast;
 
+import com.example.smartbudget.Database.DBContract;
 import com.example.smartbudget.R;
-import com.example.smartbudget.budget.BudgetFragment;
-import com.example.smartbudget.home.HomeFragment;
+import com.example.smartbudget.Budget.BudgetFragment;
+import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Home.HomeFragment;
+import com.example.smartbudget.Statstics.StatsticsFragment;
+import com.example.smartbudget.Transaction.AddTransactionActivity;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar toolbar;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DBHelper(this);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -38,8 +51,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
             }
         });
 
@@ -53,6 +65,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         gotoFragment(HomeFragment.newInstance());
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
+        getAllCategoryAsync.execute();
+
+        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
+        getAllAccountAsync.execute();
     }
 
     @Override
@@ -100,9 +120,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_budget) {
             gotoFragment(BudgetFragment.newInstance());
             getSupportActionBar().setTitle("My Budget");
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_overview) {
+            gotoFragment(StatsticsFragment.newInstance());
 
-        } else if (id == R.id.nav_tools) {
+        } else if (id == R.id.nav_calculator) {
 
         } else if (id == R.id.nav_share) {
 
@@ -120,4 +141,53 @@ public class MainActivity extends AppCompatActivity
         ft.replace(R.id.container, fragment);
         ft.commit();
     }
+
+    private class GetAllCategoryAsync extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Cursor cursor = dbHelper.getAllCategories();
+            try {
+                do {
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Category._ID));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("category_name"));
+                    String icon = cursor.getString(cursor.getColumnIndexOrThrow("category_icon"));
+                    Log.d("GetAllCategoryAsync", "id: " + id);
+                    Log.d("GetAllCategoryAsync", "name: " + name);
+                    Log.d("GetAllCategoryAsync", "icon: " + icon);
+                }
+                while (cursor.moveToNext());
+            } finally {
+                cursor.close();
+            }
+            return null;
+        }
+    }
+
+    private class GetAllAccountAsync extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Cursor cursor = dbHelper.getAllAccounts();
+            try {
+                do {
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("account_name"));
+                    String amount = cursor.getString(cursor.getColumnIndexOrThrow("account_amount"));
+                    String type = cursor.getString(cursor.getColumnIndexOrThrow("account_type"));
+                    String create_at = cursor.getString(cursor.getColumnIndexOrThrow("account_create_at"));
+                    String currency = cursor.getString(cursor.getColumnIndexOrThrow("account_currency"));
+                    Log.d("GetAllAccountAsync", "name: " + name);
+                    Log.d("GetAllAccountAsync", "amount: " + amount);
+                    Log.d("GetAllAccountAsync", "type: " + type);
+                    Log.d("GetAllAccountAsync", "create_at: " + create_at);
+                    Log.d("GetAllAccountAsync", "currency: " + currency);
+                }
+                while (cursor.moveToNext());
+            } finally {
+                cursor.close();
+            }
+            return null;
+        }
+    }
+
 }

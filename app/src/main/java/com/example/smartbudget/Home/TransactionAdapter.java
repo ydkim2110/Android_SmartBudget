@@ -1,14 +1,14 @@
-package com.example.smartbudget.home;
+package com.example.smartbudget.Home;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.smartbudget.R;
+import com.example.smartbudget.Utils.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,13 @@ import java.util.List;
 public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "TransactionAdapter";
+
+    private RecyclerItemClickListener listener;
+
+    public void setListener(RecyclerItemClickListener listener) {
+        this.listener = listener;
+    }
+
 
     private List<ListItem> consolidatedList = new ArrayList<>();
 
@@ -95,24 +102,32 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public class TransactionViewHolder extends RecyclerView.ViewHolder {
+    public class TransactionViewHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener{
 
         private TextView categoryTv;
         private TextView descriptionTv;
         private TextView amountTv;
 
-        public TransactionViewHolder(@NonNull View itemView) {
+        public TransactionViewHolder(@NonNull final View itemView) {
             super(itemView);
 
             categoryTv = itemView.findViewById(R.id.transaction_category);
             descriptionTv = itemView.findViewById(R.id.transaction_description);
             amountTv = itemView.findViewById(R.id.transaction_amount);
+
+            itemView.setOnClickListener(this);
         }
 
         private void setData(String category, String description, int amount) {
             categoryTv.setText(category);
             descriptionTv.setText(description);
             amountTv.setText(amount + "원");
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onItemClick(v, getAdapterPosition());
         }
     }
 }

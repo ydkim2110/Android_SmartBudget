@@ -13,13 +13,13 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_budget" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_overview"
+            android:icon="@drawable/ic_assessment_black_24dp"
+            android:title="Statstics" />
         <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:id="@+id/nav_calculator"
+            android:icon="@drawable/ic_gradient_black_24dp"
+            android:title="Calculator" />
     </group>
 
     <item android:title="Communicate">

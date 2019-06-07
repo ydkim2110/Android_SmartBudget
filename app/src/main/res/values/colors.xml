@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorRevenue">#f5868d</color>
     <color name="colorExpense">#4ba2ff</color>
+    <color name="status_bar_color">#ffffff</color>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.smartbudget.budget;
+package com.example.smartbudget.Budget;
 
 public class Budget {
 

@@ -1,4 +1,4 @@
-package com.example.smartbudget.home;
+package com.example.smartbudget.Home;
 
 public class TransactionItem extends ListItem {
 

@@ -1,4 +1,4 @@
-package com.example.smartbudget.home;
+package com.example.smartbudget.Home;
 
 public abstract class ListItem {
     public static final int TYPE_DATE = 0;
