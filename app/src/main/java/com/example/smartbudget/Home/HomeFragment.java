@@ -14,12 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.smartbudget.R;
 import com.example.smartbudget.Overview.OverviewActivity;
-import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Utils.Common;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,12 +39,26 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
+    public interface IBudgetContainerClickListener {
+        void onBudgetContainerClicked();
+    }
+
+    private IBudgetContainerClickListener mIBudgetContainerClickListener;
+
+    public void setIBudgetContainerClickListener(IBudgetContainerClickListener IBudgetContainerClickListener) {
+        mIBudgetContainerClickListener = IBudgetContainerClickListener;
+    }
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView transactionRecyclerview;
     private TransactionAdapter transactionAdapter;
     private ProgressBar progressBar;
+    private TextView progressBarPercentage;
+    private TextView usedBudgetTv;
+    private TextView totalBudgetTv;
 
-    private ConstraintLayout clickableArea;
+    private ConstraintLayout homeOverviewContainer;
+    private ConstraintLayout homeBudgetContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,11 +66,19 @@ public class HomeFragment extends Fragment {
 
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
 
-        ConstraintLayout constraintLayout = view.findViewById(R.id.home_overview_container);
-        constraintLayout.setOnClickListener(new View.OnClickListener() {
+        homeOverviewContainer = view.findViewById(R.id.home_overview_container);
+        homeOverviewContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
+            }
+        });
+
+        homeBudgetContainer = view.findViewById(R.id.home_budget_container);
+        homeBudgetContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIBudgetContainerClickListener.onBudgetContainerClicked();
             }
         });
 
@@ -68,8 +91,21 @@ public class HomeFragment extends Fragment {
         });
 
         progressBar = view.findViewById(R.id.progressBar);
-        progressBar.setMax(4000000);
-        ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, 1000000);
+        progressBarPercentage = view.findViewById(R.id.progressbar_percentage);
+        usedBudgetTv = view.findViewById(R.id.used_budget_tv);
+        totalBudgetTv = view.findViewById(R.id.total_budget_tv);
+
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        int maxValue = 4000000;
+        int currentValue = 3200000;
+        String percentage = df.format((Double.parseDouble(String.valueOf(currentValue)) * 100/(Double.parseDouble(String.valueOf(maxValue)))));
+        usedBudgetTv.setText(Common.changeNumberToComma(currentValue) +"원");
+        totalBudgetTv.setText(Common.changeNumberToComma(maxValue)+"원");
+
+        progressBarPercentage.setText(percentage+" %");
+        progressBar.setMax(maxValue);
+        ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, currentValue);
         progressAnim.setDuration(500);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();

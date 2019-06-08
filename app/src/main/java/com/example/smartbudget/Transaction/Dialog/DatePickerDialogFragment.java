@@ -13,14 +13,14 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-public class DatePickerFragment extends DialogFragment {
+public class DatePickerDialogFragment extends DialogFragment {
 
-    private static final String TAG = DatePickerFragment.class.getSimpleName();
+    private static final String TAG = DatePickerDialogFragment.class.getSimpleName();
 
     private IDialogSendListener mIDialogSendListener;
 
-    public static DatePickerFragment newInstance(String passedData) {
-        DatePickerFragment fragment = new DatePickerFragment();
+    public static DatePickerDialogFragment newInstance(String passedData) {
+        DatePickerDialogFragment fragment = new DatePickerDialogFragment();
         Bundle args = new Bundle();
         args.putString("DATE", passedData);
         fragment.setArguments(args);

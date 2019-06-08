@@ -1,6 +1,9 @@
 package com.example.smartbudget.Home;
 
-public class Transaction {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Transaction implements Parcelable {
 
     private String category;
     private String description;
@@ -14,6 +17,25 @@ public class Transaction {
         this.amount = amount;
         this.date = date;
     }
+
+    protected Transaction(Parcel in) {
+        category = in.readString();
+        description = in.readString();
+        amount = in.readInt();
+        date = in.readString();
+    }
+
+    public static final Creator<Transaction> CREATOR = new Creator<Transaction>() {
+        @Override
+        public Transaction createFromParcel(Parcel in) {
+            return new Transaction(in);
+        }
+
+        @Override
+        public Transaction[] newArray(int size) {
+            return new Transaction[size];
+        }
+    };
 
     public String getCategory() {
         return category;
@@ -45,5 +67,18 @@ public class Transaction {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(category);
+        dest.writeString(description);
+        dest.writeInt(amount);
+        dest.writeString(date);
     }
 }

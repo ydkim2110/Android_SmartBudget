@@ -1,6 +1,7 @@
 package com.example.smartbudget.Home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartbudget.R;
+import com.example.smartbudget.Transaction.AddTransactionActivity;
+import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
 import java.util.ArrayList;
@@ -68,12 +71,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 String description = transactionItem.getTransaction().getDescription();
                 int amount = transactionItem.getTransaction().getAmount();
 
+                final Transaction transaction = new Transaction(category, description, amount, "2019-07-25");
+
                 transactionViewHolder.setData(category, description, amount);
 
                 transactionViewHolder.setiRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                     @Override
                     public void onItemSelectedListener(View view, int position) {
-                        Toast.makeText(mContext, "Positon: " + position, Toast.LENGTH_SHORT).show();
+                        Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);
+                        editTransactionIntent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transaction);
+                        view.getContext().startActivity(editTransactionIntent);
                     }
                 });
                 break;

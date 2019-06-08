@@ -1,5 +1,6 @@
 package com.example.smartbudget.Main;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.example.smartbudget.Calculator.CalculatorFragment;
 import com.example.smartbudget.Database.DBContract;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Budget.BudgetFragment;
@@ -28,14 +30,35 @@ import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.Home.HomeFragment;
 import com.example.smartbudget.Statstics.StatsticsFragment;
 import com.example.smartbudget.Transaction.AddTransactionActivity;
+import com.example.smartbudget.Utils.IClickListener;
 
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.IBudgetContainerClickListener {
 
+    private static final int HOME_FRAGMENT = 0;
+    private static final int BUDGET_FRAGMENT = 1;
+    private static final int STATSTICS_FRAGMENT = 2;
+    private static final int CALCULATOR_FRAGMENT = 3;
+
+    private NavigationView navigationView;
     private Toolbar toolbar;
+    private FloatingActionButton fab;
+    private DrawerLayout drawer;
+
     private DBHelper dbHelper;
+
+    private int currentFragment = -1;
+    private long backKeyPressedTime = 0;
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (fragment instanceof HomeFragment) {
+            HomeFragment homeFragment = (HomeFragment) fragment;
+            ((HomeFragment) fragment).setIBudgetContainerClickListener(this);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +70,10 @@ public class MainActivity extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
-            }
-        });
+        fab = findViewById(R.id.fab);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -64,9 +81,8 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        gotoFragment(HomeFragment.newInstance());
-
-        navigationView.getMenu().getItem(0).setChecked(true);
+        gotoFragment(HomeFragment.newInstance(), HOME_FRAGMENT);
+        navigationView.getMenu().getItem(currentFragment).setChecked(true);
 
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
         getAllCategoryAsync.execute();
@@ -76,33 +92,36 @@ public class MainActivity extends AppCompatActivity
 
         GetAllTransactionAsync getAllTransactionAsync = new GetAllTransactionAsync();
         getAllTransactionAsync.execute();
+
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+                backKeyPressedTime = System.currentTimeMillis();
+                Toast.makeText(this, "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+                super.onBackPressed();
+            }
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -113,25 +132,24 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            // Handle the camera action
-            gotoFragment(HomeFragment.newInstance());
+            gotoFragment(HomeFragment.newInstance(), HOME_FRAGMENT);
             getSupportActionBar().setTitle("Home");
         } else if (id == R.id.nav_budget) {
-            gotoFragment(BudgetFragment.newInstance());
+            gotoFragment(BudgetFragment.newInstance(), BUDGET_FRAGMENT);
             getSupportActionBar().setTitle("My Budget");
         } else if (id == R.id.nav_overview) {
-            gotoFragment(StatsticsFragment.newInstance());
-
+            gotoFragment(StatsticsFragment.newInstance(), STATSTICS_FRAGMENT);
+            getSupportActionBar().setTitle("My Statstics");
         } else if (id == R.id.nav_calculator) {
-
+            gotoFragment(CalculatorFragment.newInstance(), CALCULATOR_FRAGMENT);
+            getSupportActionBar().setTitle("My Calculator");
         } else if (id == R.id.nav_share) {
-
+            Toast.makeText(this, "share click!!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
-
+            Toast.makeText(this, "send click!!", Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -139,10 +157,39 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void gotoFragment(Fragment fragment) {
+    @SuppressLint("RestrictedApi")
+    private void gotoFragment(Fragment fragment, final int currentFragmentNUM) {
+        currentFragment = currentFragmentNUM;
+
+        if (currentFragment == STATSTICS_FRAGMENT || currentFragment == CALCULATOR_FRAGMENT) {
+            fab.setVisibility(View.INVISIBLE);
+        } else {
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (currentFragmentNUM == HOME_FRAGMENT) {
+                        startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
+                    }
+                    else if (currentFragment == BUDGET_FRAGMENT) {
+                        Toast.makeText(MainActivity.this, "Budget FAB Click!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        }
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.container, fragment);
         ft.commit();
+    }
+
+    @Override
+    public void onBudgetContainerClicked() {
+        Toast.makeText(this, "Budget Click!!", Toast.LENGTH_SHORT).show();
+        gotoFragment(BudgetFragment.newInstance(), BUDGET_FRAGMENT);
+        getSupportActionBar().setTitle("My Budget");
+        navigationView.getMenu().getItem(currentFragment).setChecked(true);
     }
 
     private class GetAllCategoryAsync extends AsyncTask<Void, Void, Void> {

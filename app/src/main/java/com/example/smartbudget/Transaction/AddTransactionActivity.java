@@ -13,12 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.smartbudget.Home.Transaction;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Transaction.Dialog.CategoryDialogFragment;
-import com.example.smartbudget.Transaction.Dialog.DatePickerFragment;
+import com.example.smartbudget.Transaction.Dialog.DatePickerDialogFragment;
 import com.example.smartbudget.Transaction.Dialog.IDialogSendListener;
 import com.example.smartbudget.Utils.Common;
 
+import java.text.NumberFormat;
 import java.util.Calendar;
 
 public class AddTransactionActivity extends AppCompatActivity
@@ -48,6 +50,23 @@ public class AddTransactionActivity extends AppCompatActivity
 
         initToolbar();
         initViews();
+
+        if (getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION) != null) {
+            Transaction transaction = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
+            String passedCategory = transaction.getCategory();
+            String passedDescription = transaction.getDescription();
+            int passedAmount = transaction.getAmount();
+            String passedDate = transaction.getDate();
+
+            getSupportActionBar().setTitle("Edit Transaction");
+            saveBtn.setText("Update");
+
+            categoryEdt.setText(passedCategory);
+            noteEdt.setText(passedDescription);
+            amountEdt.setText(Common.changeNumberToComma(passedAmount));
+            dateEdt.setText(passedDate);
+        }
+
         handleClickEvent();
 
     }
@@ -98,7 +117,7 @@ public class AddTransactionActivity extends AppCompatActivity
         dateEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment dialogFragment = DatePickerFragment.newInstance(dateEdt.getText().toString());
+                DialogFragment dialogFragment = DatePickerDialogFragment.newInstance(dateEdt.getText().toString());
                 dialogFragment.show(getSupportFragmentManager(), "date picker");
             }
         });
@@ -172,4 +191,5 @@ public class AddTransactionActivity extends AppCompatActivity
     public void OnSendListener(String result) {
         dateEdt.setText(result);
     }
+
 }
