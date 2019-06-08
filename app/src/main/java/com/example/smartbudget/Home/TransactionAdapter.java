@@ -1,14 +1,16 @@
 package com.example.smartbudget.Home;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartbudget.R;
-import com.example.smartbudget.Utils.RecyclerItemClickListener;
+import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +19,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final String TAG = "TransactionAdapter";
 
-    private RecyclerItemClickListener listener;
+    private Context mContext;
+    private List<ListItem> consolidatedList;
 
-    public void setListener(RecyclerItemClickListener listener) {
-        this.listener = listener;
-    }
-
-
-    private List<ListItem> consolidatedList = new ArrayList<>();
-
-    public TransactionAdapter(List<ListItem> consolidatedList) {
+    public TransactionAdapter(Context context, List<ListItem> consolidatedList) {
+        mContext = context;
         this.consolidatedList = consolidatedList;
     }
 
@@ -35,8 +32,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         RecyclerView.ViewHolder viewHolder = null;
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-
+//        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         switch (viewType) {
             case ListItem.TYPE_DATE:
                 View dateView = LayoutInflater.from(viewGroup.getContext())
@@ -73,6 +69,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 int amount = transactionItem.getTransaction().getAmount();
 
                 transactionViewHolder.setData(category, description, amount);
+
+                transactionViewHolder.setiRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
+                    @Override
+                    public void onItemSelectedListener(View view, int position) {
+                        Toast.makeText(mContext, "Positon: " + position, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
         }
     }
@@ -109,6 +112,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView descriptionTv;
         private TextView amountTv;
 
+        private IRecyclerItemSelectedListener iRecyclerItemSelectedListener;
+
+        public void setiRecyclerItemSelectedListener(IRecyclerItemSelectedListener iRecyclerItemSelectedListener) {
+            this.iRecyclerItemSelectedListener = iRecyclerItemSelectedListener;
+        }
+
         public TransactionViewHolder(@NonNull final View itemView) {
             super(itemView);
 
@@ -127,7 +136,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public void onClick(View v) {
-            listener.onItemClick(v, getAdapterPosition());
+            iRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
         }
     }
 }

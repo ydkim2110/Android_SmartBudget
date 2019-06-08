@@ -71,8 +71,11 @@ public class MainActivity extends AppCompatActivity
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
         getAllCategoryAsync.execute();
 
-//        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
-//        getAllAccountAsync.execute();
+        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
+        getAllAccountAsync.execute();
+
+        GetAllTransactionAsync getAllTransactionAsync = new GetAllTransactionAsync();
+        getAllTransactionAsync.execute();
     }
 
     @Override
@@ -183,6 +186,36 @@ public class MainActivity extends AppCompatActivity
                     Log.d("GetAllAccountAsync", "type: " + type);
                     Log.d("GetAllAccountAsync", "create_at: " + create_at);
                     Log.d("GetAllAccountAsync", "currency: " + currency);
+                }
+                while (cursor.moveToNext());
+            } finally {
+                cursor.close();
+            }
+            return null;
+        }
+    }
+
+    private class GetAllTransactionAsync extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Cursor cursor = dbHelper.getAllTransactions();
+            try {
+                do {
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                    String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                    String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                    String category_id = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                    String account_id = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                    String to_account = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+                    Log.d("GetAllTransactionAsync", "id: " + id);
+                    Log.d("GetAllTransactionAsync", "description: " + description);
+                    Log.d("GetAllTransactionAsync", "amount: " + amount);
+                    Log.d("GetAllTransactionAsync", "date: " + date);
+                    Log.d("GetAllTransactionAsync", "category_id: " + category_id);
+                    Log.d("GetAllTransactionAsync", "account_id: " + account_id);
+                    Log.d("GetAllTransactionAsync", "to_account: " + to_account);
                 }
                 while (cursor.moveToNext());
             } finally {

@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.example.smartbudget.R;
 import com.example.smartbudget.Overview.OverviewActivity;
-import com.example.smartbudget.Utils.RecyclerItemClickListener;
+import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,8 +27,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment
-    implements RecyclerItemClickListener {
+public class HomeFragment extends Fragment {
 
     public HomeFragment() {
         // Required empty public constructor
@@ -116,11 +115,9 @@ public class HomeFragment extends Fragment
             }
         }
 
-        transactionAdapter = new TransactionAdapter(consolidatedList);
+        transactionAdapter = new TransactionAdapter(getContext(), consolidatedList);
         transactionRecyclerview.setAdapter(transactionAdapter);
         transactionAdapter.notifyDataSetChanged();
-
-        transactionAdapter.setListener(this);
 
         return view;
     }
@@ -147,10 +144,5 @@ public class HomeFragment extends Fragment
 
         return groupedHashMap;
 
-    }
-
-    @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(getContext(), "Position: "+position, Toast.LENGTH_SHORT).show();
     }
 }

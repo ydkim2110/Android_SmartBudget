@@ -40,9 +40,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TRANSACTION_TABLE =
             "CREATE TABLE " + Transaction.TABLE_NAME + " (" +
-                    Transaction.COL_DESCRIPTION + " INTEGER PRIMARY KEY," +
+                    Transaction._ID + " INTEGER PRIMARY KEY," +
+                    Transaction.COL_DESCRIPTION + " TEXT," +
                     Transaction.COL_AMOUNT + " INTEGER," +
-                    Transaction.COL_TYPE + " INTEGER," +
+                    Transaction.COL_TYPE + " TEXT," +
                     Transaction.COL_DATE + " DATE," +
                     Transaction.COL_CATEGORY_ID + " INTEGER," +
                     Transaction.COL_ACCOUNT_ID + " INTEGER ," +
@@ -59,8 +60,10 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_CATEGORY_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
 
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)", new Object[]{"국민은행", 4000000, 0, new Date(), "KRW"});
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)", new Object[]{"신한은행", 3000000, 0, new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
+                new Object[]{"국민은행", 4000000, 0, new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
+                new Object[]{"신한은행", 3000000, 0, new Date(), "KRW"});
 
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Food", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transport", R.drawable.ic_directions_bus_black_24dp});
@@ -72,6 +75,19 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Other Expenses", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Income", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transfer", R.drawable.ic_directions_bus_black_24dp});
+
+        db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});
+        db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});
+        db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});
+        db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});
+        db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});
+        db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});
     }
 
     @Override
@@ -109,6 +125,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getAllCategories() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM "+Category.TABLE_NAME, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getAllTransactions() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+Transaction.TABLE_NAME, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }

@@ -7,13 +7,13 @@ public class TransactionModel {
     private int id;
     private String transaction_description;
     private double transaction_amount;
-    private int transaction_type;
+    private String transaction_type;
     private Date transaction_date;
     private int category_id;
     private int account_id;
     private int to_account;
 
-    public TransactionModel(String transaction_description, double transaction_amount, int transaction_type, Date transaction_date, int category_id, int account_id) {
+    public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, Date transaction_date, int category_id, int account_id) {
         this.transaction_description = transaction_description;
         this.transaction_amount = transaction_amount;
         this.transaction_type = transaction_type;
@@ -22,7 +22,7 @@ public class TransactionModel {
         this.account_id = account_id;
     }
 
-    public TransactionModel(String transaction_description, double transaction_amount, int transaction_type, Date transaction_date, int category_id, int account_id, int to_account) {
+    public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, Date transaction_date, int category_id, int account_id, int to_account) {
         this.transaction_description = transaction_description;
         this.transaction_amount = transaction_amount;
         this.transaction_type = transaction_type;
@@ -48,11 +48,11 @@ public class TransactionModel {
         this.transaction_amount = transaction_amount;
     }
 
-    public int getTransaction_type() {
+    public String getTransaction_type() {
         return transaction_type;
     }
 
-    public void setTransaction_type(int transaction_type) {
+    public void setTransaction_type(String transaction_type) {
         this.transaction_type = transaction_type;
     }
 

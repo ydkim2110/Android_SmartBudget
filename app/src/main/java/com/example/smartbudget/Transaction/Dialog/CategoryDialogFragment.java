@@ -1,0 +1,100 @@
+package com.example.smartbudget.Transaction.Dialog;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.R;
+import com.example.smartbudget.Transaction.ICategoryLoadListener;
+
+import java.util.List;
+
+public class CategoryDialogFragment extends DialogFragment implements ICategoryLoadListener {
+
+    private static final String TAG = CategoryDialogFragment.class.getSimpleName();
+
+    public interface OnDialogSendListener {
+        void sendResult(String result);
+    }
+    
+    public OnDialogSendListener mOnDialogSendListener;
+
+    public static CategoryDialogFragment newInstance() {
+        return new CategoryDialogFragment();
+    }
+
+    private Button saveBtn;
+    private Button cancelBtn;
+
+    private RecyclerView mCategoryRecyclerView;
+    private DBHelper mDBHelper;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mOnDialogSendListener = (OnDialogSendListener) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
+
+        mDBHelper = new DBHelper(getContext());
+        DatabaseUtils.getAllCategory(mDBHelper, this);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_category_dialog, container, false);
+
+        saveBtn = view.findViewById(R.id.save_btn);
+        cancelBtn = view.findViewById(R.id.cancel_btn);
+        saveBtn.setEnabled(false);
+
+        mCategoryRecyclerView = view.findViewById(R.id.category_recyclerview);
+        mCategoryRecyclerView.setHasFixedSize(true);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
+        mCategoryRecyclerView.setLayoutManager(layoutManager);
+
+        handleClickButton();
+
+        return view;
+    }
+
+    private void handleClickButton() {
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: cancel btn click!!");
+                mOnDialogSendListener.sendResult("test");
+
+                getDialog().dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void onCategoryLoadSuccess(List<Category> categoryList) {
+        CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), categoryList);
+        mCategoryRecyclerView.setAdapter(categoryAdapter);
+        categoryAdapter.notifyDataSetChanged();
+    }
+
+}
