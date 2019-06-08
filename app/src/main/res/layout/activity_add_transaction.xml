@@ -45,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Category"
+                android:focusable="false"
                 android:padding="16dp" />
 
             <com.example.smartbudget.Utils.ClearEditText
@@ -52,6 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Note"
+                android:focusable="false"
                 android:padding="16dp" />
 
             <com.example.smartbudget.Utils.ClearEditText
@@ -67,6 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Amount"
+                android:focusable="false"
                 android:inputType="number"
                 android:padding="16dp" />
 
