@@ -26,13 +26,10 @@ import com.example.smartbudget.Database.DBContract;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Budget.BudgetFragment;
 import com.example.smartbudget.Database.DBHelper;
-import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.Home.HomeFragment;
 import com.example.smartbudget.Statstics.StatsticsFragment;
 import com.example.smartbudget.Transaction.AddTransactionActivity;
-import com.example.smartbudget.Utils.IClickListener;
-
-import java.util.Date;
+import com.example.smartbudget.Travel.TravelFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.IBudgetContainerClickListener {
@@ -41,6 +38,7 @@ public class MainActivity extends AppCompatActivity
     private static final int BUDGET_FRAGMENT = 1;
     private static final int STATSTICS_FRAGMENT = 2;
     private static final int CALCULATOR_FRAGMENT = 3;
+    private static final int TRAVEL_FRAGMENT = 4;
 
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -139,14 +137,17 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Home");
         } else if (id == R.id.nav_budget) {
             gotoFragment(BudgetFragment.newInstance(), BUDGET_FRAGMENT);
-            getSupportActionBar().setTitle("My Budget");
+            getSupportActionBar().setTitle("Budget");
         } else if (id == R.id.nav_overview) {
             gotoFragment(StatsticsFragment.newInstance(), STATSTICS_FRAGMENT);
-            getSupportActionBar().setTitle("My Statstics");
+            getSupportActionBar().setTitle("Statstics");
         } else if (id == R.id.nav_calculator) {
             gotoFragment(CalculatorFragment.newInstance(), CALCULATOR_FRAGMENT);
-            getSupportActionBar().setTitle("My Calculator");
-        } else if (id == R.id.nav_share) {
+            getSupportActionBar().setTitle("Calculator");
+        } else if (id == R.id.nav_travel) {
+            gotoFragment(TravelFragment.newInstance(), TRAVEL_FRAGMENT);
+            getSupportActionBar().setTitle("Travel");
+        }else if (id == R.id.nav_share) {
             Toast.makeText(this, "share click!!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
             Toast.makeText(this, "send click!!", Toast.LENGTH_SHORT).show();
@@ -161,7 +162,8 @@ public class MainActivity extends AppCompatActivity
     private void gotoFragment(Fragment fragment, final int currentFragmentNUM) {
         currentFragment = currentFragmentNUM;
 
-        if (currentFragment == STATSTICS_FRAGMENT || currentFragment == CALCULATOR_FRAGMENT) {
+        if (currentFragment == STATSTICS_FRAGMENT || currentFragment == CALCULATOR_FRAGMENT ||
+                currentFragment == TRAVEL_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);
         } else {
             fab.setVisibility(View.VISIBLE);
@@ -180,6 +182,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.container, fragment);
         ft.commit();
     }

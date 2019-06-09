@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -66,44 +67,16 @@ public class HomeFragment extends Fragment {
 
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
 
-        homeOverviewContainer = view.findViewById(R.id.home_overview_container);
-        homeOverviewContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
-            }
-        });
-
-        homeBudgetContainer = view.findViewById(R.id.home_budget_container);
-        homeBudgetContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mIBudgetContainerClickListener.onBudgetContainerClicked();
-            }
-        });
-
-        swipeRefreshLayout = view.findViewById(R.id.refresh_home_fragment);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
-        progressBar = view.findViewById(R.id.progressBar);
-        progressBarPercentage = view.findViewById(R.id.progressbar_percentage);
-        usedBudgetTv = view.findViewById(R.id.used_budget_tv);
-        totalBudgetTv = view.findViewById(R.id.total_budget_tv);
-
-        DecimalFormat df = new DecimalFormat("0.00");
+        initView(view);
+        handleViewClick();
 
         int maxValue = 4000000;
         int currentValue = 3200000;
-        String percentage = df.format((Double.parseDouble(String.valueOf(currentValue)) * 100/(Double.parseDouble(String.valueOf(maxValue)))));
+
         usedBudgetTv.setText(Common.changeNumberToComma(currentValue) +"원");
         totalBudgetTv.setText(Common.changeNumberToComma(maxValue)+"원");
+        progressBarPercentage.setText(Common.calcPercentage(currentValue, maxValue)+"%");
 
-        progressBarPercentage.setText(percentage+" %");
         progressBar.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, currentValue);
         progressAnim.setDuration(500);
@@ -113,6 +86,12 @@ public class HomeFragment extends Fragment {
         transactionRecyclerview = view.findViewById(R.id.transaction_recyclerview);
         transactionRecyclerview.setHasFixedSize(true);
         transactionRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(getContext(), new LinearLayoutManager(getContext()).getOrientation());
+
+        transactionRecyclerview.addItemDecoration(dividerItemDecoration);
+
 
         List<Transaction> transactionList = new ArrayList<>();
         List<ListItem> consolidatedList = new ArrayList<>();
@@ -156,6 +135,37 @@ public class HomeFragment extends Fragment {
         transactionAdapter.notifyDataSetChanged();
 
         return view;
+    }
+
+    private void handleViewClick() {
+        homeOverviewContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
+            }
+        });
+        homeBudgetContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIBudgetContainerClickListener.onBudgetContainerClicked();
+            }
+        });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private void initView(View view) {
+        homeOverviewContainer = view.findViewById(R.id.home_overview_container);
+        homeBudgetContainer = view.findViewById(R.id.home_budget_container);
+        swipeRefreshLayout = view.findViewById(R.id.refresh_home_fragment);
+        progressBar = view.findViewById(R.id.progressBar);
+        progressBarPercentage = view.findViewById(R.id.progressbar_percentage);
+        usedBudgetTv = view.findViewById(R.id.used_budget_tv);
+        totalBudgetTv = view.findViewById(R.id.total_budget_tv);
     }
 
     private HashMap<String, List<Transaction>> groupDataIntoHashMap(List<Transaction> listOfTransaction) {

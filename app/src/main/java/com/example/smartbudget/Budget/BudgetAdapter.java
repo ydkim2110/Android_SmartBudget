@@ -63,6 +63,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
         private TextView amountTv;
         private TextView viewAllTransactionTv;
         private ProgressBar progressBar;
+        private TextView progressbar_percentage;
 
         private IRecyclerItemSelectedListener mIRecyclerItemSelectedListener;
 
@@ -77,6 +78,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
             amountTv = itemView.findViewById(R.id.budget_amount);
             viewAllTransactionTv =  itemView.findViewById(R.id.budget_view_transacitons);
             progressBar = itemView.findViewById(R.id.budget_progressBar);
+            progressbar_percentage = itemView.findViewById(R.id.progressbar_percentage);
 
             itemView.setOnClickListener(this);
             viewAllTransactionTv.setOnClickListener(this);
@@ -84,8 +86,11 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
         private void setData(String category, int amount) {
             categoryTv.setText(category);
-            amountTv.setText(amount+"원");
-            ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, 70);
+            amountTv.setText(Common.changeNumberToComma(amount)+"원");
+            progressbar_percentage.setText(Common.calcPercentage(100000, amount)+"%");
+
+            progressBar.setMax(amount);
+            ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, 100000);
             progressAnim.setDuration(500);
             progressAnim.setInterpolator(new LinearInterpolator());
             progressAnim.start();

@@ -20,6 +20,10 @@
             android:id="@+id/nav_calculator"
             android:icon="@drawable/ic_gradient_black_24dp"
             android:title="Calculator" />
+        <item
+            android:id="@+id/nav_travel"
+            android:icon="@drawable/ic_local_airport_black_24dp"
+            android:title="Travel" />
     </group>
 
     <item android:title="Communicate">

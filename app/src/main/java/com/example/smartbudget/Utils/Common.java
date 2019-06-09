@@ -1,5 +1,6 @@
 package com.example.smartbudget.Utils;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class Common {
@@ -19,5 +20,11 @@ public class Common {
 
     public static String changeNumberToComma(int number) {
         return NumberFormat.getNumberInstance().format(number);
+    }
+
+    public static String calcPercentage (int currentValue, int maxValue) {
+        return new DecimalFormat("0.00").format(
+                (Double.parseDouble(String.valueOf(currentValue)) * 100/
+                        (Double.parseDouble(String.valueOf(maxValue)))));
     }
 }

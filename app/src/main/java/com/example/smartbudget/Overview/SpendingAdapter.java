@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartbudget.R;
 import com.example.smartbudget.Main.Spending;
+import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
 import java.util.List;
 
@@ -29,10 +31,18 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         viewHolder.percentage.setText(spendingList.get(i).getPercentage());
         viewHolder.category.setText(spendingList.get(i).getCategory());
         viewHolder.amount.setText(spendingList.get(i).getAmount());
+
+        viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
+            @Override
+            public void onItemSelectedListener(View view, int position) {
+                Toast.makeText(view.getContext(), "category: "+spendingList.get(position).getCategory(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -40,11 +50,17 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
         return spendingList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView percentage;
         private TextView category;
         private TextView amount;
+
+        private IRecyclerItemSelectedListener mIRecyclerItemSelectedListener;
+
+        public void setIRecyclerItemSelectedListener(IRecyclerItemSelectedListener IRecyclerItemSelectedListener) {
+            mIRecyclerItemSelectedListener = IRecyclerItemSelectedListener;
+        }
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -52,6 +68,13 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
             percentage = itemView.findViewById(R.id.overview_spending_percentage);
             category = itemView.findViewById(R.id.overview_spending_category);
             amount = itemView.findViewById(R.id.overview_spending_amount);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mIRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
         }
     }
 }

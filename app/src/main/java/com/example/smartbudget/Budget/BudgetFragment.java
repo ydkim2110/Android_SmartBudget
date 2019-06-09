@@ -46,11 +46,11 @@ public class BudgetFragment extends Fragment {
         budgetList.add(new Budget("교통", 200000));
         budgetList.add(new Budget("식비", 500000));
         budgetList.add(new Budget("쇼핑", 300000));
-        budgetList.add(new Budget("엔터테이먼트", 100000));
-        budgetList.add(new Budget("집", 100000));
-        budgetList.add(new Budget("선물기부", 100000));
-        budgetList.add(new Budget("건강", 100000));
-        budgetList.add(new Budget("기타", 100000));
+        budgetList.add(new Budget("엔터테이먼트", 400000));
+        budgetList.add(new Budget("집", 700000));
+        budgetList.add(new Budget("선물기부", 900000));
+        budgetList.add(new Budget("건강", 1000000));
+        budgetList.add(new Budget("기타", 550000));
 
         BudgetAdapter budgetAdapter = new BudgetAdapter(budgetList);
         budgetRecyclerview.setAdapter(budgetAdapter);
