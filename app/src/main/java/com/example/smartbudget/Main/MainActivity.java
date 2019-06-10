@@ -19,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.example.smartbudget.Calculator.CalculatorFragment;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_main);
 
         dbHelper = new DBHelper(this);
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_overview) {
             gotoFragment(StatsticsFragment.newInstance(), STATSTICS_FRAGMENT);
             getSupportActionBar().setTitle("Statstics");
+            getSupportActionBar().setElevation(0);
         } else if (id == R.id.nav_calculator) {
             gotoFragment(CalculatorFragment.newInstance(), CALCULATOR_FRAGMENT);
             getSupportActionBar().setTitle("Calculator");

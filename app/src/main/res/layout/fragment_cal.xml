@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/vertical_guideline"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.40"/>
+
+    <TextView
+        android:id="@+id/display_text_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical|end"
+        android:textSize="@dimen/activity_calculator_display_text_size"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/vertical_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="568,89 * 3,56" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vertical_guideline"
+        app:layout_constraintBottom_toBottomOf="parent" >
+
+        <android.support.constraint.Guideline
+            android:id="@+id/vertical_guideline_1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.20"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/vertical_guideline_2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.40"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/vertical_guideline_3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.60"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/vertical_guideline_4"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.80"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/horizontal_guideline_1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/horizontal_guideline_2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.50"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/horizontal_guideline_3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75"/>
+
+        <Button
+            android:id="@+id/keyboard_clear_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_clear"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_1"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_division_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_division"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_1"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_1"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_multiplication_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_multiplication"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_2"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_1"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            android:src="@drawable/ic_backspace_black_24dp"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_1"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_7_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_7"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_1"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_1"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_2"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_8_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_8"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_1"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_2"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_1"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_2"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_9_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_9"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_2"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_3"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_1"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_2"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_addition_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_addition"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_1"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_2"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_4_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_4"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_1"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_2"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_3"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_5_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_5"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_1"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_2"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_2"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_3"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_6_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_6"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_2"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_3"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_2"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_3"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_subtraction_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_subtraction"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_2"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_3"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_1_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_1"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_1"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_3"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_4"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_2_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_2"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_1"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_2"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_3"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_4"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_3_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_3"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_2"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_3"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_3"
+            app:layout_constraintBottom_toTopOf="@+id/vertical_guideline_4"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_0_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_0"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_1"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_000_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_000"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_1"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_2"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_point_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/keyboard_point"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_2"
+            app:layout_constraintEnd_toStartOf="@+id/horizontal_guideline_3"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <Button
+            android:id="@+id/keyboard_action_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/keyboard_equal"
+            android:textSize="@dimen/activity_calculator_button_text_size"
+            app:layout_constraintStart_toEndOf="@+id/horizontal_guideline_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vertical_guideline_3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="?android:attr/borderlessButtonStyle" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

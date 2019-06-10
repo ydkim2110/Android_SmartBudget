@@ -39,34 +39,46 @@ public class StatsticsFragment extends Fragment {
 
         View view =  inflater.inflate(R.layout.fragment_statstics, container, false);
 
-        mTabLayout = view.findViewById(R.id.tab);
-        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Weekly")));
-        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Monthly")));
-        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Yearly")));
-
         mViewPager = view.findViewById(R.id.viewPager);
 
-        mPagerAdapter = new PagerAdapter(getActivity().getSupportFragmentManager(), mTabLayout.getTabCount());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
 
-        mViewPager.setAdapter(mPagerAdapter);
+        adapter.addFragment(WeeklyFragment.newInstance(), "Weekly");
+        adapter.addFragment(MonthlyFragment.newInstance(), "Monthly");
+        adapter.addFragment(YearlyFragment.newInstance(), "Yearly");
 
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+        mViewPager.setAdapter(adapter);
 
-            }
+        mTabLayout = view.findViewById(R.id.tab);
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+        mTabLayout.setupWithViewPager(mViewPager);
 
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+//        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Weekly")));
+//        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Monthly")));
+//        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Yearly")));
+//
+//
+//        mPagerAdapter = new PagerAdapter(getActivity().getSupportFragmentManager(), mTabLayout.getTabCount());
+//
+//        mViewPager.setAdapter(mPagerAdapter);
+//
+//        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+//        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//
+//            }
+//        });
 
 
 
