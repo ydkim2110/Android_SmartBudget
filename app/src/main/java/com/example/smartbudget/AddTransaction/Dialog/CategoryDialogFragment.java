@@ -1,4 +1,4 @@
-package com.example.smartbudget.Transaction.Dialog;
+package com.example.smartbudget.AddTransaction.Dialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import android.widget.Button;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Transaction.ICategoryLoadListener;
+import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
 
 import java.util.List;
 

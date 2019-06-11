@@ -1,4 +1,4 @@
-package com.example.smartbudget.Transaction;
+package com.example.smartbudget.AddTransaction;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -15,12 +15,11 @@ import android.widget.Toast;
 
 import com.example.smartbudget.Home.Transaction;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Transaction.Dialog.CategoryDialogFragment;
-import com.example.smartbudget.Transaction.Dialog.DatePickerDialogFragment;
-import com.example.smartbudget.Transaction.Dialog.IDialogSendListener;
+import com.example.smartbudget.AddTransaction.Dialog.CategoryDialogFragment;
+import com.example.smartbudget.AddTransaction.Dialog.DatePickerDialogFragment;
+import com.example.smartbudget.AddTransaction.Dialog.IDialogSendListener;
 import com.example.smartbudget.Utils.Common;
 
-import java.text.NumberFormat;
 import java.util.Calendar;
 
 public class AddTransactionActivity extends AppCompatActivity

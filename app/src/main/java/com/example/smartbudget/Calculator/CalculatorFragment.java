@@ -29,6 +29,10 @@ public class CalculatorFragment extends Fragment
     private TextView keysPressedTv;
     private TextView keyOneTv;
 
+    private TextView mDisplayTextView;
+    private boolean mKeypadMode;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

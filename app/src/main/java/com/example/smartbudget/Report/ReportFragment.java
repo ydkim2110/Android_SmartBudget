@@ -1,4 +1,4 @@
-package com.example.smartbudget.Statstics;
+package com.example.smartbudget.Report;
 
 
 import android.os.Bundle;
@@ -16,15 +16,15 @@ import com.example.smartbudget.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StatsticsFragment extends Fragment {
+public class ReportFragment extends Fragment {
 
-    private static final String TAG = StatsticsFragment.class.getSimpleName();
+    private static final String TAG = ReportFragment.class.getSimpleName();
 
-    public StatsticsFragment() {
+    public ReportFragment() {
     }
 
-    public static StatsticsFragment newInstance() {
-        StatsticsFragment fragment = new StatsticsFragment();
+    public static ReportFragment newInstance() {
+        ReportFragment fragment = new ReportFragment();
         return fragment;
     }
 
@@ -37,7 +37,7 @@ public class StatsticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: started!!");
 
-        View view =  inflater.inflate(R.layout.fragment_statstics, container, false);
+        View view =  inflater.inflate(R.layout.fragment_report, container, false);
 
         mViewPager = view.findViewById(R.id.viewPager);
 

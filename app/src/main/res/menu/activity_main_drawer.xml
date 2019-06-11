@@ -9,13 +9,21 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
         <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_account_balance_wallet_black_24dp"
+            android:title="Account" />
+        <item
             android:id="@+id/nav_budget"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_budget" />
         <item
-            android:id="@+id/nav_overview"
+            android:id="@+id/nav_transaction"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:title="Transaction" />
+        <item
+            android:id="@+id/nav_report"
             android:icon="@drawable/ic_assessment_black_24dp"
-            android:title="Statstics" />
+            android:title="Report" />
         <item
             android:id="@+id/nav_calculator"
             android:icon="@drawable/ic_gradient_black_24dp"
@@ -34,6 +42,30 @@
                 android:title="@string/menu_share" />
             <item
                 android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/menu_send" />
+            <item
+                android:id="@+id/nav_share1"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/menu_share" />
+            <item
+                android:id="@+id/nav_send1"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/menu_send" />
+            <item
+                android:id="@+id/nav_share2"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/menu_share" />
+            <item
+                android:id="@+id/nav_send2"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/menu_send" />
+            <item
+                android:id="@+id/nav_share3"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/menu_share" />
+            <item
+                android:id="@+id/nav_send3"
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/menu_send" />
         </menu>

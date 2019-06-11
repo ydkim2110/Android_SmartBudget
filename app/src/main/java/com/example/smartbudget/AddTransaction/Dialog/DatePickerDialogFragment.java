@@ -1,4 +1,4 @@
-package com.example.smartbudget.Transaction.Dialog;
+package com.example.smartbudget.AddTransaction.Dialog;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

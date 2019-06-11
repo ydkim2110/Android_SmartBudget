@@ -1,4 +1,4 @@
-package com.example.smartbudget.Statstics;
+package com.example.smartbudget.Report;
 
 
 import android.os.Bundle;
@@ -12,15 +12,14 @@ import com.example.smartbudget.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WeeklyFragment extends Fragment {
+public class YearlyFragment extends Fragment {
 
-
-    public static WeeklyFragment newInstance() {
-        WeeklyFragment fragment = new WeeklyFragment();
+    public static YearlyFragment newInstance() {
+        YearlyFragment fragment = new YearlyFragment();
         return fragment;
     }
 
-    public WeeklyFragment() {
+    public YearlyFragment() {
         // Required empty public constructor
     }
 
@@ -29,7 +28,7 @@ public class WeeklyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_weekly, container, false);
+        return inflater.inflate(R.layout.fragment_yearly, container, false);
     }
 
 }

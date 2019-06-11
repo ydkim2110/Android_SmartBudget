@@ -8,14 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.R;
-import com.example.smartbudget.Transaction.AddTransactionActivity;
+import com.example.smartbudget.AddTransaction.AddTransactionActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

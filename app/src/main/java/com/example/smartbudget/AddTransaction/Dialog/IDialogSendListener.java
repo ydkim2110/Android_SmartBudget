@@ -1,4 +1,4 @@
-package com.example.smartbudget.Transaction.Dialog;
+package com.example.smartbudget.AddTransaction.Dialog;
 
 public interface IDialogSendListener {
     void OnSendListener(String result);

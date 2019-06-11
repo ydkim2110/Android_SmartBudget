@@ -1,5 +1,6 @@
-package com.example.smartbudget.Transaction;
+package com.example.smartbudget.Account;
 
+import android.app.Dialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,25 +9,31 @@ import android.view.MenuItem;
 
 import com.example.smartbudget.R;
 
-public class InputAmountActivity extends AppCompatActivity {
+public class AddAccountActivity extends AppCompatActivity {
 
-    private static final String TAG = InputAmountActivity.class.getSimpleName();
+    private static final String TAG = AddAccountActivity.class.getSimpleName();
+
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_input_amount);
+        setContentView(R.layout.activity_add_account);
         Log.d(TAG, "onCreate: started!!");
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Add Amount");
+        initToolbar();
+
+    }
+
+    private void initToolbar() {
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Add Account");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         if (id == android.R.id.home) {

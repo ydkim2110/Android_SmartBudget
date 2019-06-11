@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#e9e9e9"
-    tools:context=".AddTransaction.AddTransactionActivity">
+    tools:context=".Account.AddAccountActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -40,39 +39,25 @@
             android:background="@android:color/white"
             android:orientation="vertical"
             android:padding="16dp">
-            <com.example.smartbudget.Utils.ClearEditText
-                android:id="@+id/add_transaction_category"
+
+            <EditText
+                android:id="@+id/editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Category"
-                android:focusable="false"
+                android:ems="10"
+                android:hint="Account Name..."
+                android:inputType="textPersonName"
                 android:padding="16dp" />
 
-            <com.example.smartbudget.Utils.ClearEditText
-                android:id="@+id/add_transaction_note"
+            <EditText
+                android:id="@+id/editText2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Note"
-                android:focusable="false"
-                android:padding="16dp" />
-
-            <com.example.smartbudget.Utils.ClearEditText
-                android:id="@+id/add_transaction_date"
-                android:focusable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Date"
-                android:padding="16dp" />
-
-            <com.example.smartbudget.Utils.ClearEditText
-                android:id="@+id/add_transaction_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Amount"
-                android:focusable="false"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:hint="Account_balance"
                 android:inputType="number"
                 android:padding="16dp" />
-
         </LinearLayout>
 
     </ScrollView>

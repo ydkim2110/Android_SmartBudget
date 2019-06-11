@@ -1,4 +1,4 @@
-package com.example.smartbudget.Statstics;
+package com.example.smartbudget.Report;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;

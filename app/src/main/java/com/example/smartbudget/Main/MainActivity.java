@@ -22,24 +22,29 @@ import android.view.Menu;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.example.smartbudget.Account.AccountFragment;
+import com.example.smartbudget.Account.AddAccountActivity;
 import com.example.smartbudget.Calculator.CalculatorFragment;
 import com.example.smartbudget.Database.DBContract;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Budget.BudgetFragment;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Home.HomeFragment;
-import com.example.smartbudget.Statstics.StatsticsFragment;
-import com.example.smartbudget.Transaction.AddTransactionActivity;
+import com.example.smartbudget.Report.ReportFragment;
+import com.example.smartbudget.AddTransaction.AddTransactionActivity;
+import com.example.smartbudget.Transaction.TransactionFragment;
 import com.example.smartbudget.Travel.TravelFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.IBudgetContainerClickListener {
 
     private static final int HOME_FRAGMENT = 0;
-    private static final int BUDGET_FRAGMENT = 1;
-    private static final int STATSTICS_FRAGMENT = 2;
-    private static final int CALCULATOR_FRAGMENT = 3;
-    private static final int TRAVEL_FRAGMENT = 4;
+    private static final int ACCOUNT_FRAGMENT = 1;
+    private static final int BUDGET_FRAGMENT = 2;
+    private static final int TRANSACTION_FRAGMENT = 3;
+    private static final int REPORT_FRAGMENT = 4;
+    private static final int CALCULATOR_FRAGMENT = 5;
+    private static final int TRAVEL_FRAGMENT = 6;
 
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -137,11 +142,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             gotoFragment(HomeFragment.newInstance(), HOME_FRAGMENT);
             getSupportActionBar().setTitle("Home");
+        } else if (id == R.id.nav_account) {
+            gotoFragment(AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
+            getSupportActionBar().setTitle("Account");
         } else if (id == R.id.nav_budget) {
             gotoFragment(BudgetFragment.newInstance(), BUDGET_FRAGMENT);
             getSupportActionBar().setTitle("Budget");
-        } else if (id == R.id.nav_overview) {
-            gotoFragment(StatsticsFragment.newInstance(), STATSTICS_FRAGMENT);
+        } else if (id == R.id.nav_transaction) {
+            gotoFragment(TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
+            getSupportActionBar().setTitle("Transaction");
+        } else if (id == R.id.nav_report) {
+            gotoFragment(ReportFragment.newInstance(), REPORT_FRAGMENT);
             getSupportActionBar().setTitle("Statstics");
             getSupportActionBar().setElevation(0);
         } else if (id == R.id.nav_calculator) {
@@ -150,7 +161,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_travel) {
             gotoFragment(TravelFragment.newInstance(), TRAVEL_FRAGMENT);
             getSupportActionBar().setTitle("Travel");
-        }else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
             Toast.makeText(this, "share click!!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
             Toast.makeText(this, "send click!!", Toast.LENGTH_SHORT).show();
@@ -165,8 +176,8 @@ public class MainActivity extends AppCompatActivity
     private void gotoFragment(Fragment fragment, final int currentFragmentNUM) {
         currentFragment = currentFragmentNUM;
 
-        if (currentFragment == STATSTICS_FRAGMENT || currentFragment == CALCULATOR_FRAGMENT ||
-                currentFragment == TRAVEL_FRAGMENT) {
+        if (currentFragment == ACCOUNT_FRAGMENT || currentFragment == REPORT_FRAGMENT ||
+                currentFragment == CALCULATOR_FRAGMENT || currentFragment == TRAVEL_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);
         } else {
             fab.setVisibility(View.VISIBLE);
