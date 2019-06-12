@@ -61,9 +61,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
 
         db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-                new Object[]{"국민은행", 4000000, 0, new Date(), "KRW"});
+                new Object[]{"국민은행", 4000000, "수시입출금", new Date(), "KRW"});
         db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-                new Object[]{"신한은행", 3000000, 0, new Date(), "KRW"});
+                new Object[]{"신한은행", 3000000, "예금", new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
+                new Object[]{"한국투자증권", 13000000, "주식", new Date(), "KRW"});
 
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Food", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transport", R.drawable.ic_directions_bus_black_24dp});
@@ -111,6 +113,21 @@ public class DBHelper extends SQLiteOpenHelper {
         long result = db.insert(Account.TABLE_NAME, null, values);
 
         return result;
+    }
+
+    public boolean insertToAccount(AccountModel accountModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Account.COL_NAME, accountModel.getAccount_name());
+        contentValues.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
+        contentValues.put(Account.COL_TYPE, accountModel.getAccount_type());
+        contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getAccount_create_at()));
+        contentValues.put(Account.COL_CURRENCY, accountModel.getAccount_currency());
+
+        long result = db.insert(Account.TABLE_NAME, null, contentValues);
+
+        return result != -1;
     }
 
     public Cursor getAllAccounts() {

@@ -68,7 +68,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
 
     @Override
     public void onAccountLoadSuccess(List<Account> accountList) {
-        mAccountAdapter = new AccountAdapter(accountList);
+        mAccountAdapter = new AccountAdapter(getActivity(), accountList);
         mRecyclerView.setAdapter(mAccountAdapter);
         mAccountAdapter.notifyDataSetChanged();
     }

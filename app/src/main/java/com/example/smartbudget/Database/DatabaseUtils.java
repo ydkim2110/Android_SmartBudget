@@ -1,5 +1,6 @@
 package com.example.smartbudget.Database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
@@ -7,11 +8,17 @@ import com.example.smartbudget.Account.Account;
 import com.example.smartbudget.Account.IAccountLoadListener;
 import com.example.smartbudget.AddTransaction.Dialog.Category;
 import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
+import com.example.smartbudget.Database.Model.AccountModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseUtils {
+
+    public static void insertAccountAsync(DBHelper db, AccountModel... accountModel) {
+        insertAccountAsync task = new insertAccountAsync(db);
+        task.execute(accountModel);
+    }
 
     public static void getAllCategory(DBHelper db, ICategoryLoadListener listener) {
         GetAllCategoryAsync task = new GetAllCategoryAsync(db, listener);
@@ -21,6 +28,27 @@ public class DatabaseUtils {
     public static void getAllAccount(DBHelper db, IAccountLoadListener listener) {
         GetAllAccountAsync task = new GetAllAccountAsync(db, listener);
         task.execute();
+    }
+
+    /*
+    ============================================================================
+    ASYNC TASK DEFINE
+    ============================================================================
+     */
+
+    private static class insertAccountAsync extends AsyncTask<AccountModel, Void, Void> {
+
+        DBHelper db;
+
+        public insertAccountAsync(DBHelper db) {
+            this.db = db;
+        }
+
+        @Override
+        protected Void doInBackground(AccountModel... accountModels) {
+            db.insertToAccount(accountModels[0]);
+            return null;
+        }
     }
 
     private static class GetAllCategoryAsync extends AsyncTask<Void, Void, List<Category>> {
