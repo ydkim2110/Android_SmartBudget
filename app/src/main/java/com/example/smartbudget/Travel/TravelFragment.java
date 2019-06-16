@@ -14,9 +14,13 @@ import com.example.smartbudget.R;
  */
 public class TravelFragment extends Fragment {
 
-    public static TravelFragment newInstance() {
-        TravelFragment fragment = new TravelFragment();
-        return fragment;
+    private static TravelFragment instance;
+
+    public static TravelFragment getInstance() {
+        if (instance == null) {
+            instance = new TravelFragment();
+        }
+        return instance;
     }
 
     public TravelFragment() {

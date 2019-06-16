@@ -20,12 +20,16 @@ public class ReportFragment extends Fragment {
 
     private static final String TAG = ReportFragment.class.getSimpleName();
 
-    public ReportFragment() {
+    private static ReportFragment instance;
+
+    public static ReportFragment getInstance() {
+        if (instance == null) {
+            instance = new ReportFragment();
+        }
+        return instance;
     }
 
-    public static ReportFragment newInstance() {
-        ReportFragment fragment = new ReportFragment();
-        return fragment;
+    public ReportFragment() {
     }
 
     private TabLayout mTabLayout;

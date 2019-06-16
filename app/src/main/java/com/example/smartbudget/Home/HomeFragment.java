@@ -17,11 +17,10 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.smartbudget.R;
 import com.example.smartbudget.Overview.OverviewActivity;
+import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,13 +30,17 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
-    public HomeFragment() {
-        // Required empty public constructor
+    private static HomeFragment instance;
+
+    public static HomeFragment getInstance() {
+        if (instance == null) {
+            instance = new HomeFragment();
+        }
+        return instance;
     }
 
-    public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
-        return fragment;
+    public HomeFragment() {
+        // Required empty public constructor
     }
 
     public interface IBudgetContainerClickListener {

@@ -85,6 +85,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
                 public void onItemSelectedListener(View view, int position) {
+                    Common.SELECTED_ACCOUNT = null;
                     mBSAccountAddFragment = BSAccountAddFragment.getInstance();
                     mBSAccountAddFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), mBSAccountAddFragment.getTag());
                 }

@@ -16,14 +16,17 @@ import com.example.smartbudget.R;
 public class CalculatorFragment extends Fragment
         implements View.OnClickListener {
 
+    private static CalculatorFragment instance;
+
+    public static CalculatorFragment getInstance() {
+        if (instance == null) {
+            instance = new CalculatorFragment();
+        }
+        return instance;
+    }
 
     public CalculatorFragment() {
         // Required empty public constructor
-    }
-
-    public static CalculatorFragment newInstance() {
-        CalculatorFragment fragment = new CalculatorFragment();
-        return fragment;
     }
 
     private TextView keysPressedTv;

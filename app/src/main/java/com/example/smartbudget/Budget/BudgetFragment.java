@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.smartbudget.Home.HomeFragment;
 import com.example.smartbudget.R;
 
 import java.util.ArrayList;
@@ -19,18 +20,20 @@ import java.util.List;
  */
 public class BudgetFragment extends Fragment {
 
+    private static BudgetFragment instance;
+
+    public static BudgetFragment getInstance() {
+        if (instance == null) {
+            instance = new BudgetFragment();
+        }
+        return instance;
+    }
 
     public BudgetFragment() {
         // Required empty public constructor
     }
 
-    public static BudgetFragment newInstance() {
-        BudgetFragment fragment = new BudgetFragment();
-        return fragment;
-    }
-
     private RecyclerView budgetRecyclerview;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

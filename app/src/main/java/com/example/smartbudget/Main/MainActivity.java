@@ -23,7 +23,6 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.example.smartbudget.Account.AccountFragment;
-import com.example.smartbudget.Account.AddAccountActivity;
 import com.example.smartbudget.Calculator.CalculatorFragment;
 import com.example.smartbudget.Database.DBContract;
 import com.example.smartbudget.R;
@@ -37,6 +36,8 @@ import com.example.smartbudget.Travel.TravelFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.IBudgetContainerClickListener {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int HOME_FRAGMENT = 0;
     private static final int ACCOUNT_FRAGMENT = 1;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        gotoFragment(HomeFragment.newInstance(), HOME_FRAGMENT);
+        gotoFragment("Home", HomeFragment.getInstance(), HOME_FRAGMENT);
         navigationView.getMenu().getItem(currentFragment).setChecked(true);
 
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
@@ -116,7 +117,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        if (currentFragment == HOME_FRAGMENT) {
+            getMenuInflater().inflate(R.menu.nav_home_menu, menu);
+        } else if (currentFragment == ACCOUNT_FRAGMENT) {
+            getMenuInflater().inflate(R.menu.nav_account_menu, menu);
+        }
         return true;
     }
 
@@ -126,6 +131,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.nav_account_menu) {
+            Toast.makeText(this, "account menu click!!", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -137,27 +144,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            gotoFragment(HomeFragment.newInstance(), HOME_FRAGMENT);
-            getSupportActionBar().setTitle("Home");
+            gotoFragment("Home", HomeFragment.getInstance(), HOME_FRAGMENT);
         } else if (id == R.id.nav_account) {
-            gotoFragment(AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
-            getSupportActionBar().setTitle("Account");
+            gotoFragment("Account", AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
         } else if (id == R.id.nav_budget) {
-            gotoFragment(BudgetFragment.newInstance(), BUDGET_FRAGMENT);
-            getSupportActionBar().setTitle("Budget");
+            gotoFragment("Budget", BudgetFragment.getInstance(), BUDGET_FRAGMENT);
         } else if (id == R.id.nav_transaction) {
-            gotoFragment(TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
-            getSupportActionBar().setTitle("Transaction");
+            gotoFragment("Transaction", TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
         } else if (id == R.id.nav_report) {
-            gotoFragment(ReportFragment.newInstance(), REPORT_FRAGMENT);
-            getSupportActionBar().setTitle("Report");
-            getSupportActionBar().setElevation(0);
+            gotoFragment("Report", ReportFragment.getInstance(), REPORT_FRAGMENT);
         } else if (id == R.id.nav_calculator) {
-            gotoFragment(CalculatorFragment.newInstance(), CALCULATOR_FRAGMENT);
-            getSupportActionBar().setTitle("Calculator");
+            gotoFragment("Calculator", CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
         } else if (id == R.id.nav_travel) {
-            gotoFragment(TravelFragment.newInstance(), TRAVEL_FRAGMENT);
-            getSupportActionBar().setTitle("Travel");
+            gotoFragment("Travel", TravelFragment.getInstance(), TRAVEL_FRAGMENT);
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "share click!!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
@@ -169,12 +168,20 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @SuppressLint("RestrictedApi")
-    private void gotoFragment(Fragment fragment, final int currentFragmentNUM) {
-        currentFragment = currentFragmentNUM;
+    private void gotoFragment(String title, Fragment fragment, final int currentFragmentNUM) {
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(title);
+        invalidateOptionsMenu();
 
-        if (currentFragment == ACCOUNT_FRAGMENT || currentFragment == REPORT_FRAGMENT ||
-                currentFragment == CALCULATOR_FRAGMENT || currentFragment == TRAVEL_FRAGMENT) {
+        setFragment(fragment, currentFragmentNUM);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void setFragment(Fragment fragment, final int currentFragmentNUM) {
+        Log.d(TAG, "setFragment: called");
+
+        if (currentFragmentNUM == ACCOUNT_FRAGMENT || currentFragmentNUM == REPORT_FRAGMENT ||
+                currentFragmentNUM == CALCULATOR_FRAGMENT || currentFragmentNUM == TRAVEL_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);
         } else {
             fab.setVisibility(View.VISIBLE);
@@ -184,13 +191,14 @@ public class MainActivity extends AppCompatActivity
                     if (currentFragmentNUM == HOME_FRAGMENT) {
                         startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
                     }
-                    else if (currentFragment == BUDGET_FRAGMENT) {
+                    else if (currentFragmentNUM == BUDGET_FRAGMENT) {
                         Toast.makeText(MainActivity.this, "Budget FAB Click!", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
         }
+
+        currentFragment = currentFragmentNUM;
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
@@ -201,8 +209,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBudgetContainerClicked() {
         Toast.makeText(this, "Budget Click!!", Toast.LENGTH_SHORT).show();
-        gotoFragment(BudgetFragment.newInstance(), BUDGET_FRAGMENT);
-        getSupportActionBar().setTitle("My Budget");
+        gotoFragment("Budget", BudgetFragment.getInstance(), BUDGET_FRAGMENT);
         navigationView.getMenu().getItem(currentFragment).setChecked(true);
     }
 
