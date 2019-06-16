@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
         getAllCategoryAsync.execute();
 
-        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
-        getAllAccountAsync.execute();
+//        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
+//        getAllAccountAsync.execute();
 
         GetAllTransactionAsync getAllTransactionAsync = new GetAllTransactionAsync();
         getAllTransactionAsync.execute();
@@ -240,12 +240,14 @@ public class MainActivity extends AppCompatActivity
                 do {
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
                     String name = cursor.getString(cursor.getColumnIndexOrThrow("account_name"));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow("account_description"));
                     String amount = cursor.getString(cursor.getColumnIndexOrThrow("account_amount"));
                     String type = cursor.getString(cursor.getColumnIndexOrThrow("account_type"));
                     String create_at = cursor.getString(cursor.getColumnIndexOrThrow("account_create_at"));
                     String currency = cursor.getString(cursor.getColumnIndexOrThrow("account_currency"));
                     Log.d("GetAllAccountAsync", "id: " + id);
                     Log.d("GetAllAccountAsync", "name: " + name);
+                    Log.d("GetAllAccountAsync", "description: " + description);
                     Log.d("GetAllAccountAsync", "amount: " + amount);
                     Log.d("GetAllAccountAsync", "type: " + type);
                     Log.d("GetAllAccountAsync", "create_at: " + create_at);

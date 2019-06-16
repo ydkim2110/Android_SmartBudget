@@ -1,17 +1,17 @@
 package com.example.smartbudget.Account;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -26,13 +26,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public static BottomSheetFragment bottomSheetFragment;
 
     private Context mContext;
-    private List<Account> accountList;
+    private List<AccountModel> accountList;
 
     private int count = 0;
+    private IAccountLoadListener mListener;
 
-    public AccountAdapter(Context context, List<Account> accountList) {
+    public AccountAdapter(Context context, List<AccountModel> accountList, IAccountLoadListener listener) {
         this.mContext = context;
         this.accountList = accountList;
+        this.mListener = listener;
     }
 
     @NonNull
@@ -42,42 +44,38 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         if (count >= accountList.size()) {
             view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.account_add_item_layout, viewGroup, false);
+                    .inflate(R.layout.account_item_add_layout, viewGroup, false);
             view.setTag("ADD");
         } else {
             view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.account_item_layout, viewGroup, false);
+                    .inflate(R.layout.account_item2_layout, viewGroup, false);
             view.setTag(null);
         }
         count += 1;
         return new ViewHolder(view);
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        if (i<accountList.size()) {
-            viewHolder.accountName.setText(accountList.get(i).getName());
-            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) accountList.get(i).getAmount()));
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+        if (i < accountList.size()) {
+            viewHolder.accountName.setText(accountList.get(i).getAccount_name());
+            viewHolder.accountDescription.setText(accountList.get(i).getAccount_description());
+            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) accountList.get(i).getAccount_amount()));
+            viewHolder.accountType.setText(accountList.get(i).getAccount_type());
 
             viewHolder.setmIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
                 public void onItemSelectedListener(View view, int position) {
-                    Toast.makeText(view.getContext(), "계좌명: "+accountList.get(position).getName(),
+                    Toast.makeText(view.getContext(), "계좌명: " + accountList.get(position).getAccount_name(),
                             Toast.LENGTH_SHORT).show();
                 }
             });
-            
-            viewHolder.accountEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "수정 클릭!", Toast.LENGTH_SHORT).show();
-                }
-            });
 
-            viewHolder.accountSetting.setOnClickListener(new View.OnClickListener() {
+            viewHolder.accountAmount.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "설정 클릭!", Toast.LENGTH_SHORT).show();
+                    DatabaseUtils.deleteAccountAsync(AccountFragment.mDBHelper, mListener, accountList.get(i));
                 }
             });
 
@@ -85,11 +83,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             viewHolder.setmIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
                 public void onItemSelectedListener(View view, int position) {
-                    //view.getContext().startActivity(new Intent(view.getContext(), AddAccountActivity.class));
-
                     bottomSheetFragment = new BottomSheetFragment();
                     bottomSheetFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), bottomSheetFragment.getTag());
-
                 }
             });
         }
@@ -97,15 +92,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return accountList.size()+1;
+        return accountList.size() + 1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView accountName;
+        private TextView accountDescription;
         private TextView accountAmount;
-        private TextView accountEdit;
-        private TextView accountSetting;
+        private TextView accountType;
 
         private IRecyclerItemSelectedListener mIRecyclerItemSelectedListener;
 
@@ -120,13 +115,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
                 itemView.setOnClickListener(this);
             } else {
                 accountName = itemView.findViewById(R.id.account_name);
+                accountDescription = itemView.findViewById(R.id.account_description);
                 accountAmount = itemView.findViewById(R.id.account_amount);
-                accountEdit = itemView.findViewById(R.id.account_edit);
-                accountSetting = itemView.findViewById(R.id.account_setting);
+                accountType = itemView.findViewById(R.id.account_type);
 
                 itemView.setOnClickListener(this);
-                accountEdit.setOnClickListener(this);
-                accountSetting.setOnClickListener(this);
             }
         }
 

@@ -10,6 +10,7 @@ public class DBContract {
     public static class Account implements BaseColumns {
         public static final String TABLE_NAME = "account_table";
         public static final String COL_NAME = "account_name";
+        public static final String COL_DESCRIPTION = "account_description";
         public static final String COL_AMOUNT = "account_amount";
         public static final String COL_TYPE = "account_type";
         public static final String COL_CREATE_AT = "account_create_at";

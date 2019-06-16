@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
@@ -16,6 +18,8 @@ import static com.example.smartbudget.Database.DBContract.*;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = DBHelper.class.getSimpleName();
+
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "smartbudget.db";
 
@@ -25,11 +29,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ACCOUNT_TABLE =
             "CREATE TABLE " + Account.TABLE_NAME + " (" +
-                    Account._ID + " INTEGER PRIMARY KEY," +
-                    Account.COL_NAME + " TEXT," +
-                    Account.COL_AMOUNT + " INTEGER," +
-                    Account.COL_TYPE + " INTEGER," +
-                    Account.COL_CREATE_AT + " DATE," +
+                    Account._ID + " INTEGER PRIMARY KEY, " +
+                    Account.COL_NAME + " TEXT, " +
+                    Account.COL_DESCRIPTION + " TEXT, " +
+                    Account.COL_AMOUNT + " INTEGER, " +
+                    Account.COL_TYPE + " INTEGER, " +
+                    Account.COL_CREATE_AT + " DATE, " +
                     Account.COL_CURRENCY + " TEXT)";
 
     private static final String SQL_CREATE_CATEGORY_TABLE =
@@ -60,12 +65,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_CATEGORY_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
 
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-                new Object[]{"국민은행", 4000000, "수시입출금", new Date(), "KRW"});
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-                new Object[]{"신한은행", 3000000, "예금", new Date(), "KRW"});
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-                new Object[]{"한국투자증권", 13000000, "주식", new Date(), "KRW"});
+//        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
+//                new Object[]{"국민은행", 4000000, "수시입출금", new Date(), "KRW"});
+//        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
+//                new Object[]{"신한은행", 3000000, "예금", new Date(), "KRW"});
+//        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
+//                new Object[]{"한국투자증권", 13000000, "주식", new Date(), "KRW"});
 
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Food", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transport", R.drawable.ic_directions_bus_black_24dp});
@@ -106,6 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(Account.COL_NAME, accountModel.getAccount_name());
+        values.put(Account.COL_DESCRIPTION, accountModel.getAccount_description());
         values.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
         values.put(Account.COL_TYPE, accountModel.getAccount_type());
         values.put(Account.COL_CREATE_AT, dateFormat.format(date));
@@ -120,6 +126,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Account.COL_NAME, accountModel.getAccount_name());
+        contentValues.put(Account.COL_DESCRIPTION, accountModel.getAccount_description());
         contentValues.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
         contentValues.put(Account.COL_TYPE, accountModel.getAccount_type());
         contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getAccount_create_at()));
@@ -128,6 +135,13 @@ public class DBHelper extends SQLiteOpenHelper {
         long result = db.insert(Account.TABLE_NAME, null, contentValues);
 
         return result != -1;
+    }
+
+    public int deleteAccount(AccountModel accountModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+
+        return db.delete(Account.TABLE_NAME, "_id = "+accountModel.getId(), null);
     }
 
     public Cursor getAllAccounts() {

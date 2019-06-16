@@ -1,10 +1,12 @@
 package com.example.smartbudget.Database;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
-import com.example.smartbudget.Account.Account;
+import com.example.smartbudget.Account.IAccountInsertListener;
 import com.example.smartbudget.Account.IAccountLoadListener;
 import com.example.smartbudget.AddTransaction.Dialog.Category;
 import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
@@ -15,18 +17,25 @@ import java.util.List;
 
 public class DatabaseUtils {
 
-    public static void insertAccountAsync(DBHelper db, AccountModel... accountModel) {
-        insertAccountAsync task = new insertAccountAsync(db);
+    private static final String TAG = DatabaseUtils.class.getSimpleName();
+
+    public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModel) {
+        InsertAccountAsync task = new InsertAccountAsync(db, listener);
         task.execute(accountModel);
     }
 
-    public static void getAllCategory(DBHelper db, ICategoryLoadListener listener) {
-        GetAllCategoryAsync task = new GetAllCategoryAsync(db, listener);
-        task.execute();
+    public static void deleteAccountAsync(DBHelper db, IAccountLoadListener listener, AccountModel... accountModel) {
+        DeleteAccountAsync task = new DeleteAccountAsync(db, listener);
+        task.execute(accountModel);
     }
 
     public static void getAllAccount(DBHelper db, IAccountLoadListener listener) {
         GetAllAccountAsync task = new GetAllAccountAsync(db, listener);
+        task.execute();
+    }
+
+    public static void getAllCategory(DBHelper db, ICategoryLoadListener listener) {
+        GetAllCategoryAsync task = new GetAllCategoryAsync(db, listener);
         task.execute();
     }
 
@@ -35,19 +44,104 @@ public class DatabaseUtils {
     ASYNC TASK DEFINE
     ============================================================================
      */
-
-    private static class insertAccountAsync extends AsyncTask<AccountModel, Void, Void> {
+    private static class InsertAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
+        IAccountInsertListener mListener;
 
-        public insertAccountAsync(DBHelper db) {
+        public InsertAccountAsync(DBHelper db, IAccountInsertListener listener) {
             this.db = db;
+            mListener = listener;
         }
 
         @Override
-        protected Void doInBackground(AccountModel... accountModels) {
-            db.insertToAccount(accountModels[0]);
+        protected Boolean doInBackground(AccountModel... accountModels) {
+            return db.insertToAccount(accountModels[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isInserted) {
+            super.onPostExecute(isInserted);
+            mListener.onAccountInsertSuccess(isInserted);
+        }
+    }
+
+    private static class DeleteAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
+
+        DBHelper db;
+        IAccountLoadListener mListener;
+
+        public DeleteAccountAsync(DBHelper db, IAccountLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(AccountModel... accountModels) {
+            try {
+                long result = db.deleteAccount(accountModels[0]);
+                return result == 1;
+            } catch (Exception e) {
+                Log.d(TAG, "doInBackground: Error-" + e.getMessage());
+            }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onAccountDeleteSuccess(aBoolean);
+        }
+    }
+
+
+    private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+
+        DBHelper db;
+        IAccountLoadListener mListener;
+
+        public GetAllAccountAsync(DBHelper db, IAccountLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<AccountModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getAllAccounts();
+            List<AccountModel> accountList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() >0) {
+                try {
+                    do {
+                        AccountModel account = new AccountModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
+                        String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+                        String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
+                        String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
+
+                        account.setId((int) id);
+                        account.setAccount_name(name);
+                        account.setAccount_description(description);
+                        account.setAccount_amount(Double.parseDouble(amount));
+                        account.setAccount_type(type);
+                        account.setAccount_currency(currency);
+                        accountList.add(account);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return accountList;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<AccountModel> accountList) {
+            super.onPostExecute(accountList);
+            mListener.onAccountLoadSuccess(accountList);
         }
     }
 
@@ -88,43 +182,6 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<Account>> {
-
-        DBHelper db;
-        IAccountLoadListener mListener;
-
-        public GetAllAccountAsync(DBHelper db, IAccountLoadListener listener) {
-            this.db = db;
-            mListener = listener;
-        }
-
-        @Override
-        protected List<Account> doInBackground(Void... voids) {
-            Cursor cursor = db.getAllAccounts();
-            List<Account> accountList = new ArrayList<>();
-            try {
-                do {
-                    Account account = new Account();
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
-                    String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
-                    account.setName(name);
-                    account.setAmount(Double.parseDouble(amount));
-                    accountList.add(account);
-                }
-                while (cursor.moveToNext());
-            } finally {
-                cursor.close();
-            }
-            return accountList;
-        }
-
-        @Override
-        protected void onPostExecute(List<Account> accountList) {
-            super.onPostExecute(accountList);
-            mListener.onAccountLoadSuccess(accountList);
-        }
-    }
 
 
 }

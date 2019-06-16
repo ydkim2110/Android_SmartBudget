@@ -13,13 +13,12 @@ import android.view.ViewGroup;
 
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AccountFragment extends Fragment implements IAccountLoadListener {
 
     private static AccountFragment instance;
@@ -31,14 +30,18 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
         return instance;
     }
 
-    public AccountFragment() {
-        // Required empty public constructor
-    }
+    public AccountFragment() {}
 
     private RecyclerView mRecyclerView;
     private AccountAdapter mAccountAdapter;
 
-    private DBHelper mDBHelper;
+    public static DBHelper mDBHelper;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DatabaseUtils.getAllAccount(mDBHelper, this);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,17 +62,27 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-//        DividerItemDecoration dividerItemDecoration =
-//                new DividerItemDecoration(getContext(), new LinearLayoutManager(getContext()).getOrientation());
-//        mRecyclerView.addItemDecoration(dividerItemDecoration);
-
         return view;
     }
 
     @Override
-    public void onAccountLoadSuccess(List<Account> accountList) {
-        mAccountAdapter = new AccountAdapter(getActivity(), accountList);
-        mRecyclerView.setAdapter(mAccountAdapter);
-        mAccountAdapter.notifyDataSetChanged();
+    public void onAccountLoadSuccess(List<AccountModel> accountList) {
+        if (accountList == null) {
+            accountList = new ArrayList<>();
+            mAccountAdapter = new AccountAdapter(getActivity(), accountList, this);
+            mRecyclerView.setAdapter(mAccountAdapter);
+            mAccountAdapter.notifyDataSetChanged();
+        } else {
+            mAccountAdapter = new AccountAdapter(getActivity(), accountList, this);
+            mRecyclerView.setAdapter(mAccountAdapter);
+            mAccountAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onAccountDeleteSuccess(boolean isSuccess) {
+        if (isSuccess) {
+            DatabaseUtils.getAllAccount(mDBHelper, this);
+        }
     }
 }
