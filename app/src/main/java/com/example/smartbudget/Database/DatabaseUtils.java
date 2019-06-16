@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.example.smartbudget.Account.IAccountInsertListener;
 import com.example.smartbudget.Account.IAccountLoadListener;
-import com.example.smartbudget.AddTransaction.Dialog.Category;
+import com.example.smartbudget.AddTransaction.Category.Category;
 import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
 import com.example.smartbudget.Database.Model.AccountModel;
 

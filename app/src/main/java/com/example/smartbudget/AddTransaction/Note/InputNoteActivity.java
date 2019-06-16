@@ -1,4 +1,4 @@
-package com.example.smartbudget.AddTransaction;
+package com.example.smartbudget.AddTransaction.Note;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

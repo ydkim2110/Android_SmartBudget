@@ -1,6 +1,6 @@
 package com.example.smartbudget.AddTransaction;
 
-import com.example.smartbudget.AddTransaction.Dialog.Category;
+import com.example.smartbudget.AddTransaction.Category.Category;
 
 import java.util.List;
 

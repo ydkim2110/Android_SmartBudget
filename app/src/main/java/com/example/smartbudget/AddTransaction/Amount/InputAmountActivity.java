@@ -1,4 +1,4 @@
-package com.example.smartbudget.AddTransaction;
+package com.example.smartbudget.AddTransaction.Amount;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

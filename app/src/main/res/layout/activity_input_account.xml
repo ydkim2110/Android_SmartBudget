@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddTransaction.Note.InputNoteActivity">
+    tools:context=".AddTransaction.Account.InputAccountActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout2"
@@ -25,20 +25,42 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <EditText
-        android:id="@+id/input_note_edt"
-        android:layout_width="0dp"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/input_account_recyclerview"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        android:hint="Add Note..."
-        android:gravity="top"
-        android:padding="16dp"
-        android:lines="10"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/input_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/input_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_weight="1"
+            android:background="@color/colorRevenue"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="Save" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.smartbudget.AddTransaction.Dialog;
+package com.example.smartbudget.AddTransaction.Category;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,14 +20,24 @@ import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
 
 import java.util.List;
 
-public class CategoryDialogFragment extends DialogFragment implements ICategoryLoadListener {
+public class CategoryDialogFragment extends DialogFragment
+        implements ICategoryLoadListener, CategoryDialogAdapter.UpdateButtonListener {
 
     private static final String TAG = CategoryDialogFragment.class.getSimpleName();
+
+    private String selectedCategoryName = "";
+
+    @Override
+    public void onUpdate(boolean status, String categoryName) {
+        if (status) {
+            saveBtn.setEnabled(true);
+            selectedCategoryName = categoryName;
+        }
+    }
 
     public interface OnDialogSendListener {
         void sendResult(String result);
     }
-    
     public OnDialogSendListener mOnDialogSendListener;
 
     public static CategoryDialogFragment newInstance() {
@@ -83,8 +93,15 @@ public class CategoryDialogFragment extends DialogFragment implements ICategoryL
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: cancel btn click!!");
-                mOnDialogSendListener.sendResult("test");
-
+                getDialog().dismiss();
+            }
+        });
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: save btn click!!");
+                // todo: send result to activity
+                mOnDialogSendListener.sendResult(selectedCategoryName);
                 getDialog().dismiss();
             }
         });
@@ -92,7 +109,7 @@ public class CategoryDialogFragment extends DialogFragment implements ICategoryL
 
     @Override
     public void onCategoryLoadSuccess(List<Category> categoryList) {
-        CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), categoryList);
+        CategoryDialogAdapter categoryAdapter = new CategoryDialogAdapter(getContext(), categoryList, this);
         mCategoryRecyclerView.setAdapter(categoryAdapter);
         categoryAdapter.notifyDataSetChanged();
     }

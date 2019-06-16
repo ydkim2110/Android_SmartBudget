@@ -13,11 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.smartbudget.AddTransaction.Account.InputAccountActivity;
+import com.example.smartbudget.AddTransaction.Amount.InputAmountActivity;
+import com.example.smartbudget.AddTransaction.Date.DatePickerDialogFragment;
+import com.example.smartbudget.AddTransaction.Note.InputNoteActivity;
+import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.Home.Transaction;
 import com.example.smartbudget.R;
-import com.example.smartbudget.AddTransaction.Dialog.CategoryDialogFragment;
-import com.example.smartbudget.AddTransaction.Dialog.DatePickerDialogFragment;
-import com.example.smartbudget.AddTransaction.Dialog.IDialogSendListener;
+import com.example.smartbudget.AddTransaction.Category.CategoryDialogFragment;
+import com.example.smartbudget.AddTransaction.Date.IDialogSendListener;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.Calendar;
@@ -26,10 +30,12 @@ public class AddTransactionActivity extends AppCompatActivity
         implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener {
 
     private static final String TAG = AddTransactionActivity.class.getSimpleName();
-    private static final int INPUT_NOTE_REQUEST = 100;
-    private static final int INPUT_AMOUNT_REQUEST = 200;
+    private static final int INPUT_ACCOUNT_REQUEST = 100;
+    private static final int INPUT_NOTE_REQUEST = 200;
+    private static final int INPUT_AMOUNT_REQUEST = 300;
 
     private Toolbar mToolbar;
+    private EditText accountEdt;
     private EditText categoryEdt;
     private EditText noteEdt;
     private EditText dateEdt;
@@ -78,6 +84,7 @@ public class AddTransactionActivity extends AppCompatActivity
     }
 
     private void initViews() {
+        accountEdt = findViewById(R.id.add_transaction_account);
         categoryEdt = findViewById(R.id.add_transaction_category);
         noteEdt = findViewById(R.id.add_transaction_note);
         dateEdt = findViewById(R.id.add_transaction_date);
@@ -94,6 +101,17 @@ public class AddTransactionActivity extends AppCompatActivity
     }
 
     private void handleClickEvent() {
+        accountEdt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddTransactionActivity.this, InputAccountActivity.class);
+                if (accountEdt.getText() != null) {
+                    intent.putExtra("accountName", accountEdt.getText().toString());
+                }
+                startActivityForResult(intent, INPUT_ACCOUNT_REQUEST);
+            }
+        });
+
         categoryEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,6 +171,15 @@ public class AddTransactionActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == INPUT_ACCOUNT_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    AccountModel accountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
+                    Log.d(TAG, "onActivityResult: data: "+accountModel.getAccount_name());
+                    accountEdt.setText(accountModel.getAccount_name());
+                }
+            }
+        }
         if (requestCode == INPUT_NOTE_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {

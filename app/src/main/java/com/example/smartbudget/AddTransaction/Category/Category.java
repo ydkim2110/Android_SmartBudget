@@ -1,4 +1,4 @@
-package com.example.smartbudget.AddTransaction.Dialog;
+package com.example.smartbudget.AddTransaction.Category;
 
 public class Category {
 

@@ -1,4 +1,4 @@
-package com.example.smartbudget.AddTransaction.Dialog;
+package com.example.smartbudget.AddTransaction.Category;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -16,16 +16,26 @@ import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
+public class CategoryDialogAdapter extends RecyclerView.Adapter<CategoryDialogAdapter.ViewHolder> {
+
+    private static final String TAG = CategoryDialogAdapter.class.getSimpleName();
+
+    public interface UpdateButtonListener {
+        void onUpdate(boolean status, String categoryName);
+    }
+
+    public UpdateButtonListener mUpdateButtonListener;
 
     private Context mContext;
     private List<Category> mCategoryList;
     private List<ImageView> mImageViewList;
 
-    public CategoryAdapter(Context context, List<Category> categoryList) {
+
+    public CategoryDialogAdapter(Context context, List<Category> categoryList, UpdateButtonListener listener) {
         this.mContext = context;
         this.mCategoryList = categoryList;
         mImageViewList = new ArrayList<>();
+        this.mUpdateButtonListener = listener;
     }
 
     @NonNull
@@ -37,7 +47,7 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
         viewHolder.categoryImage.setImageResource(mCategoryList.get(i).getIcon());
         viewHolder.categoryName.setText(mCategoryList.get(i).getName());
 
@@ -45,15 +55,15 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
             mImageViewList.add(viewHolder.categoryImage);
         }
 
-        viewHolder.setiRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
+        viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
             @Override
             public void onItemSelectedListener(View view, int position) {
-
                 for (ImageView imageView : mImageViewList) {
                     imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.colorBlack));
                 }
-
                 viewHolder.categoryImage.setColorFilter(ContextCompat.getColor(mContext, R.color.colorRevenue));
+
+                mUpdateButtonListener.onUpdate(true, mCategoryList.get(i).getName());
             }
         });
     }
@@ -68,10 +78,10 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
         ImageView categoryImage;
         TextView categoryName;
 
-        private IRecyclerItemSelectedListener iRecyclerItemSelectedListener;
+        private IRecyclerItemSelectedListener mIRecyclerItemSelectedListener;
 
-        public void setiRecyclerItemSelectedListener(IRecyclerItemSelectedListener iRecyclerItemSelectedListener) {
-            this.iRecyclerItemSelectedListener = iRecyclerItemSelectedListener;
+        public void setIRecyclerItemSelectedListener(IRecyclerItemSelectedListener IRecyclerItemSelectedListener) {
+            this.mIRecyclerItemSelectedListener = IRecyclerItemSelectedListener;
         }
 
         public ViewHolder(@NonNull View itemView) {
@@ -85,7 +95,7 @@ public class CategoryAdapter  extends RecyclerView.Adapter<CategoryAdapter.ViewH
 
         @Override
         public void onClick(View v) {
-            iRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
+            mIRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
         }
     }
 
