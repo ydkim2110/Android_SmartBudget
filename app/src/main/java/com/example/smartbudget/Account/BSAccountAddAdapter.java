@@ -3,25 +3,21 @@ package com.example.smartbudget.Account;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
-import java.util.List;
-
-public class BottomSheetAdapter  extends RecyclerView.Adapter<BottomSheetAdapter.ViewHolder> {
+public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapter.ViewHolder> {
 
     private String[] title;
     private Context mContext;
 
-    public BottomSheetAdapter(Context context, String[] title) {
+    public BSAccountAddAdapter(Context context, String[] title) {
         this.mContext = context;
         this.title = title;
     }
@@ -44,7 +40,7 @@ public class BottomSheetAdapter  extends RecyclerView.Adapter<BottomSheetAdapter
                 Intent intent = new Intent(mContext, AddAccountActivity.class);
                 intent.putExtra("type", title[position]);
                 mContext.startActivity(intent);
-                AccountAdapter.bottomSheetFragment.dismiss();
+                AccountAdapter.mBSAccountAddFragment.dismiss();
             }
         });
     }

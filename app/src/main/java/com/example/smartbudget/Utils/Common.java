@@ -1,12 +1,16 @@
 package com.example.smartbudget.Utils;
 
+import com.example.smartbudget.Database.Model.AccountModel;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class Common {
 
     public static final String KEY_SELECTED_CATEGORY = "SELECTED_CATEGORY";
-
+    
+    public static AccountModel SELECTED_ACCOUNT = null;
+    
     // Intent
     public static final String EXTRA_PASS_INPUT_NOTE = "PASS_INPUT_NOTE";
     public static final String EXTRA_INPUT_NOTE = "INPUT_NOTE";

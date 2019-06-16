@@ -1,17 +1,17 @@
 package com.example.smartbudget.Account;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.smartbudget.Database.DBHelper;
-import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -23,13 +23,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     private static final String TAG = "AccountAdapter";
 
-    public static BottomSheetFragment bottomSheetFragment;
+    public static BSAccountAddFragment mBSAccountAddFragment;
+    public static BSAccountMenuFragment mBSAccountMenuFragment;
 
     private Context mContext;
     private List<AccountModel> accountList;
 
     private int count = 0;
-    private IAccountLoadListener mListener;
+    public static IAccountLoadListener mListener;
 
     public AccountAdapter(Context context, List<AccountModel> accountList, IAccountLoadListener listener) {
         this.mContext = context;
@@ -61,30 +62,31 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         if (i < accountList.size()) {
             viewHolder.accountName.setText(accountList.get(i).getAccount_name());
             viewHolder.accountDescription.setText(accountList.get(i).getAccount_description());
-            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) accountList.get(i).getAccount_amount()));
+            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) accountList.get(i).getAccount_amount())+"원");
             viewHolder.accountType.setText(accountList.get(i).getAccount_type());
 
-            viewHolder.setmIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
+            viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
                 public void onItemSelectedListener(View view, int position) {
-                    Toast.makeText(view.getContext(), "계좌명: " + accountList.get(position).getAccount_name(),
-                            Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext, AccountDetailActivity.class));
                 }
             });
 
-            viewHolder.accountAmount.setOnClickListener(new View.OnClickListener() {
+            viewHolder.accountMoreIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DatabaseUtils.deleteAccountAsync(AccountFragment.mDBHelper, mListener, accountList.get(i));
+                    Common.SELECTED_ACCOUNT = accountList.get(i);
+                    mBSAccountMenuFragment = BSAccountMenuFragment.getInstance();
+                    mBSAccountMenuFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), mBSAccountMenuFragment.getTag());
                 }
             });
 
         } else {
-            viewHolder.setmIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
+            viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
                 public void onItemSelectedListener(View view, int position) {
-                    bottomSheetFragment = new BottomSheetFragment();
-                    bottomSheetFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), bottomSheetFragment.getTag());
+                    mBSAccountAddFragment = BSAccountAddFragment.getInstance();
+                    mBSAccountAddFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), mBSAccountAddFragment.getTag());
                 }
             });
         }
@@ -101,10 +103,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         private TextView accountDescription;
         private TextView accountAmount;
         private TextView accountType;
+        private ImageView accountMoreIcon;
 
         private IRecyclerItemSelectedListener mIRecyclerItemSelectedListener;
 
-        public void setmIRecyclerItemSelectedListener(IRecyclerItemSelectedListener mIRecyclerItemSelectedListener) {
+        public void setIRecyclerItemSelectedListener(IRecyclerItemSelectedListener mIRecyclerItemSelectedListener) {
             this.mIRecyclerItemSelectedListener = mIRecyclerItemSelectedListener;
         }
 
@@ -118,6 +121,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
                 accountDescription = itemView.findViewById(R.id.account_description);
                 accountAmount = itemView.findViewById(R.id.account_amount);
                 accountType = itemView.findViewById(R.id.account_type);
+                accountMoreIcon = itemView.findViewById(R.id.account_more_icon);
 
                 itemView.setOnClickListener(this);
             }

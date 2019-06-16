@@ -3,8 +3,6 @@ package com.example.smartbudget.Database;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.example.smartbudget.Account.IAccountInsertListener;
 import com.example.smartbudget.Account.IAccountLoadListener;
@@ -21,6 +19,11 @@ public class DatabaseUtils {
 
     public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModel) {
         InsertAccountAsync task = new InsertAccountAsync(db, listener);
+        task.execute(accountModel);
+    }
+
+    public static void updateAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModel) {
+        UpdateAccountAsync task = new UpdateAccountAsync(db, listener);
         task.execute(accountModel);
     }
 
@@ -63,6 +66,34 @@ public class DatabaseUtils {
         protected void onPostExecute(Boolean isInserted) {
             super.onPostExecute(isInserted);
             mListener.onAccountInsertSuccess(isInserted);
+        }
+    }
+
+    public static class UpdateAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
+
+        DBHelper db;
+        IAccountInsertListener mListener;
+
+        public UpdateAccountAsync(DBHelper db, IAccountInsertListener listener) {
+            this.db = db;
+            this.mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(AccountModel... accountModels) {
+            try {
+                long result = db.updateAccount(accountModels[0]);
+                return result == 1;
+            } catch (Exception e) {
+                Log.d(TAG, "doInBackground: Error-" + e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onAccountUpdateSuccess(aBoolean);
         }
     }
 

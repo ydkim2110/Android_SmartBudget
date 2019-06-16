@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Account.AddAccountActivity"></activity>
+        <activity android:name=".Account.AccountDetailActivity"></activity>
+        <activity android:name=".Account.AddAccountActivity" />
         <activity android:name=".Budget.ViewTransactionActivity" />
         <activity android:name=".AddTransaction.InputAmountActivity" />
         <activity android:name=".AddTransaction.InputNoteActivity" />

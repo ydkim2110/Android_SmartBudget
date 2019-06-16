@@ -33,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     Account.COL_NAME + " TEXT, " +
                     Account.COL_DESCRIPTION + " TEXT, " +
                     Account.COL_AMOUNT + " INTEGER, " +
-                    Account.COL_TYPE + " INTEGER, " +
+                    Account.COL_TYPE + " TEXT, " +
                     Account.COL_CREATE_AT + " DATE, " +
                     Account.COL_CURRENCY + " TEXT)";
 
@@ -103,24 +103,6 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addAccount(AccountModel accountModel) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
-
-        ContentValues values = new ContentValues();
-        values.put(Account.COL_NAME, accountModel.getAccount_name());
-        values.put(Account.COL_DESCRIPTION, accountModel.getAccount_description());
-        values.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
-        values.put(Account.COL_TYPE, accountModel.getAccount_type());
-        values.put(Account.COL_CREATE_AT, dateFormat.format(date));
-
-        long result = db.insert(Account.TABLE_NAME, null, values);
-
-        return result;
-    }
-
     public boolean insertToAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -137,9 +119,27 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    public int deleteAccount(AccountModel accountModel) {
+    public int updateAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        Log.d(TAG, "updateAccount:getId "+accountModel.getId());
+        Log.d(TAG, "updateAccount:getAccount_name "+accountModel.getAccount_name());
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Account.COL_NAME, accountModel.getAccount_name());
+        contentValues.put(Account.COL_DESCRIPTION, accountModel.getAccount_description());
+        contentValues.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
+        contentValues.put(Account.COL_TYPE, accountModel.getAccount_type());
+        contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getAccount_create_at()));
+        contentValues.put(Account.COL_CURRENCY, accountModel.getAccount_currency());
+
+        int result = db.update(Account.TABLE_NAME, contentValues, "_id = "+accountModel.getId(), null);
+
+        return result;
+    }
+
+    public int deleteAccount(AccountModel accountModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
         return db.delete(Account.TABLE_NAME, "_id = "+accountModel.getId(), null);
     }

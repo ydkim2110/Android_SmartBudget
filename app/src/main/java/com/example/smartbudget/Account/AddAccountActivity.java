@@ -10,13 +10,19 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Utils.Common;
+import com.example.smartbudget.Utils.NumberTextWatcher;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -26,15 +32,21 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
     private Toolbar mToolbar;
 
-    private TextView accountName;
-    private TextView accountDescription;
-    private TextView accountAmount;
-    private TextView accountType;
+    private EditText accountName;
+    private EditText accountDescription;
+    private EditText accountAmount;
+    private EditText accountType;
 
     private Button saveBtn;
     private Button cancelBtn;
 
     private DBHelper mDBHelper;
+
+    private DecimalFormat df;
+    private DecimalFormat dfnd;
+    private boolean hasFractionalPart;
+
+    private AccountModel passedAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +56,21 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
         mDBHelper = new DBHelper(this);
 
+        df = new DecimalFormat("#,###.##");
+        df.setDecimalSeparatorAlwaysShown(true);
+        dfnd = new DecimalFormat("#,###");
+        hasFractionalPart = false;
+
+        if (Common.SELECTED_ACCOUNT != null) {
+            passedAccount = Common.SELECTED_ACCOUNT;
+        }
+
         initToolbar();
         initView();
 
-        accountType.setText(getIntent().getStringExtra("type"));
+        if (Common.SELECTED_ACCOUNT == null) {
+            accountType.setText(getIntent().getStringExtra("type"));
+        }
 
         accountName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -65,6 +88,7 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
             }
         });
+
         accountDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,10 +105,11 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
             }
         });
+
+        // todo: numberformat
         accountAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -94,9 +119,10 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
+
+        //accountAmount.addTextChangedListener(new NumberTextWatcher(accountAmount));
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,10 +138,19 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
                 String description = accountDescription.getText().toString();
                 double amount = Double.parseDouble(accountAmount.getText().toString());
                 String type = accountType.getText().toString();
-
-                AccountModel accountModel = new AccountModel(name, description, amount, type, new Date(), "KRW");
-
-                DatabaseUtils.insertAccountAsync(mDBHelper, AddAccountActivity.this, accountModel);
+                if (saveBtn.getText().toString().toUpperCase().equals("SAVE")) {
+                    Log.d(TAG, "onClick: save");
+                    AccountModel accountModel = new AccountModel(name, description,
+                            amount, type, new Date(), "KRW");
+                    DatabaseUtils.insertAccountAsync(mDBHelper, AddAccountActivity.this, accountModel);
+                }
+                else if (saveBtn.getText().toString().toUpperCase().equals("UPDATE")) {
+                    Log.d(TAG, "onClick: update");
+                    int id = passedAccount.getId();
+                    AccountModel accountModel = new AccountModel(id, name, description,
+                            amount, type, new Date(), "KRW");
+                    DatabaseUtils.updateAccountAsync(mDBHelper, AddAccountActivity.this, accountModel);
+                }
             }
         });
 
@@ -147,12 +182,26 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
         saveBtn = findViewById(R.id.save_btn);
         saveBtn.setEnabled(false);
         cancelBtn = findViewById(R.id.cancel_btn);
+
+        if (Common.SELECTED_ACCOUNT != null) {
+            saveBtn.setText("Update");
+            accountName.setText(passedAccount.getAccount_name());
+            accountDescription.setText(passedAccount.getAccount_description());
+            accountAmount.setText(""+passedAccount.getAccount_amount());
+            accountType.setText(passedAccount.getAccount_type());
+        } else {
+            saveBtn.setText("Save");
+        }
     }
 
     private void initToolbar() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Add Account");
+        if (Common.SELECTED_ACCOUNT != null) {
+            getSupportActionBar().setTitle("Edit Account");
+        } else {
+            getSupportActionBar().setTitle("Add Account");
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -174,7 +223,16 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             finish();
         } else {
             Log.d(TAG, "onAccountInsertSuccess: false");
+        }
+    }
 
+    @Override
+    public void onAccountUpdateSuccess(Boolean isUpdated) {
+        if (isUpdated) {
+            Log.d(TAG, "onAccountUpdateSuccess: true");
+            finish();
+        } else {
+            Log.d(TAG, "onAccountUpdateSuccess: false");
         }
     }
 }

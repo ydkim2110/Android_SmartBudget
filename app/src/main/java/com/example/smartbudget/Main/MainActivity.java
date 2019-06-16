@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
         getAllCategoryAsync.execute();
 
-//        GetAllAccountAsync getAllAccountAsync = new GetAllAccountAsync();
-//        getAllAccountAsync.execute();
-
         GetAllTransactionAsync getAllTransactionAsync = new GetAllTransactionAsync();
         getAllTransactionAsync.execute();
 
@@ -153,7 +150,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Transaction");
         } else if (id == R.id.nav_report) {
             gotoFragment(ReportFragment.newInstance(), REPORT_FRAGMENT);
-            getSupportActionBar().setTitle("Statstics");
+            getSupportActionBar().setTitle("Report");
             getSupportActionBar().setElevation(0);
         } else if (id == R.id.nav_calculator) {
             gotoFragment(CalculatorFragment.newInstance(), CALCULATOR_FRAGMENT);
@@ -222,36 +219,6 @@ public class MainActivity extends AppCompatActivity
                     Log.d("GetAllCategoryAsync", "id: " + id);
                     Log.d("GetAllCategoryAsync", "name: " + name);
                     Log.d("GetAllCategoryAsync", "icon: " + icon);
-                }
-                while (cursor.moveToNext());
-            } finally {
-                cursor.close();
-            }
-            return null;
-        }
-    }
-
-    private class GetAllAccountAsync extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Cursor cursor = dbHelper.getAllAccounts();
-            try {
-                do {
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("account_name"));
-                    String description = cursor.getString(cursor.getColumnIndexOrThrow("account_description"));
-                    String amount = cursor.getString(cursor.getColumnIndexOrThrow("account_amount"));
-                    String type = cursor.getString(cursor.getColumnIndexOrThrow("account_type"));
-                    String create_at = cursor.getString(cursor.getColumnIndexOrThrow("account_create_at"));
-                    String currency = cursor.getString(cursor.getColumnIndexOrThrow("account_currency"));
-                    Log.d("GetAllAccountAsync", "id: " + id);
-                    Log.d("GetAllAccountAsync", "name: " + name);
-                    Log.d("GetAllAccountAsync", "description: " + description);
-                    Log.d("GetAllAccountAsync", "amount: " + amount);
-                    Log.d("GetAllAccountAsync", "type: " + type);
-                    Log.d("GetAllAccountAsync", "create_at: " + create_at);
-                    Log.d("GetAllAccountAsync", "currency: " + currency);
                 }
                 while (cursor.moveToNext());
             } finally {

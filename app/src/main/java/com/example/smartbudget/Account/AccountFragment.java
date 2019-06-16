@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Utils.Common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
     @Override
     public void onResume() {
         super.onResume();
+        Common.SELECTED_ACCOUNT = null;
         DatabaseUtils.getAllAccount(mDBHelper, this);
     }
 

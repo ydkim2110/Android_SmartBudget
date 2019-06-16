@@ -12,9 +12,18 @@ import android.view.ViewGroup;
 
 import com.example.smartbudget.R;
 
-public class BottomSheetFragment extends BottomSheetDialogFragment {
+public class BSAccountAddFragment extends BottomSheetDialogFragment {
 
-    public BottomSheetFragment() {
+    private static BSAccountAddFragment instance;
+
+    public static BSAccountAddFragment getInstance() {
+        if (instance == null) {
+            instance = new BSAccountAddFragment();
+        }
+        return instance;
+    }
+
+    public BSAccountAddFragment() {
     }
 
     private RecyclerView mRecyclerView;
@@ -28,11 +37,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_bottom_sheet_dialog, container, false);
+        View view = inflater.inflate(R.layout.fragment_bsaccount_add, container, false);
 
         mRecyclerView = view.findViewById(R.id.account_add_recyclerview);
 
-        BottomSheetAdapter adapter = new BottomSheetAdapter(getActivity(), title);
+        BSAccountAddAdapter adapter = new BSAccountAddAdapter(getActivity(), title);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
         mRecyclerView.setLayoutManager(layoutManager);
