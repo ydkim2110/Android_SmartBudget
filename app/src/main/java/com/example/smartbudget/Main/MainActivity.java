@@ -34,6 +34,12 @@ import com.example.smartbudget.AddTransaction.AddTransactionActivity;
 import com.example.smartbudget.Transaction.TransactionFragment;
 import com.example.smartbudget.Travel.TravelFragment;
 
+import java.util.Calendar;
+
+import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.HorizontalCalendarView;
+import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.IBudgetContainerClickListener {
 
@@ -48,14 +54,20 @@ public class MainActivity extends AppCompatActivity
     private static final int TRAVEL_FRAGMENT = 6;
 
     private NavigationView navigationView;
-    private Toolbar toolbar;
+    private Toolbar mToolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawer;
 
-    private DBHelper dbHelper;
+    public static DBHelper mDBHelper;
 
     private int currentFragment = -1;
     private long backKeyPressedTime = 0;
+
+    private ICalendarChangeListener mICalendarChangeListener;
+
+    public void setICalendarChangeListener(ICalendarChangeListener mICalendarChangeListener) {
+        this.mICalendarChangeListener = mICalendarChangeListener;
+    }
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -71,31 +83,93 @@ public class MainActivity extends AppCompatActivity
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new DBHelper(this);
+        mDBHelper = new DBHelper(this);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        /* starts before 1 month from now */
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.MONTH, -12);
 
-        fab = findViewById(R.id.fab);
+        /* ends after 1 month from now */
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.MONTH, 3);
 
-        drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        initToolbar();
+        initView();
+
+        HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
+                .range(startDate, endDate)
+                .datesNumberOnScreen(5) // Number of Dates cells shown on screen (default to 5).
+                .mode(HorizontalCalendar.Mode.MONTHS)
+                .configure() // starts configuration.
+                    .formatMiddleText("MMM")
+                    .formatBottomText("yyyy")
+                    .sizeTopText(12)
+                    .sizeMiddleText(12)
+                    .sizeBottomText(12)
+                    .showTopText(false)
+                    .showBottomText(true)
+                    .textColor(R.color.colorWhite, R.color.colorRevenue)
+                .end() // ends configuration.
+                .build();
+
+        horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
+            @Override
+            public void onDateSelected(Calendar date, int position) {
+                Log.d(TAG, "onDateSelected: "+date.get(Calendar.YEAR)+"-"
+                        +date.get(Calendar.MONTH)+"-"+date.get(Calendar.DAY_OF_MONTH));
+                mICalendarChangeListener.onCalendarClicked();
+            }
+
+            @Override
+            public void onCalendarScroll(HorizontalCalendarView calendarView, int dx, int dy) {
+                super.onCalendarScroll(calendarView, dx, dy);
+            }
+
+            @Override
+            public boolean onDateLongClicked(Calendar date, int position) {
+                return super.onDateLongClicked(date, position);
+            }
+
+        });
+
+        initDrawAndNavigationView();
+
+        gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
+        navigationView.getMenu().getItem(currentFragment).setChecked(true);
+
+        loadData();
+    }
+
+    private void initDrawAndNavigationView() {
+        Log.d(TAG, "initDrawAndNavigationView: called!!");
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        gotoFragment("Home", HomeFragment.getInstance(), HOME_FRAGMENT);
-        navigationView.getMenu().getItem(currentFragment).setChecked(true);
-
+    private void loadData() {
+        Log.d(TAG, "loadData: called!!");
         GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
         getAllCategoryAsync.execute();
 
         GetAllTransactionAsync getAllTransactionAsync = new GetAllTransactionAsync();
         getAllTransactionAsync.execute();
+    }
 
+    private void initView() {
+        Log.d(TAG, "initView: called!!");
+        fab = findViewById(R.id.fab);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+    }
+
+    private void initToolbar() {
+        Log.d(TAG, "initToolbar: called!!");
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
     }
 
     @Override
@@ -105,7 +179,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
                 backKeyPressedTime = System.currentTimeMillis();
-                Toast.makeText(this, "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.",
+                Toast.makeText(this, getResources().getString(R.string.toast_on_back_pressed_message),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -144,31 +218,30 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            gotoFragment("Home", HomeFragment.getInstance(), HOME_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
         } else if (id == R.id.nav_account) {
-            gotoFragment("Account", AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_account), AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
         } else if (id == R.id.nav_budget) {
-            gotoFragment("Budget", BudgetFragment.getInstance(), BUDGET_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
         } else if (id == R.id.nav_transaction) {
-            gotoFragment("Transaction", TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_transaction), TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
         } else if (id == R.id.nav_report) {
-            gotoFragment("Report", ReportFragment.getInstance(), REPORT_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_report), ReportFragment.getInstance(), REPORT_FRAGMENT);
         } else if (id == R.id.nav_calculator) {
-            gotoFragment("Calculator", CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_calculator), CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
         } else if (id == R.id.nav_travel) {
-            gotoFragment("Travel", TravelFragment.getInstance(), TRAVEL_FRAGMENT);
+            gotoFragment(getResources().getString(R.string.menu_travel), TravelFragment.getInstance(), TRAVEL_FRAGMENT);
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "share click!!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
             Toast.makeText(this, "send click!!", Toast.LENGTH_SHORT).show();
         }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     private void gotoFragment(String title, Fragment fragment, final int currentFragmentNUM) {
+        Log.d(TAG, "gotoFragment: called!!");
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(title);
         invalidateOptionsMenu();
@@ -179,7 +252,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("RestrictedApi")
     private void setFragment(Fragment fragment, final int currentFragmentNUM) {
         Log.d(TAG, "setFragment: called");
-
         if (currentFragmentNUM == ACCOUNT_FRAGMENT || currentFragmentNUM == REPORT_FRAGMENT ||
                 currentFragmentNUM == CALCULATOR_FRAGMENT || currentFragmentNUM == TRAVEL_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);
@@ -197,7 +269,6 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
-
         currentFragment = currentFragmentNUM;
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -209,7 +280,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBudgetContainerClicked() {
         Toast.makeText(this, "Budget Click!!", Toast.LENGTH_SHORT).show();
-        gotoFragment("Budget", BudgetFragment.getInstance(), BUDGET_FRAGMENT);
+        gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
         navigationView.getMenu().getItem(currentFragment).setChecked(true);
     }
 
@@ -217,7 +288,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Cursor cursor = dbHelper.getAllCategories();
+            Cursor cursor = mDBHelper.getAllCategories();
             try {
                 do {
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Category._ID));
@@ -239,7 +310,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Cursor cursor = dbHelper.getAllTransactions();
+            Cursor cursor = mDBHelper.getAllTransactions();
             try {
                 do {
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));

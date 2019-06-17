@@ -47,26 +47,31 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
-        viewHolder.acccountName.setText(mAccountModelList.get(i).getAccount_name());
-        viewHolder.accountAmount.setText(Common.changeNumberToComma((int) mAccountModelList.get(i).getAccount_amount()) +"원");
-        viewHolder.accountType.setText(mAccountModelList.get(i).getAccount_type());
+        if (mAccountModelList.size() == 0) {
 
-        if (!mCardViewList.contains(viewHolder.container)) {
-            mCardViewList.add(viewHolder.container);
         }
+        else {
+            viewHolder.accountName.setText(mAccountModelList.get(i).getAccount_name());
+            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) mAccountModelList.get(i).getAccount_amount()) + "원");
+            viewHolder.accountType.setText(mAccountModelList.get(i).getAccount_type());
 
-        viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
-            @Override
-            public void onItemSelectedListener(View view, int position) {
-                Toast.makeText(view.getContext(), "Name: "+mAccountModelList.get(position).getAccount_name(), Toast.LENGTH_SHORT).show();
-                for (CardView cardView : mCardViewList) {
-                    cardView.setBackgroundColor(Color.WHITE);
-                }
-                viewHolder.container.setBackgroundColor(view.getContext().getResources().getColor(R.color.colorRevenue));
-
-                mSaveButtonListener.onUpdate(true, mAccountModelList.get(i));
+            if (!mCardViewList.contains(viewHolder.container)) {
+                mCardViewList.add(viewHolder.container);
             }
-        });
+
+            viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
+                @Override
+                public void onItemSelectedListener(View view, int position) {
+                    Toast.makeText(view.getContext(), "Name: " + mAccountModelList.get(position).getAccount_name(), Toast.LENGTH_SHORT).show();
+                    for (CardView cardView : mCardViewList) {
+                        cardView.setBackgroundColor(Color.WHITE);
+                    }
+                    viewHolder.container.setBackgroundColor(view.getContext().getResources().getColor(R.color.colorRevenue));
+
+                    mSaveButtonListener.onUpdate(true, mAccountModelList.get(i));
+                }
+            });
+        }
     }
 
     @Override
@@ -77,7 +82,7 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private CardView container;
-        private TextView acccountName;
+        private TextView accountName;
         private TextView accountAmount;
         private TextView accountType;
 
@@ -91,7 +96,7 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
             super(itemView);
 
             container = itemView.findViewById(R.id.container);
-            acccountName = itemView.findViewById(R.id.input_account_name);
+            accountName = itemView.findViewById(R.id.input_account_name);
             accountAmount = itemView.findViewById(R.id.input_account_amount);
             accountType = itemView.findViewById(R.id.input_account_type);
 

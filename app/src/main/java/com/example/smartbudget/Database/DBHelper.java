@@ -43,6 +43,13 @@ public class DBHelper extends SQLiteOpenHelper {
                     Category.COL_NAME + " TEXT," +
                     Category.COL_ICON + " INTEGER)";
 
+    private static final String SQL_CREATE_SUBCATEGORY_TABLE =
+            "CREATE TABLE " + SubCategory.TABLE_NAME + " (" +
+                    SubCategory._ID + " INTEGER PRIMARY KEY, " +
+                    SubCategory.COL_NAME + " TEXT, " +
+                    SubCategory.COL_ICON + " INTEGER, " +
+                    SubCategory.COL_CATEGORY_ID + " INTEGER)";
+
     private static final String SQL_CREATE_TRANSACTION_TABLE =
             "CREATE TABLE " + Transaction.TABLE_NAME + " (" +
                     Transaction._ID + " INTEGER PRIMARY KEY," +
@@ -63,6 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ACCOUNT_TABLE);
         db.execSQL(SQL_CREATE_CATEGORY_TABLE);
+        db.execSQL(SQL_CREATE_SUBCATEGORY_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
 
 //        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
@@ -82,6 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Other Expenses", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Income", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transfer", R.drawable.ic_directions_bus_black_24dp});
+
 
         db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
                 new Object[]{"택시비", 40000, "Expense", new Date(), 2, 1, null});

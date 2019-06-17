@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.NumberTextWatcher;
@@ -40,8 +41,6 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
     private Button saveBtn;
     private Button cancelBtn;
 
-    private DBHelper mDBHelper;
-
     private DecimalFormat df;
     private DecimalFormat dfnd;
     private boolean hasFractionalPart;
@@ -53,8 +52,6 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_account);
         Log.d(TAG, "onCreate: started!!");
-
-        mDBHelper = new DBHelper(this);
 
         df = new DecimalFormat("#,###.##");
         df.setDecimalSeparatorAlwaysShown(true);
@@ -142,14 +139,14 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
                     Log.d(TAG, "onClick: save");
                     AccountModel accountModel = new AccountModel(name, description,
                             amount, type, new Date(), "KRW");
-                    DatabaseUtils.insertAccountAsync(mDBHelper, AddAccountActivity.this, accountModel);
+                    DatabaseUtils.insertAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
                 }
                 else if (saveBtn.getText().toString().toUpperCase().equals("UPDATE")) {
                     Log.d(TAG, "onClick: update");
                     int id = passedAccount.getId();
                     AccountModel accountModel = new AccountModel(id, name, description,
                             amount, type, new Date(), "KRW");
-                    DatabaseUtils.updateAccountAsync(mDBHelper, AddAccountActivity.this, accountModel);
+                    DatabaseUtils.updateAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
                 }
             }
         });

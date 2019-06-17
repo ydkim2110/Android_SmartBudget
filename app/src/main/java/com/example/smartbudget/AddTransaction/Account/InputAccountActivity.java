@@ -10,15 +10,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartbudget.Account.IAccountLoadListener;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InputAccountActivity extends AppCompatActivity implements IAccountLoadListener, InputAccountAdapter.SaveButtonListener {
@@ -26,8 +29,8 @@ public class InputAccountActivity extends AppCompatActivity implements IAccountL
     private static final String TAG = InputAccountActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
-    private DBHelper mDBHelper;
 
+    private TextView mNoAccountMessage;
     private Button mSaveBtn;
     private Button mCancelBtn;
 
@@ -40,8 +43,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccountL
         setContentView(R.layout.activity_input_account);
         Log.d(TAG, "onCreate: started!!");
 
-        mDBHelper = new DBHelper(this);
-        DatabaseUtils.getAllAccount(mDBHelper, this);
+        DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
 
         // todo: 이전 선택된 아이템은 선택되어졌다고 표시하기
         if (getIntent() != null) {
@@ -80,6 +82,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccountL
     private void initView() {
         Log.d(TAG, "initView: called!!");
 
+        mNoAccountMessage = findViewById(R.id.no_account_message);
         mSaveBtn = findViewById(R.id.input_save_btn);
         mSaveBtn.setEnabled(false);
         mCancelBtn = findViewById(R.id.input_cancel_btn);
@@ -110,9 +113,18 @@ public class InputAccountActivity extends AppCompatActivity implements IAccountL
 
     @Override
     public void onAccountLoadSuccess(List<AccountModel> accountList) {
-        InputAccountAdapter adapter = new InputAccountAdapter(accountList, this);
-        mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        if (accountList == null) {
+            mNoAccountMessage.setVisibility(View.VISIBLE);
+            accountList = new ArrayList<>();
+            InputAccountAdapter adapter = new InputAccountAdapter(accountList, this);
+            mRecyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        } else {
+            mNoAccountMessage.setVisibility(View.GONE);
+            InputAccountAdapter adapter = new InputAccountAdapter(accountList, this);
+            mRecyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override

@@ -7,8 +7,14 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Menu Title -->
     <string name="menu_home">Home</string>
+    <string name="menu_account">Account</string>
     <string name="menu_budget">Budget</string>
+    <string name="menu_transaction">Transaction</string>
+    <string name="menu_report">Report</string>
+    <string name="menu_calculator">Calculator</string>
+    <string name="menu_travel">Travel</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
@@ -36,5 +42,8 @@
     <string name="keyboard_subtraction">"−"</string>
     <string name="keyboard_equal">"="</string>
     <string name="keyboard_commit">">"</string>
+
+    <!-- Toast Message -->
+    <string name="toast_on_back_pressed_message">\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.</string>
 
 </resources>

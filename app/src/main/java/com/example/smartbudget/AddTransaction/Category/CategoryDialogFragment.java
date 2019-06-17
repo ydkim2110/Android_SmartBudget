@@ -15,6 +15,7 @@ import android.widget.Button;
 
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
 
@@ -48,7 +49,6 @@ public class CategoryDialogFragment extends DialogFragment
     private Button cancelBtn;
 
     private RecyclerView mCategoryRecyclerView;
-    private DBHelper mDBHelper;
 
     @Override
     public void onAttach(Context context) {
@@ -65,8 +65,7 @@ public class CategoryDialogFragment extends DialogFragment
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialogTheme);
 
-        mDBHelper = new DBHelper(getContext());
-        DatabaseUtils.getAllCategory(mDBHelper, this);
+        DatabaseUtils.getAllCategory(MainActivity.mDBHelper, this);
     }
 
     @Nullable

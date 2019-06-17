@@ -26,6 +26,7 @@ public class DBContract {
     public static class SubCategory implements BaseColumns {
         public static final String TABLE_NAME = "subcategory_table";
         public static final String COL_NAME = "subcategory_name";
+        public static final String COL_ICON = "subcategory_icon";
         public static final String COL_CATEGORY_ID = "category_id";
     }
 

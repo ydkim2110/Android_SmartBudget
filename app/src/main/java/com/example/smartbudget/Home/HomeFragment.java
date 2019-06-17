@@ -4,6 +4,7 @@ package com.example.smartbudget.Home;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,7 +17,10 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.smartbudget.Main.ICalendarChangeListener;
+import com.example.smartbudget.Main.MainActivity;
 import com.example.smartbudget.Overview.OverviewActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -28,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements ICalendarChangeListener {
 
     private static HomeFragment instance;
 
@@ -41,6 +45,11 @@ public class HomeFragment extends Fragment {
 
     public HomeFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCalendarClicked() {
+        Toast.makeText(getContext(), "Change!!" , Toast.LENGTH_SHORT).show();
     }
 
     public interface IBudgetContainerClickListener {
@@ -63,6 +72,12 @@ public class HomeFragment extends Fragment {
 
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((MainActivity)getActivity()).setICalendarChangeListener(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -19,19 +19,19 @@
         <item
             android:id="@+id/nav_transaction"
             android:icon="@drawable/ic_assignment_black_24dp"
-            android:title="Transaction" />
+            android:title="@string/menu_transaction" />
         <item
             android:id="@+id/nav_report"
             android:icon="@drawable/ic_assessment_black_24dp"
-            android:title="Report" />
+            android:title="@string/menu_report" />
         <item
             android:id="@+id/nav_calculator"
             android:icon="@drawable/ic_gradient_black_24dp"
-            android:title="Calculator" />
+            android:title="@string/menu_calculator" />
         <item
             android:id="@+id/nav_travel"
             android:icon="@drawable/ic_local_airport_black_24dp"
-            android:title="Travel" />
+            android:title="@string/menu_travel" />
     </group>
 
     <item android:title="Communicate">

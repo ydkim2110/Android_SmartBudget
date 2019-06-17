@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
@@ -37,21 +38,18 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
     private RecyclerView mRecyclerView;
     private AccountAdapter mAccountAdapter;
 
-    public static DBHelper mDBHelper;
-
     @Override
     public void onResume() {
         super.onResume();
         Common.SELECTED_ACCOUNT = null;
-        DatabaseUtils.getAllAccount(mDBHelper, this);
+        DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDBHelper = new DBHelper(getContext());
-        DatabaseUtils.getAllAccount(mDBHelper, this);
+        DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
     }
 
     @Override
@@ -85,7 +83,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
     @Override
     public void onAccountDeleteSuccess(boolean isSuccess) {
         if (isSuccess) {
-            DatabaseUtils.getAllAccount(mDBHelper, this);
+            DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
         }
     }
 }
