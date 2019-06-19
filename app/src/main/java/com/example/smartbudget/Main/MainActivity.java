@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.smartbudget.Account.AccountFragment;
@@ -57,11 +58,14 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawer;
+    private HorizontalCalendar horizontalCalendar;
+    private FrameLayout calendarViewContainer;
 
     public static DBHelper mDBHelper;
 
     private int currentFragment = -1;
     private long backKeyPressedTime = 0;
+
 
     private ICalendarChangeListener mICalendarChangeListener;
 
@@ -85,6 +89,19 @@ public class MainActivity extends AppCompatActivity
 
         mDBHelper = new DBHelper(this);
 
+        initToolbar();
+        initView();
+        initDrawAndNavigationView();
+        horizontalCalendarView();
+
+        gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
+        navigationView.getMenu().getItem(currentFragment).setChecked(true);
+
+        loadData();
+    }
+
+    private void horizontalCalendarView() {
+        Log.d(TAG, "horizontalCalendarView: called!!");
         /* starts before 1 month from now */
         Calendar startDate = Calendar.getInstance();
         startDate.add(Calendar.MONTH, -12);
@@ -93,31 +110,25 @@ public class MainActivity extends AppCompatActivity
         Calendar endDate = Calendar.getInstance();
         endDate.add(Calendar.MONTH, 3);
 
-        initToolbar();
-        initView();
-
-        HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
+        horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
                 .range(startDate, endDate)
                 .datesNumberOnScreen(5) // Number of Dates cells shown on screen (default to 5).
                 .mode(HorizontalCalendar.Mode.MONTHS)
                 .configure() // starts configuration.
-                    .formatMiddleText("MMM")
-                    .formatBottomText("yyyy")
-                    .sizeTopText(12)
-                    .sizeMiddleText(12)
-                    .sizeBottomText(12)
-                    .showTopText(false)
-                    .showBottomText(true)
-                    .textColor(R.color.colorWhite, R.color.colorRevenue)
+                .formatMiddleText("MMM")
+                .formatBottomText("yyyy")
+                .sizeTopText(12)
+                .sizeMiddleText(12)
+                .sizeBottomText(12)
+                .showTopText(false)
+                .showBottomText(true)
                 .end() // ends configuration.
                 .build();
 
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Calendar date, int position) {
-                Log.d(TAG, "onDateSelected: "+date.get(Calendar.YEAR)+"-"
-                        +date.get(Calendar.MONTH)+"-"+date.get(Calendar.DAY_OF_MONTH));
-                mICalendarChangeListener.onCalendarClicked();
+                mICalendarChangeListener.onCalendarClicked(date);
             }
 
             @Override
@@ -131,13 +142,6 @@ public class MainActivity extends AppCompatActivity
             }
 
         });
-
-        initDrawAndNavigationView();
-
-        gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
-        navigationView.getMenu().getItem(currentFragment).setChecked(true);
-
-        loadData();
     }
 
     private void initDrawAndNavigationView() {
@@ -164,6 +168,7 @@ public class MainActivity extends AppCompatActivity
         fab = findViewById(R.id.fab);
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        calendarViewContainer = findViewById(R.id.calendarView_container);
     }
 
     private void initToolbar() {
@@ -252,6 +257,13 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("RestrictedApi")
     private void setFragment(Fragment fragment, final int currentFragmentNUM) {
         Log.d(TAG, "setFragment: called");
+        if (currentFragmentNUM == ACCOUNT_FRAGMENT || currentFragmentNUM == REPORT_FRAGMENT ||
+                currentFragmentNUM == CALCULATOR_FRAGMENT || currentFragmentNUM == TRAVEL_FRAGMENT) {
+            calendarViewContainer.setVisibility(View.GONE);
+        } else {
+            calendarViewContainer.setVisibility(View.GONE);
+        }
+
         if (currentFragmentNUM == ACCOUNT_FRAGMENT || currentFragmentNUM == REPORT_FRAGMENT ||
                 currentFragmentNUM == CALCULATOR_FRAGMENT || currentFragmentNUM == TRAVEL_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);

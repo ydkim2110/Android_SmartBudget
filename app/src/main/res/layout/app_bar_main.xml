@@ -20,13 +20,20 @@
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <devs.mulham.horizontalcalendar.HorizontalCalendarView
-            android:id="@+id/calendarView"
+        <FrameLayout
+            android:id="@+id/calendarView_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:textColorSelected="#FFFF"/>
+            android:layout_height="wrap_content">
+
+            <devs.mulham.horizontalcalendar.HorizontalCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:textColorSelected="#FFFF"/>
+
+        </FrameLayout>
 
     </android.support.design.widget.AppBarLayout>
 

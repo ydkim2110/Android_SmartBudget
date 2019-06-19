@@ -8,28 +8,35 @@ import com.example.smartbudget.Account.IAccountInsertListener;
 import com.example.smartbudget.Account.IAccountLoadListener;
 import com.example.smartbudget.AddTransaction.Category.Category;
 import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
+import com.example.smartbudget.AddTransaction.ITransactionInsertListener;
 import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Database.Model.CategoryModel;
+import com.example.smartbudget.Database.Model.TransactionModel;
+import com.example.smartbudget.Transaction.ITransactionLoadListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseUtils {
 
     private static final String TAG = DatabaseUtils.class.getSimpleName();
 
-    public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModel) {
+    public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
         InsertAccountAsync task = new InsertAccountAsync(db, listener);
-        task.execute(accountModel);
+        task.execute(accountModels);
     }
 
-    public static void updateAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModel) {
+    public static void updateAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
         UpdateAccountAsync task = new UpdateAccountAsync(db, listener);
-        task.execute(accountModel);
+        task.execute(accountModels);
     }
 
-    public static void deleteAccountAsync(DBHelper db, IAccountLoadListener listener, AccountModel... accountModel) {
+    public static void deleteAccountAsync(DBHelper db, IAccountLoadListener listener, AccountModel... accountModels) {
         DeleteAccountAsync task = new DeleteAccountAsync(db, listener);
-        task.execute(accountModel);
+        task.execute(accountModels);
     }
 
     public static void getAllAccount(DBHelper db, IAccountLoadListener listener) {
@@ -42,11 +49,43 @@ public class DatabaseUtils {
         task.execute();
     }
 
+    public static void getAllTransaction(DBHelper db, ITransactionLoadListener listener) {
+        GetAllTransactionAsync task = new GetAllTransactionAsync(db, listener);
+        task.execute();
+    }
+
+    public static void insertTransactionAsync(DBHelper db, ITransactionInsertListener listener, TransactionModel... transactionModels) {
+        InsertTransactionAsync task = new InsertTransactionAsync(db, listener);
+        task.execute(transactionModels);
+    }
+
     /*
     ============================================================================
     ASYNC TASK DEFINE
     ============================================================================
      */
+    private static class InsertTransactionAsync extends AsyncTask<TransactionModel, Void, Boolean> {
+
+        DBHelper db;
+        ITransactionInsertListener mListener;
+
+        public InsertTransactionAsync(DBHelper db, ITransactionInsertListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(TransactionModel... transactionModels) {
+            return db.insertToTransaction(transactionModels[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isInserted) {
+            super.onPostExecute(isInserted);
+            mListener.onTransactionInsertSuccess(isInserted);
+        }
+    }
+
     private static class InsertAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
@@ -140,7 +179,7 @@ public class DatabaseUtils {
         protected List<AccountModel> doInBackground(Void... voids) {
             Cursor cursor = db.getAllAccounts();
             List<AccountModel> accountList = new ArrayList<>();
-            if (cursor != null && cursor.getCount() >0) {
+            if (cursor != null && cursor.getCount() > 0) {
                 try {
                     do {
                         AccountModel account = new AccountModel();
@@ -176,7 +215,59 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetAllCategoryAsync extends AsyncTask<Void, Void, List<Category>> {
+    private static class GetAllTransactionAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        ITransactionLoadListener mListener;
+
+        public GetAllTransactionAsync(DBHelper db, ITransactionLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getAllTransactions();
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                        String amoount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setTransaction_description(description);
+                        transaction.setTransaction_amount(Double.parseDouble(amoount));
+                        transaction.setTransaction_type(type);
+                        transaction.setTransaction_date(new Date(date));
+                        transaction.setCategory_id(Integer.parseInt(categoryId));
+                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            mListener.onTransactionLoadSuccess(transactionList);
+        }
+    }
+
+    private static class GetAllCategoryAsync extends AsyncTask<Void, Void, List<CategoryModel>> {
 
         DBHelper db;
         ICategoryLoadListener mListener;
@@ -187,16 +278,19 @@ public class DatabaseUtils {
         }
 
         @Override
-        protected List<Category> doInBackground(Void... voids) {
+        protected List<CategoryModel> doInBackground(Void... voids) {
             Cursor cursor = db.getAllCategories();
-            List<Category> categoryList = new ArrayList<>();
+            List<CategoryModel> categoryList = new ArrayList<>();
             try {
                 do {
-                    Category category = new Category();
+                    CategoryModel category = new CategoryModel();
+
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Category._ID));
                     String icon = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Category.COL_ICON));
                     String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Category.COL_NAME));
-                    category.setIcon(Integer.parseInt(icon));
-                    category.setName(name);
+                    category.setId((int) id);
+                    category.setCategory_icon(Integer.parseInt(icon));
+                    category.setCategory_name(name);
                     categoryList.add(category);
                 }
                 while (cursor.moveToNext());
@@ -207,12 +301,11 @@ public class DatabaseUtils {
         }
 
         @Override
-        protected void onPostExecute(List<Category> categoryList) {
+        protected void onPostExecute(List<CategoryModel> categoryList) {
             super.onPostExecute(categoryList);
             mListener.onCategoryLoadSuccess(categoryList);
         }
     }
-
 
 
 }

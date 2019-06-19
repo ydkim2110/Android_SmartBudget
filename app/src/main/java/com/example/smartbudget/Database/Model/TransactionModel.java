@@ -13,6 +13,8 @@ public class TransactionModel {
     private int account_id;
     private int to_account;
 
+    public TransactionModel() {}
+
     public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, Date transaction_date, int category_id, int account_id) {
         this.transaction_description = transaction_description;
         this.transaction_amount = transaction_amount;
@@ -30,6 +32,15 @@ public class TransactionModel {
         this.category_id = category_id;
         this.account_id = account_id;
         this.to_account = to_account;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTransaction_description() {

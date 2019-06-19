@@ -15,6 +15,7 @@ import android.widget.Button;
 
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Model.CategoryModel;
 import com.example.smartbudget.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.AddTransaction.ICategoryLoadListener;
@@ -26,18 +27,18 @@ public class CategoryDialogFragment extends DialogFragment
 
     private static final String TAG = CategoryDialogFragment.class.getSimpleName();
 
-    private String selectedCategoryName = "";
+    private CategoryModel mCategoryModel;
 
     @Override
-    public void onUpdate(boolean status, String categoryName) {
+    public void onUpdate(boolean status, CategoryModel categoryModel) {
         if (status) {
             saveBtn.setEnabled(true);
-            selectedCategoryName = categoryName;
+            mCategoryModel = categoryModel;
         }
     }
 
     public interface OnDialogSendListener {
-        void sendResult(String result);
+        void sendResult(CategoryModel categoryModel);
     }
     public OnDialogSendListener mOnDialogSendListener;
 
@@ -100,14 +101,14 @@ public class CategoryDialogFragment extends DialogFragment
             public void onClick(View v) {
                 Log.d(TAG, "onClick: save btn click!!");
                 // todo: send result to activity
-                mOnDialogSendListener.sendResult(selectedCategoryName);
+                mOnDialogSendListener.sendResult(mCategoryModel);
                 getDialog().dismiss();
             }
         });
     }
 
     @Override
-    public void onCategoryLoadSuccess(List<Category> categoryList) {
+    public void onCategoryLoadSuccess(List<CategoryModel> categoryList) {
         CategoryDialogAdapter categoryAdapter = new CategoryDialogAdapter(getContext(), categoryList, this);
         mCategoryRecyclerView.setAdapter(categoryAdapter);
         categoryAdapter.notifyDataSetChanged();

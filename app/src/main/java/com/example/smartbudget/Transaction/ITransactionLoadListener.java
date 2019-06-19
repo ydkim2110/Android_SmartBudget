@@ -1,10 +1,10 @@
-package com.example.smartbudget.Account;
+package com.example.smartbudget.Transaction;
 
-import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Database.Model.TransactionModel;
 
 import java.util.List;
 
-public interface IAccountLoadListener {
-    void onAccountLoadSuccess(List<AccountModel> accountList);
-    void onAccountDeleteSuccess(boolean isSuccess);
+public interface ITransactionLoadListener {
+    void onTransactionLoadSuccess(List<TransactionModel> transactionList);
+    void onTransactionDeleteSuccess(boolean isSuccess);
 }

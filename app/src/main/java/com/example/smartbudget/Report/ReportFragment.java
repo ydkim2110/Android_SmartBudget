@@ -1,6 +1,7 @@
 package com.example.smartbudget.Report;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -57,43 +58,7 @@ public class ReportFragment extends Fragment {
 
         mTabLayout.setupWithViewPager(mViewPager);
 
-//        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Weekly")));
-//        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Monthly")));
-//        mTabLayout.addTab(mTabLayout.newTab().setCustomView(createTabView("Yearly")));
-//
-//
-//        mPagerAdapter = new PagerAdapter(getActivity().getSupportFragmentManager(), mTabLayout.getTabCount());
-//
-//        mViewPager.setAdapter(mPagerAdapter);
-//
-//        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-//        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
-
-
-
         return view;
-    }
-
-    private View createTabView(String tabName) {
-        View tabView = LayoutInflater.from(getContext()).inflate(R.layout.custom_tab, null);
-        TextView txt_name = tabView.findViewById(R.id.txt_name);
-        txt_name.setText(tabName);
-        return tabView;
     }
 
 }

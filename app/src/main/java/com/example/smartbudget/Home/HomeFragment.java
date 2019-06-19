@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +35,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment implements ICalendarChangeListener {
+
+    private static final String TAG = HomeFragment.class.getSimpleName();
 
     private static HomeFragment instance;
 
@@ -45,11 +49,6 @@ public class HomeFragment extends Fragment implements ICalendarChangeListener {
 
     public HomeFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCalendarClicked() {
-        Toast.makeText(getContext(), "Change!!" , Toast.LENGTH_SHORT).show();
     }
 
     public interface IBudgetContainerClickListener {
@@ -73,10 +72,21 @@ public class HomeFragment extends Fragment implements ICalendarChangeListener {
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
 
+    List<Transaction> transactionList;
+    List<ListItem> consolidatedList;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((MainActivity)getActivity()).setICalendarChangeListener(this);
+    }
+
+    @Override
+    public void onCalendarClicked(Calendar selectedDate) {
+        Log.d(TAG, "onCalendarClicked: called!!");
+        Log.d(TAG, "onCalendarClicked: selected year: "+selectedDate.get(Calendar.YEAR));
+        Log.d(TAG, "onCalendarClicked: selected month: "+(selectedDate.get(Calendar.MONTH)+1));
+        Log.d(TAG, "onCalendarClicked: selected day: "+selectedDate.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
@@ -110,9 +120,8 @@ public class HomeFragment extends Fragment implements ICalendarChangeListener {
 
         transactionRecyclerview.addItemDecoration(dividerItemDecoration);
 
-
-        List<Transaction> transactionList = new ArrayList<>();
-        List<ListItem> consolidatedList = new ArrayList<>();
+        transactionList = new ArrayList<>();
+        consolidatedList = new ArrayList<>();
 
         transactionList.add(new Transaction("교통", "택시", 12000, "2019-05-02"));
         transactionList.add(new Transaction("교통", "택시", 12000, "2019-05-02"));
@@ -148,11 +157,18 @@ public class HomeFragment extends Fragment implements ICalendarChangeListener {
             }
         }
 
+        loadData();
+
+
+        return view;
+    }
+
+    private void loadData() {
+        Log.d(TAG, "loadData: called!!");
+
         transactionAdapter = new TransactionAdapter(getContext(), consolidatedList);
         transactionRecyclerview.setAdapter(transactionAdapter);
         transactionAdapter.notifyDataSetChanged();
-
-        return view;
     }
 
     private void handleViewClick() {

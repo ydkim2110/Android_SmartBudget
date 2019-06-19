@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = "TransactionAdapter";
+    private static final String TAG = "TransactionListAdapter";
 
     private Context mContext;
     private List<ListItem> consolidatedList;

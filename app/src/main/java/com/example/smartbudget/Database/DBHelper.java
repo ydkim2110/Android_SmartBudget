@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Database.Model.TransactionModel;
 import com.example.smartbudget.R;
 
 import java.text.SimpleDateFormat;
@@ -73,13 +74,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_SUBCATEGORY_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
 
-//        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-//                new Object[]{"국민은행", 4000000, "수시입출금", new Date(), "KRW"});
-//        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-//                new Object[]{"신한은행", 3000000, "예금", new Date(), "KRW"});
-//        db.execSQL("INSERT INTO " + Account.TABLE_NAME + " (account_name, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?)",
-//                new Object[]{"한국투자증권", 13000000, "주식", new Date(), "KRW"});
-
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Food", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transport", R.drawable.ic_directions_bus_black_24dp});
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Clothing", R.drawable.ic_directions_bus_black_24dp});
@@ -124,6 +118,23 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Account.COL_CURRENCY, accountModel.getAccount_currency());
 
         long result = db.insert(Account.TABLE_NAME, null, contentValues);
+
+        return result != -1;
+    }
+
+    public boolean insertToTransaction(TransactionModel transactionModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Transaction.COL_DESCRIPTION, transactionModel.getTransaction_description());
+        contentValues.put(Transaction.COL_AMOUNT, transactionModel.getTransaction_amount());
+        contentValues.put(Transaction.COL_TYPE, transactionModel.getTransaction_type());
+        contentValues.put(Transaction.COL_DATE, String.valueOf(transactionModel.getTransaction_date()));
+        contentValues.put(Transaction.COL_CATEGORY_ID, transactionModel.getCategory_id());
+        contentValues.put(Transaction.COL_ACCOUNT_ID, transactionModel.getAccount_id());
+        contentValues.put(Transaction.COL_TO_ACCOUNT, "");
+
+        long result = db.insert(Transaction.TABLE_NAME, null, contentValues);
 
         return result != -1;
     }

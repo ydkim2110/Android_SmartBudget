@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.smartbudget.Database.Model.CategoryModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
 
@@ -21,17 +22,17 @@ public class CategoryDialogAdapter extends RecyclerView.Adapter<CategoryDialogAd
     private static final String TAG = CategoryDialogAdapter.class.getSimpleName();
 
     public interface UpdateButtonListener {
-        void onUpdate(boolean status, String categoryName);
+        void onUpdate(boolean status, CategoryModel categoryModel);
     }
 
     public UpdateButtonListener mUpdateButtonListener;
 
     private Context mContext;
-    private List<Category> mCategoryList;
+    private List<CategoryModel> mCategoryList;
     private List<ImageView> mImageViewList;
 
 
-    public CategoryDialogAdapter(Context context, List<Category> categoryList, UpdateButtonListener listener) {
+    public CategoryDialogAdapter(Context context, List<CategoryModel> categoryList, UpdateButtonListener listener) {
         this.mContext = context;
         this.mCategoryList = categoryList;
         mImageViewList = new ArrayList<>();
@@ -48,8 +49,8 @@ public class CategoryDialogAdapter extends RecyclerView.Adapter<CategoryDialogAd
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
-        viewHolder.categoryImage.setImageResource(mCategoryList.get(i).getIcon());
-        viewHolder.categoryName.setText(mCategoryList.get(i).getName());
+        viewHolder.categoryImage.setImageResource(mCategoryList.get(i).getCategory_icon());
+        viewHolder.categoryName.setText(mCategoryList.get(i).getCategory_name());
 
         if (!mImageViewList.contains(viewHolder.categoryImage)) {
             mImageViewList.add(viewHolder.categoryImage);
@@ -63,7 +64,7 @@ public class CategoryDialogAdapter extends RecyclerView.Adapter<CategoryDialogAd
                 }
                 viewHolder.categoryImage.setColorFilter(ContextCompat.getColor(mContext, R.color.colorRevenue));
 
-                mUpdateButtonListener.onUpdate(true, mCategoryList.get(i).getName());
+                mUpdateButtonListener.onUpdate(true, mCategoryList.get(i));
             }
         });
     }

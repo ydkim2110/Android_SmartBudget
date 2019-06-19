@@ -7,6 +7,9 @@ public class CategoryModel {
     private int category_icon;
     private double category_budget;
 
+    public CategoryModel() {
+    }
+
     public CategoryModel(String category_name, int category_icon, double category_budget) {
         this.category_name = category_name;
         this.category_icon = category_icon;
@@ -18,6 +21,12 @@ public class CategoryModel {
         this.category_icon = category_icon;
     }
 
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public String getCategory_name() {
         return category_name;
     }
