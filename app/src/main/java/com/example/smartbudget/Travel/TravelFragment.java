@@ -50,7 +50,7 @@ public class TravelFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_travel, container, false);
 
-        mUnbinder = ButterKnife.bind()
+        mUnbinder = ButterKnife.bind(this, view);
 
         mRecyclerView = view.findViewById(R.id.travel_recyclerview);
         mRecyclerView.setHasFixedSize(true);
