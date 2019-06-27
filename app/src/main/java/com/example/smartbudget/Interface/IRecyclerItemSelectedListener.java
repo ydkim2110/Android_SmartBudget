@@ -1,7 +1,7 @@
-package com.example.smartbudget.Utils;
+package com.example.smartbudget.Interface;
 
 import android.view.View;
 
 public interface IRecyclerItemSelectedListener {
-    void onItemSelectedListener(View view, int position);
+    void onItemSelected(View view, int position);
 }

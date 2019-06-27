@@ -1,11 +1,12 @@
 package com.example.smartbudget.AddTransaction;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -43,6 +45,7 @@ public class AddTransactionActivity extends AppCompatActivity
     private static final int INPUT_ACCOUNT_REQUEST = 100;
     private static final int INPUT_NOTE_REQUEST = 200;
     private static final int INPUT_AMOUNT_REQUEST = 300;
+    private static final int REQUEST_TAKE_PICTURE = 400;
 
     private Toolbar mToolbar;
     private RadioGroup mRadioGroup;
@@ -52,6 +55,7 @@ public class AddTransactionActivity extends AppCompatActivity
     private EditText descriptionEdt;
     private EditText dateEdt;
     private EditText amountEdt;
+    private ImageView photoImage;
     private Button saveBtn;
     private Button cancelBtn;
     private Calendar calendar;
@@ -204,6 +208,7 @@ public class AddTransactionActivity extends AppCompatActivity
         descriptionEdt = findViewById(R.id.add_transaction_description);
         dateEdt = findViewById(R.id.add_transaction_date);
         amountEdt = findViewById(R.id.add_transaction_amount);
+        photoImage = findViewById(R.id.add_transaction_photo);
         cancelBtn = findViewById(R.id.cancel_btn);
         saveBtn = findViewById(R.id.save_btn);
         saveBtn.setEnabled(false);
@@ -286,6 +291,17 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         });
 
+        photoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "Choose..."), REQUEST_TAKE_PICTURE);
+
+            }
+        });
+
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -323,17 +339,25 @@ public class AddTransactionActivity extends AppCompatActivity
                 }
             }
         }
-        if (requestCode == INPUT_NOTE_REQUEST) {
+        else if (requestCode == INPUT_NOTE_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     descriptionEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_NOTE));
                 }
             }
-        } else if (requestCode == INPUT_AMOUNT_REQUEST) {
+        }
+        else if (requestCode == INPUT_AMOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     amountEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_AMOUNT));
                 }
+            }
+        }
+        else if (requestCode == REQUEST_TAKE_PICTURE) {
+            if (resultCode == RESULT_OK) {
+                //data.getData returns the content URI for the selected Image
+                Uri selectedImage = data.getData();
+                photoImage.setImageURI(selectedImage);
             }
         }
     }

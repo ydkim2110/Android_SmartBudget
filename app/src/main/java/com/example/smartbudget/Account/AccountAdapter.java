@@ -2,20 +2,19 @@ package com.example.smartbudget.Account;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
-import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
             viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
-                public void onItemSelectedListener(View view, int position) {
+                public void onItemSelected(View view, int position) {
                     mContext.startActivity(new Intent(mContext, AccountDetailActivity.class));
                 }
             });
@@ -84,7 +83,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         } else {
             viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
-                public void onItemSelectedListener(View view, int position) {
+                public void onItemSelected(View view, int position) {
                     Common.SELECTED_ACCOUNT = null;
                     mBSAccountAddFragment = BSAccountAddFragment.getInstance();
                     mBSAccountAddFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), mBSAccountAddFragment.getTag());
@@ -130,7 +129,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
-            mIRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
+            mIRecyclerItemSelectedListener.onItemSelected(v, getAdapterPosition());
         }
     }
 }

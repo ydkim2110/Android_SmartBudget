@@ -1,30 +1,45 @@
 package com.example.smartbudget.Transaction;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
-public class DynamicFragmentAdapter extends FragmentPagerAdapter {
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
-    private int mNumberOfTabs;
+import com.example.smartbudget.Database.Model.TransactionModel;
 
-    public DynamicFragmentAdapter(FragmentManager fm, int numberOfTabs) {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DynamicFragmentAdapter extends FragmentStatePagerAdapter {
+
+    private List<Fragment> mFragmentList = new ArrayList<>();
+    private List<String> mFragmentTitleList = new ArrayList<>();
+
+    public DynamicFragmentAdapter(FragmentManager fm) {
         super(fm);
-        this.mNumberOfTabs = numberOfTabs;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Bundle args = new Bundle();
-        args.putInt("position", position);
-        Fragment fragment = DynamicFragment.newInstance();
-        fragment.setArguments(args);
-        return fragment;
+        return mFragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return mNumberOfTabs;
+        return mFragmentList.size();
+    }
+
+    @Nullable
+    @Override
+    public CharSequence getPageTitle(int position) {
+       return mFragmentTitleList.get(position);
+    }
+
+    public void addFragment(Fragment fragment, String title){
+        mFragmentList.add(fragment);
+        mFragmentTitleList.add(title);
     }
 }

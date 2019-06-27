@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.smartbudget">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddTransaction.Account.InputAccountActivity"></activity>
+        <activity android:name=".Travel.TravelFullListActivity"></activity>
+        <activity android:name=".Travel.AddTravelTransactionActivity" />
+        <activity android:name=".Travel.TravelDetailActivity" />
+        <activity android:name=".Travel.AddTravelActivity" />
+        <activity android:name=".AddTransaction.Account.InputAccountActivity" />
         <activity android:name=".Account.AccountDetailActivity" />
         <activity android:name=".Account.AddAccountActivity" />
         <activity android:name=".Budget.ViewTransactionActivity" />

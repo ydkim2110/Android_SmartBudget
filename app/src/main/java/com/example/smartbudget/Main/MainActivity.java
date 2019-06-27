@@ -5,35 +5,36 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.MenuItem;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.smartbudget.Account.AccountFragment;
+import com.example.smartbudget.AddTransaction.AddTransactionActivity;
+import com.example.smartbudget.Budget.BudgetFragment;
 import com.example.smartbudget.Calculator.CalculatorFragment;
 import com.example.smartbudget.Database.DBContract;
-import com.example.smartbudget.R;
-import com.example.smartbudget.Budget.BudgetFragment;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Home.HomeFragment;
+import com.example.smartbudget.R;
 import com.example.smartbudget.Report.ReportFragment;
-import com.example.smartbudget.AddTransaction.AddTransactionActivity;
 import com.example.smartbudget.Transaction.TransactionFragment;
+import com.example.smartbudget.Travel.AddTravelActivity;
 import com.example.smartbudget.Travel.TravelFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.Calendar;
 
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (currentFragmentNUM == ACCOUNT_FRAGMENT || currentFragmentNUM == REPORT_FRAGMENT ||
-                currentFragmentNUM == CALCULATOR_FRAGMENT || currentFragmentNUM == TRAVEL_FRAGMENT) {
+                currentFragmentNUM == CALCULATOR_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);
         } else {
             fab.setVisibility(View.VISIBLE);
@@ -277,6 +278,9 @@ public class MainActivity extends AppCompatActivity
                     }
                     else if (currentFragmentNUM == BUDGET_FRAGMENT) {
                         Toast.makeText(MainActivity.this, "Budget FAB Click!", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (currentFragmentNUM == TRAVEL_FRAGMENT) {
+                        startActivity(new Intent(MainActivity.this, AddTravelActivity.class));
                     }
                 }
             });

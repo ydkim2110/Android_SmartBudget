@@ -1,9 +1,9 @@
 package com.example.smartbudget.AddTransaction.Amount;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.smartbudget.AddTransaction.Account.InputAccountActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 

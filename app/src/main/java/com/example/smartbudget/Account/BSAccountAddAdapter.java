@@ -2,15 +2,15 @@ package com.example.smartbudget.Account;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.smartbudget.R;
-import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
 public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapter.ViewHolder> {
 
@@ -36,7 +36,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
 
         viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
             @Override
-            public void onItemSelectedListener(View view, int position) {
+            public void onItemSelected(View view, int position) {
                 Intent intent = new Intent(mContext, AddAccountActivity.class);
                 intent.putExtra("type", title[position]);
                 mContext.startActivity(intent);
@@ -69,7 +69,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
 
         @Override
         public void onClick(View v) {
-            mIRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
+            mIRecyclerItemSelectedListener.onItemSelected(v, getAdapterPosition());
         }
     }
 }

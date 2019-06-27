@@ -4,6 +4,11 @@ import com.example.smartbudget.Database.Model.AccountModel;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Common {
 
@@ -62,4 +67,57 @@ public class Common {
                 (Double.parseDouble(String.valueOf(currentValue)) * 100/
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }
+
+    public static Date stringToDate(String date) {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date tempDate = null;
+        try {
+            tempDate = transFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            tempDate = new Date();
+        }
+        return tempDate;
+    }
+
+    public static long calDateBetweenStartandEnd(String startDate, String endDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        long diffDay = -1;
+        try {
+            Date start = sdf.parse(startDate);
+            Date end = sdf.parse(endDate);
+            diffDay = (end.getTime() - start.getTime()) / (24*60*60*1000);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            diffDay = 0;
+        }
+        return diffDay+1;
+    }
+
+    public static String[] getDiffDays(String fromDate, String toDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(sdf.parse(fromDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        int count = (int) calDateBetweenStartandEnd(fromDate, toDate);
+        cal.add(Calendar.DATE, -1);
+
+        ArrayList<String> list = new ArrayList<>();
+
+        for (int i=0; i<count; i++) {
+            cal.add(Calendar.DATE, 1);
+            list.add(sdf.format(cal.getTime()));
+        }
+
+        String[] result = new String[list.size()];
+
+        list.toArray(result);
+
+        return result;
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.example.smartbudget.Overview;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.example.smartbudget.R;
 import com.example.smartbudget.Main.Spending;
-import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
 
         viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
             @Override
-            public void onItemSelectedListener(View view, int position) {
+            public void onItemSelected(View view, int position) {
                 Toast.makeText(view.getContext(), "category: "+spendingList.get(position).getCategory(),
                         Toast.LENGTH_SHORT).show();
             }
@@ -74,7 +74,7 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-            mIRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
+            mIRecyclerItemSelectedListener.onItemSelected(v, getAdapterPosition());
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.example.smartbudget.AddTransaction.Account;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.example.smartbudget.Database.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
-import com.example.smartbudget.Utils.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
 
             viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
-                public void onItemSelectedListener(View view, int position) {
+                public void onItemSelected(View view, int position) {
                     Toast.makeText(view.getContext(), "Name: " + mAccountModelList.get(position).getAccount_name(), Toast.LENGTH_SHORT).show();
                     for (CardView cardView : mCardViewList) {
                         cardView.setBackgroundColor(Color.WHITE);
@@ -105,7 +105,7 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
 
         @Override
         public void onClick(View v) {
-            mIRecyclerItemSelectedListener.onItemSelectedListener(v, getAdapterPosition());
+            mIRecyclerItemSelectedListener.onItemSelected(v, getAdapterPosition());
         }
     }
 

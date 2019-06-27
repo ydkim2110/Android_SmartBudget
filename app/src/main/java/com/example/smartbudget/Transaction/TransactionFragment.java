@@ -1,19 +1,28 @@
 package com.example.smartbudget.Transaction;
 
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.smartbudget.R;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
-public class TransactionFragment extends Fragment{
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Model.TransactionModel;
+import com.example.smartbudget.Main.MainActivity;
+import com.example.smartbudget.R;
+import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TransactionFragment extends Fragment {
 
     private static final String TAG = TransactionFragment.class.getSimpleName();
 
@@ -29,23 +38,31 @@ public class TransactionFragment extends Fragment{
     public TransactionFragment() {
     }
 
-    private ViewPager mViewPager;
     private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_transaction, container, false);
 
-        mViewPager = view.findViewById(R.id.transaction_list_viewPager);
         mTabLayout = view.findViewById(R.id.transaction_list_tab);
+        mViewPager = view.findViewById(R.id.transaction_viewPager);
 
-        mViewPager.setOffscreenPageLimit(1);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        setupViewPager(mViewPager);
+
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
+
             }
 
             @Override
@@ -59,21 +76,14 @@ public class TransactionFragment extends Fragment{
             }
         });
 
-        setDynamicFragmentToTabLayout();
-
         return view;
     }
 
-    private void setDynamicFragmentToTabLayout() {
-        Log.d(TAG, "setDynamicFragmentToTabLayout: called!!");
-
-        for (int i=0; i<10; i++) {
-            mTabLayout.addTab(mTabLayout.newTab().setText("Category: "+i));
+    private void setupViewPager(ViewPager viewPager) {
+        DynamicFragmentAdapter adapter = new DynamicFragmentAdapter(getChildFragmentManager());
+        for(int i=0 ;i<10; i++){
+            adapter.addFragment(DynamicFragment.newInstance(), "6월 "+(i+1)+"일");
+            viewPager.setAdapter(adapter);
         }
-
-        DynamicFragmentAdapter dynamicFragmentAdapter = new DynamicFragmentAdapter(getActivity().getSupportFragmentManager(),
-                mTabLayout.getTabCount());
-        mViewPager.setAdapter(dynamicFragmentAdapter);
-        mViewPager.setCurrentItem(5);
     }
 }

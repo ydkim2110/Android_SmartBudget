@@ -1,8 +1,11 @@
 package com.example.smartbudget.Database.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public class TransactionModel {
+public class TransactionModel implements Parcelable {
 
     private int id;
     private String transaction_description;
@@ -97,5 +100,15 @@ public class TransactionModel {
 
     public void setTo_account(int to_account) {
         this.to_account = to_account;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }
