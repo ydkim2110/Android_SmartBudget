@@ -7,9 +7,11 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.smartbudget.R;
@@ -17,6 +19,7 @@ import com.example.smartbudget.Transaction.DynamicFragment;
 import com.example.smartbudget.Transaction.DynamicFragmentAdapter;
 import com.example.smartbudget.Utils.Common;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -39,6 +42,8 @@ public class TravelDetailActivity extends AppCompatActivity {
     TabLayout travel_detail_tab;
     @BindView(R.id.travel_detail_viewPager)
     ViewPager travel_detail_viewPager;
+    @BindView(R.id.travel_fab)
+    FloatingActionButton travel_fab;
 
     private int count = -1;
     private ArrayList<String> diffDays;
@@ -55,6 +60,13 @@ public class TravelDetailActivity extends AppCompatActivity {
 
         initToolbar();
         initView();
+
+        travel_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TravelDetailActivity.this, AddTravelTransactionActivity.class));
+            }
+        });
     }
 
     private void initView() {

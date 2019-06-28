@@ -290,6 +290,7 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.container, fragment);
+        ft.addToBackStack(null);
         ft.commit();
     }
 

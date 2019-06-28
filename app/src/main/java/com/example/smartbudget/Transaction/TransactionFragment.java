@@ -44,12 +44,14 @@ public class TransactionFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate: called!!");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: called!!");
+
         View view = inflater.inflate(R.layout.fragment_transaction, container, false);
 
         mTabLayout = view.findViewById(R.id.transaction_list_tab);
@@ -81,7 +83,7 @@ public class TransactionFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         DynamicFragmentAdapter adapter = new DynamicFragmentAdapter(getChildFragmentManager());
-        for(int i=0 ;i<10; i++){
+        for(int i=0; i<10; i++){
             adapter.addFragment(DynamicFragment.newInstance(), "6월 "+(i+1)+"일");
             viewPager.setAdapter(adapter);
         }

@@ -17,4 +17,6 @@ public class TravelFullListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_travel_full_list);
         Log.d(TAG, "onCreate: started!!");
     }
+
+
 }
