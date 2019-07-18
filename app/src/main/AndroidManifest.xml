@@ -11,18 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Travel.TravelFullListActivity"></activity>
-        <activity android:name=".Travel.AddTravelTransactionActivity" />
-        <activity android:name=".Travel.TravelDetailActivity" />
-        <activity android:name=".Travel.AddTravelActivity" />
-        <activity android:name=".AddTransaction.Account.InputAccountActivity" />
-        <activity android:name=".Account.AccountDetailActivity" />
-        <activity android:name=".Account.AddAccountActivity" />
-        <activity android:name=".Budget.ViewTransactionActivity" />
-        <activity android:name=".AddTransaction.Amount.InputAmountActivity" />
-        <activity android:name=".AddTransaction.Note.InputNoteActivity" />
+        <activity android:name=".Ui.Travel.TravelFullListActivity"></activity>
+        <activity android:name=".Ui.Travel.AddTravelTransactionActivity" />
+        <activity android:name=".Ui.Travel.TravelDetailActivity" />
+        <activity android:name=".Ui.Travel.AddTravelActivity" />
+        <activity android:name=".Ui.Transaction.Add.Account.InputAccountActivity" />
+        <activity android:name=".Ui.Account.AccountDetailActivity" />
+        <activity android:name=".Ui.Account.AddAccountActivity" />
+        <activity android:name=".Ui.Budget.ViewTransactionActivity" />
+        <activity android:name=".Ui.Transaction.Add.Amount.InputAmountActivity" />
+        <activity android:name=".Ui.Transaction.Add.Note.InputNoteActivity" />
         <activity
-            android:name=".Main.SplashActivity"
+            android:name=".Ui.Main.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,11 +31,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddTransaction.AddTransactionActivity"
+            android:name=".Ui.Transaction.Add.AddTransactionActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".Overview.OverviewActivity" />
         <activity
-            android:name=".Main.MainActivity"
+            android:name=".Ui.Main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

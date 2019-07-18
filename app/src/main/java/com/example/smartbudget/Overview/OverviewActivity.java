@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.smartbudget.R;
-import com.example.smartbudget.Main.Spending;
+import com.example.smartbudget.Ui.Main.Spending;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;

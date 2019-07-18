@@ -1,6 +1,6 @@
 package com.example.smartbudget.Utils;
 
-import com.example.smartbudget.Database.Model.AccountModel;
+import com.example.smartbudget.Model.AccountModel;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

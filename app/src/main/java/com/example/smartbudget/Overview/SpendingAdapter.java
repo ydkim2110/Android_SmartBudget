@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartbudget.R;
-import com.example.smartbudget.Main.Spending;
+import com.example.smartbudget.Ui.Main.Spending;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
 import java.util.List;

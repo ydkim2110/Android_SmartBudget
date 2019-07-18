@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/container"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Main.MainActivity"
+    tools:context=".Ui.Main.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
