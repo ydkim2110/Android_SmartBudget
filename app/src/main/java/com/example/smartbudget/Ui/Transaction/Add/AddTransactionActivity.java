@@ -20,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Ui.Transaction.Add.Account.InputAccountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Amount.InputAmountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Category.CategoryDialogFragment;
@@ -34,6 +35,8 @@ import com.example.smartbudget.Ui.Home.Transaction;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -77,15 +80,17 @@ public class AddTransactionActivity extends AppCompatActivity
         initViews();
 
         if (getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION) != null) {
-            Transaction transaction = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
-            String passedCategory = transaction.getCategory();
-            String passedDescription = transaction.getDescription();
-            int passedAmount = transaction.getAmount();
-            String passedDate = transaction.getDate();
+            TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
+            String passedAccount = String.valueOf(transactionModel.getAccount_id());
+            String passedCategory = String.valueOf(transactionModel.getCategory_id());
+            String passedDescription = transactionModel.getTransaction_description();
+            int passedAmount = (int) transactionModel.getTransaction_amount();
+            String passedDate = String.valueOf(transactionModel.getTransaction_date());
 
             getSupportActionBar().setTitle("Edit Transaction");
             saveBtn.setText("Update");
 
+            accountEdt.setText(passedAccount);
             categoryEdt.setText(passedCategory);
             descriptionEdt.setText(passedDescription);
             amountEdt.setText(Common.changeNumberToComma(passedAmount));
@@ -224,105 +229,76 @@ public class AddTransactionActivity extends AppCompatActivity
     }
 
     private void handleClickEvent() {
-        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.rb_income:
-                        selectedType = "Income";
-                        break;
-                    case R.id.rb_expense:
-                        selectedType = "Expense";
-                        break;
-                    case R.id.rb_transfer:
-                        selectedType = "Transfer";
-                        break;
-                    default:
-                        return;
-                }
+        mRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.rb_income:
+                    selectedType = "Income";
+                    break;
+                case R.id.rb_expense:
+                    selectedType = "Expense";
+                    break;
+                case R.id.rb_transfer:
+                    selectedType = "Transfer";
+                    break;
+                default:
+                    return;
             }
         });
-        accountEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AddTransactionActivity.this, InputAccountActivity.class);
-                if (accountEdt.getText() != null) {
-                    intent.putExtra("accountName", accountEdt.getText().toString());
-                }
-                startActivityForResult(intent, INPUT_ACCOUNT_REQUEST);
+        accountEdt.setOnClickListener(v -> {
+            Intent intent = new Intent(AddTransactionActivity.this, InputAccountActivity.class);
+            if (accountEdt.getText() != null) {
+                intent.putExtra("accountName", accountEdt.getText().toString());
             }
+            startActivityForResult(intent, INPUT_ACCOUNT_REQUEST);
         });
 
-        categoryEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment dialogFragment = CategoryDialogFragment.newInstance();
-                dialogFragment.show(getSupportFragmentManager(), "category_dialog");
-            }
+        categoryEdt.setOnClickListener(v -> {
+            DialogFragment dialogFragment = CategoryDialogFragment.newInstance();
+            dialogFragment.show(getSupportFragmentManager(), "category_dialog");
         });
 
-        descriptionEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AddTransactionActivity.this, InputNoteActivity.class);
-                if (descriptionEdt.getText() != null) {
-                    intent.putExtra(Common.EXTRA_PASS_INPUT_NOTE, descriptionEdt.getText().toString());
-                }
-                startActivityForResult(intent, INPUT_NOTE_REQUEST);
+        descriptionEdt.setOnClickListener(v -> {
+            Intent intent = new Intent(AddTransactionActivity.this, InputNoteActivity.class);
+            if (descriptionEdt.getText() != null) {
+                intent.putExtra(Common.EXTRA_PASS_INPUT_NOTE, descriptionEdt.getText().toString());
             }
+            startActivityForResult(intent, INPUT_NOTE_REQUEST);
         });
 
-        dateEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment dialogFragment = DatePickerDialogFragment.newInstance(dateEdt.getText().toString());
-                dialogFragment.show(getSupportFragmentManager(), "date picker");
-            }
+        dateEdt.setOnClickListener(v -> {
+            DialogFragment dialogFragment = DatePickerDialogFragment.newInstance(dateEdt.getText().toString());
+            dialogFragment.show(getSupportFragmentManager(), "date picker");
         });
 
-        amountEdt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AddTransactionActivity.this, InputAmountActivity.class);
-                if (descriptionEdt.getText() != null) {
-                    intent.putExtra(Common.EXTRA_PASS_INPUT_AMOUNT, amountEdt.getText().toString());
-                }
-                startActivityForResult(intent, INPUT_AMOUNT_REQUEST);
+        amountEdt.setOnClickListener(v -> {
+            Intent intent = new Intent(AddTransactionActivity.this, InputAmountActivity.class);
+            if (descriptionEdt.getText() != null) {
+                intent.putExtra(Common.EXTRA_PASS_INPUT_AMOUNT, amountEdt.getText().toString());
             }
+            startActivityForResult(intent, INPUT_AMOUNT_REQUEST);
         });
 
-        photoImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "Choose..."), REQUEST_TAKE_PICTURE);
+        photoImage.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(Intent.createChooser(intent, "Choose..."), REQUEST_TAKE_PICTURE);
 
-            }
         });
 
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        cancelBtn.setOnClickListener(v -> finish());
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TransactionModel transactionModel = new TransactionModel();
-                transactionModel.setTransaction_description(descriptionEdt.getText().toString());
-                transactionModel.setTransaction_amount(Double.parseDouble(amountEdt.getText().toString()));
-                transactionModel.setTransaction_type(selectedType);
-                transactionModel.setTransaction_date(new Date());
-                transactionModel.setCategory_id(requestedCategoryModel.getId());
-                transactionModel.setAccount_id(requestedAccountModel.getId());
-                transactionModel.setTo_account(0);
+        saveBtn.setOnClickListener(v -> {
+            TransactionModel transactionModel = new TransactionModel();
+            transactionModel.setTransaction_description(descriptionEdt.getText().toString());
+            transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+            transactionModel.setTransaction_type(selectedType);
+            transactionModel.setTransaction_date(new Date());
+            transactionModel.setCategory_id(requestedCategoryModel.getId());
+            transactionModel.setAccount_id(requestedAccountModel.getId());
+            transactionModel.setTo_account(0);
 
-                DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
-            }
+            DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
         });
     }
 
@@ -375,7 +351,7 @@ public class AddTransactionActivity extends AppCompatActivity
     @Override
     public void sendResult(CategoryModel categoryModel) {
         requestedCategoryModel = categoryModel;
-        Log.d(TAG, "sendResult: get the result: " + requestedCategoryModel.getCategory_name());
+        Log.d(TAG, "sendResult: get the result: " + requestedCategoryModel.getId());
         Toast.makeText(this, "" + requestedCategoryModel.getCategory_name(), Toast.LENGTH_SHORT).show();
         categoryEdt.setText(requestedCategoryModel.getCategory_name());
     }
@@ -388,7 +364,7 @@ public class AddTransactionActivity extends AppCompatActivity
     @Override
     public void onTransactionInsertSuccess(Boolean isInserted) {
         if (isInserted) {
-            Toast.makeText(this, "Insert Success!!", Toast.LENGTH_SHORT).show();
+            EventBus.getDefault().post(new AddTransactionEvent());
             finish();
         }
     }

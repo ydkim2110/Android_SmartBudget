@@ -32,17 +32,13 @@ public class TravelDetailFragment extends Fragment implements ITransactionLoadLi
 
     private RecyclerView mRecyclerView;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dynamic_fragment_layout, container, false);
+
+        DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
+
         initView(view);
         return view;
     }
@@ -52,7 +48,7 @@ public class TravelDetailFragment extends Fragment implements ITransactionLoadLi
         mRecyclerView = view.findViewById(R.id.transaction_list_recyclerview);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setOrientation(layoutManager.getOrientation());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
@@ -61,7 +57,6 @@ public class TravelDetailFragment extends Fragment implements ITransactionLoadLi
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
         TransactionListAdapter adapter = new TransactionListAdapter(transactionList);
         mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
     @Override

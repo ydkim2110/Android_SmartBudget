@@ -66,9 +66,7 @@ public class TravelFragment extends Fragment {
         travelList.add(new Travel("하외이", "미국", "2019-05-20", "2019-05-25", 1200000d));
 
         TravelListAdapter adapter = new TravelListAdapter(getContext(), travelList);
-
         mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
         return view;
     }

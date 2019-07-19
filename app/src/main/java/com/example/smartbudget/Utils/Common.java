@@ -120,4 +120,7 @@ public class Common {
         return result;
     }
 
+    public static String removeComma(String number) {
+        return number.replace(",", "");
+    }
 }

@@ -53,11 +53,8 @@ public class TravelDetailActivity extends AppCompatActivity {
         initToolbar();
         initView();
 
-        travel_fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TravelDetailActivity.this, AddTravelTransactionActivity.class));
-            }
+        travel_fab.setOnClickListener(v -> {
+            startActivity(new Intent(TravelDetailActivity.this, AddTravelTransactionActivity.class));
         });
     }
 
@@ -66,16 +63,11 @@ public class TravelDetailActivity extends AppCompatActivity {
 
         count = Common.getDiffDays(travel.getStart_date(), travel.getEnd_date()).length;
 
-
-        Log.d(TAG, "initView: travel getStart_date: " + travel.getStart_date());
-        Log.d(TAG, "initView: travel getEnd_date: " + travel.getEnd_date());
         diffDays = new ArrayList<>();
         for (int i = 0; i <Common.getDiffDays(travel.getStart_date(), travel.getEnd_date()).length; i++) {
             Log.d(TAG, "initView: differ: "+Common.getDiffDays(travel.getStart_date(), travel.getEnd_date())[i]);
             diffDays.add(Common.getDiffDays(travel.getStart_date(), travel.getEnd_date())[i]);
         }
-
-
 
         setupViewPager(travel_detail_viewPager);
 
@@ -105,8 +97,8 @@ public class TravelDetailActivity extends AppCompatActivity {
         TravelDetailFragmentAdapter adapter = new TravelDetailFragmentAdapter(getSupportFragmentManager());
         for(int i=0 ; i<count; i++){
             adapter.addFragment(TravelDetailFragment.newInstance(), diffDays.get(i));
-            viewPager.setAdapter(adapter);
         }
+        viewPager.setAdapter(adapter);
     }
 
     private void initToolbar() {
@@ -114,7 +106,7 @@ public class TravelDetailActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(travel.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(0);
+        //getSupportActionBar().setElevation(0);
 
         AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
         StateListAnimator stateListAnimator = null;

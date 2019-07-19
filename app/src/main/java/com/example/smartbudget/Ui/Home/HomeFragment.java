@@ -18,19 +18,31 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Overview.OverviewActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
+import com.example.smartbudget.Utils.MyComparator;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,6 +86,8 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        EventBus.getDefault().register(this);
+
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
 
         initView(view);
@@ -103,30 +117,22 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
 
-/*
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-02"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-02"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-04"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-04"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-04"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-05"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-05"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-12"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-12"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-15"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-15"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-15"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-18"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-18"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-19"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-19"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-22"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-22"));
-        mTransactionList.add(new Transaction("교통", "택시", 12000, "2019-05-22"));
-*/
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void reloadData(AddTransactionEvent event) {
+        if (event != null) {
+            DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
+        }
+    }
+    
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
         mConsolidatedList = new ArrayList<>();
@@ -135,20 +141,26 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         int total;
 
-        for (String date : groupedHashMap.keySet()) {
+        TreeMap<String, List<TransactionModel>> tm = new TreeMap<String, List<TransactionModel>>(groupedHashMap);
+
+        Iterator<String> iteratorKey = tm.descendingKeySet().iterator();
+
+        while (iteratorKey.hasNext()) {
+            String key = iteratorKey.next();
+
             total = 0;
 
             DateItem dateItem = new DateItem();
-            dateItem.setDate(date);
+            dateItem.setDate(key);
 
-            for (TransactionModel transactionModel : groupedHashMap.get(date)) {
+            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
                 total += transactionModel.getTransaction_amount();
             }
 
             dateItem.setTotal(total);
             mConsolidatedList.add(dateItem);
 
-            for (TransactionModel transactionModel : groupedHashMap.get(date)) {
+            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
                 TransactionItem transactionItem = new TransactionItem();
                 transactionItem.setTransaction(transactionModel);
                 mConsolidatedList.add(transactionItem);
@@ -165,9 +177,12 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
     private void loadData() {
         Log.d(TAG, "loadData: called!!");
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+
         mAdapter = new TransactionAdapter(getContext(), mConsolidatedList);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
     }
 
     private void handleViewClick() {
@@ -178,7 +193,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             mIBudgetContainerClickListener.onBudgetContainerClicked();
         });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mSwipeRefreshLayout.setRefreshing(false);
+            DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
         });
     }
 
@@ -199,13 +214,12 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         for (TransactionModel dataModel : listOfTransaction) {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             String hashMapkey = ""+dateFormat.format(dataModel.getTransaction_date());
 
             if (groupedHashMap.containsKey(hashMapkey)) {
-                // The key is already in the HashMap; add the pojo object
-                // against the existing key.
+                // The key is already in the HashMap; add the pojo object against the existing key.
                 groupedHashMap.get(hashMapkey).add(dataModel);
             } else {
                 // The key is not there in the HashMap; create a new key-value pair
@@ -217,4 +231,5 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         return groupedHashMap;
     }
+    
 }

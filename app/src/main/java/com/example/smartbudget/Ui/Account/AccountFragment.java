@@ -1,6 +1,7 @@
 package com.example.smartbudget.Ui.Account;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -49,6 +50,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
         DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +59,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
         mRecyclerView = view.findViewById(R.id.account_recyclerview);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        layoutManager.setOrientation(layoutManager.getOrientation());
         mRecyclerView.setLayoutManager(layoutManager);
 
         return view;

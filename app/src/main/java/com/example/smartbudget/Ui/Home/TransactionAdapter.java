@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
+import java.util.Date;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -66,17 +68,21 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 TransactionItem transactionItem = (TransactionItem) consolidatedList.get(i);
                 TransactionViewHolder transactionViewHolder = (TransactionViewHolder) viewHolder;
 
-                String category = "" + transactionItem.getTransaction().getCategory_id();
                 String description = transactionItem.getTransaction().getTransaction_description();
                 int amount = (int) transactionItem.getTransaction().getTransaction_amount();
+                String type = transactionItem.getTransaction().getTransaction_type();
+                Date transactionDate = transactionItem.getTransaction().getTransaction_date();
+                int categoryId =  transactionItem.getTransaction().getCategory_id();
+                int accountId = transactionItem.getTransaction().getAccount_id();
 
-                final Transaction transaction = new Transaction(category, description, amount, "2019-07-25");
 
-                transactionViewHolder.setData(category, description, amount);
+                final TransactionModel transactionModel = new TransactionModel(description, amount, type, transactionDate, categoryId, accountId);
+
+                transactionViewHolder.setData(categoryId, description, amount);
 
                 transactionViewHolder.setIRecyclerItemSelectedListener((view, position) -> {
                     Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);
-                    editTransactionIntent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transaction);
+                    editTransactionIntent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transactionModel);
                     view.getContext().startActivity(editTransactionIntent);
                 });
                 break;
@@ -135,8 +141,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             itemView.setOnClickListener(this);
         }
 
-        private void setData(String category, String description, int amount) {
-            categoryTv.setText(category);
+        private void setData(int category, String description, int amount) {
+            categoryTv.setText(""+category);
             descriptionTv.setText(description);
             amountTv.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
         }
