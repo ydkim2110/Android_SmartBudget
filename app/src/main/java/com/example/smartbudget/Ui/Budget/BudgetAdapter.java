@@ -29,7 +29,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.budget_item_layout, viewGroup, false);
+                .inflate(R.layout.item_budget, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -40,13 +40,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
         viewHolder.setData(category, amount);
 
-        viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
-            @Override
-            public void onItemSelected(View view, int position) {
-                Intent viewTransactionIntent = new Intent(view.getContext(), ViewTransactionActivity.class);
-                viewTransactionIntent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, category);
-                view.getContext().startActivity(viewTransactionIntent);
-            }
+        viewHolder.setIRecyclerItemSelectedListener((view, position) -> {
+            Intent viewTransactionIntent = new Intent(view.getContext(), ViewTransactionActivity.class);
+            viewTransactionIntent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, category);
+            view.getContext().startActivity(viewTransactionIntent);
         });
 
     }

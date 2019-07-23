@@ -1,5 +1,7 @@
 package com.example.smartbudget.Ui.Transaction;
 
+import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,6 +20,15 @@ public class DynamicFragmentAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
+    public void restoreState(Parcelable state, ClassLoader loader) {
+        try {
+            super.restoreState(state, loader);
+        } catch (NullPointerException e) {
+
+        }
+    }
+
+    @Override
     public Fragment getItem(int position) {
         return mFragmentList.get(position);
     }
@@ -30,10 +41,10 @@ public class DynamicFragmentAdapter extends FragmentStatePagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-       return mFragmentTitleList.get(position);
+        return mFragmentTitleList.get(position);
     }
 
-    public void addFragment(Fragment fragment, String title){
+    public void addFragment(Fragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
     }

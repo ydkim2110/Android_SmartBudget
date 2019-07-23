@@ -5,7 +5,7 @@
     <color name="colorAccent">#00B8D4</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorBlack">#000000</color>
-    <color name="colorRevenue">#f5868d</color>
-    <color name="colorExpense">#4ba2ff</color>
+    <color name="colorRevenue">#f5787e</color>
+    <color name="colorExpense">#68bcbe</color>
     <color name="status_bar_color">#ffffff</color>
 </resources>

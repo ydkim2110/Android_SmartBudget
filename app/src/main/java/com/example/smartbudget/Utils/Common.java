@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class Common {
 
@@ -28,6 +29,8 @@ public class Common {
     public static final String EXTRA_PASS_BUDGET_CATEGORY = "PASS_BUDGET_CATEGORY";
 
     public static final String EXTRA_EDIT_TRANSACTION = "EDIT_TRANSACTION";
+
+    public static final SimpleDateFormat yearmonthDateFormate = new SimpleDateFormat("yyyy MMMM", Locale.KOREA);
 
     ////// Calculator
     public static final String ACTIVITY_MODE = "ActivityMode";
