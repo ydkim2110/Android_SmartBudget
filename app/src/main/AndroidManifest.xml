@@ -33,7 +33,7 @@
         <activity
             android:name=".Ui.Transaction.Add.AddTransactionActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".Overview.OverviewActivity" />
+        <activity android:name=".Ui.Home.Overview.OverviewActivity" />
         <activity
             android:name=".Ui.Main.MainActivity"
             android:label="@string/app_name"

@@ -1,4 +1,4 @@
-package com.example.smartbudget.Overview;
+package com.example.smartbudget.Ui.Home.Overview;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.Spending;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
@@ -16,10 +18,10 @@ import java.util.List;
 
 public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHolder> {
 
-    private List<Spending> spendingList;
+    private List<CategoryModel> categoryList;
 
-    public SpendingAdapter(List<Spending> spendingList) {
-        this.spendingList = spendingList;
+    public SpendingAdapter(List<CategoryModel> categoryList) {
+        this.categoryList = categoryList;
     }
 
     @NonNull
@@ -32,14 +34,14 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
-        viewHolder.percentage.setText(spendingList.get(i).getPercentage());
-        viewHolder.category.setText(spendingList.get(i).getCategory());
-        viewHolder.amount.setText(spendingList.get(i).getAmount());
+        //viewHolder.amount.setText(spendingList.get(i).getAmount());
+        viewHolder.category.setText(categoryList.get(i).getCategory_name());
+        //viewHolder.percentage.setText(spendingList.get(i).getPercentage());
 
         viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
             @Override
             public void onItemSelected(View view, int position) {
-                Toast.makeText(view.getContext(), "category: "+spendingList.get(position).getCategory(),
+                Toast.makeText(view.getContext(), "category: "+categoryList.get(position).getCategory_name(),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -47,7 +49,7 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return spendingList.size();
+        return categoryList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

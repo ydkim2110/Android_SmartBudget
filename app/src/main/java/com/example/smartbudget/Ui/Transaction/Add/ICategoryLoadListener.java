@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ICategoryLoadListener {
     void onCategoryLoadSuccess(List<CategoryModel> categoryList);
+    void onCategoryLoadFailed(String message);
 }

@@ -27,7 +27,7 @@ public class ViewTransactionActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(budgetCategory+" Transactions");
+        getSupportActionBar().setTitle(budgetCategory);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }

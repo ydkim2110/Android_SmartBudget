@@ -1,4 +1,4 @@
-package com.example.smartbudget.Overview;
+package com.example.smartbudget.Ui.Home.Overview;
 
 import android.graphics.Color;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Main.Spending;
+import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -26,7 +31,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OverviewActivity extends AppCompatActivity {
+public class OverviewActivity extends AppCompatActivity implements ICategoryLoadListener {
 
     private static final String TAG = OverviewActivity.class.getSimpleName();
 
@@ -62,6 +67,9 @@ public class OverviewActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         List<Spending> list = new ArrayList<>();
+
+        DatabaseUtils.getAllCategory(MainActivity.mDBHelper, this);
+
         list.add(new Spending("42%", "Food", "320,000원"));
         list.add(new Spending("42%", "Transport", "320,000원"));
         list.add(new Spending("42%", "Clothing", "320,000원"));
@@ -69,8 +77,7 @@ public class OverviewActivity extends AppCompatActivity {
         list.add(new Spending("42%", "Household", "320,000원"));
         list.add(new Spending("42%", "Bills", "320,000원"));
         list.add(new Spending("42%", "Other Expenses", "320,000원"));
-        adapter = new SpendingAdapter(list);
-        recyclerView.setAdapter(adapter);
+
     }
 
     private void setUpPieGraph() {
@@ -169,5 +176,16 @@ public class OverviewActivity extends AppCompatActivity {
             default:
                 return true;
         }
+    }
+
+    @Override
+    public void onCategoryLoadSuccess(List<CategoryModel> categoryList) {
+        adapter = new SpendingAdapter(categoryList);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onCategoryLoadFailed(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

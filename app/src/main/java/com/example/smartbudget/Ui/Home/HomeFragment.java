@@ -8,9 +8,9 @@ import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,17 +18,15 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.TransactionModel;
-import com.example.smartbudget.Overview.OverviewActivity;
+import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
-import com.example.smartbudget.Utils.MyComparator;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,13 +34,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,7 +68,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private TransactionAdapter mAdapter;
+    private RecyclerViewDataAdapter mAdapter;
     private ProgressBar progressBar;
     private TextView progressBarPercentage;
     private TextView usedBudgetTv;
@@ -82,13 +78,14 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
     private ConstraintLayout homeBudgetContainer;
 
     private List<ListItem> mConsolidatedList;
+    private HashMap<String, List<TransactionModel>> groupedHashMap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
 
-        View view =  inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         initView(view);
         handleViewClick();
@@ -96,9 +93,9 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         int maxValue = 4000000;
         int currentValue = 3200000;
 
-        usedBudgetTv.setText(Common.changeNumberToComma(currentValue) +"원");
-        totalBudgetTv.setText(Common.changeNumberToComma(maxValue)+"원");
-        progressBarPercentage.setText(Common.calcPercentage(currentValue, maxValue)+"%");
+        usedBudgetTv.setText(Common.changeNumberToComma(currentValue) + "원");
+        totalBudgetTv.setText(Common.changeNumberToComma(maxValue) + "원");
+        progressBarPercentage.setText(Common.calcPercentage(currentValue, maxValue) + "%");
 
         progressBar.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, currentValue);
@@ -109,11 +106,6 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         mRecyclerView = view.findViewById(R.id.transaction_recyclerview);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(getContext(), new LinearLayoutManager(getContext()).getOrientation());
-
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
 
@@ -132,40 +124,50 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
         }
     }
-    
+
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
         mConsolidatedList = new ArrayList<>();
 
-        HashMap<String, List<TransactionModel>> groupedHashMap = groupDataIntoHashMap(transactionList);
+        groupedHashMap = groupDataIntoHashMap(transactionList);
 
-        int total;
+        Set set = groupedHashMap.entrySet();
 
-        TreeMap<String, List<TransactionModel>> tm = new TreeMap<String, List<TransactionModel>>(groupedHashMap);
+        Iterator iterator = set.iterator();
 
-        Iterator<String> iteratorKey = tm.descendingKeySet().iterator();
-
-        while (iteratorKey.hasNext()) {
-            String key = iteratorKey.next();
-
-            total = 0;
-
-            DateItem dateItem = new DateItem();
-            dateItem.setDate(key);
-
-            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
-                total += transactionModel.getTransaction_amount();
-            }
-
-            dateItem.setTotal(total);
-            mConsolidatedList.add(dateItem);
-
-            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
-                TransactionItem transactionItem = new TransactionItem();
-                transactionItem.setTransaction(transactionModel);
-                mConsolidatedList.add(transactionItem);
-            }
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Log.d(TAG, "onTransactionLoadSuccess: " + entry.getKey());
         }
+
+
+//        int total;
+//
+//        TreeMap<String, List<TransactionModel>> tm = new TreeMap<String, List<TransactionModel>>(groupedHashMap);
+//
+//        Iterator<String> iteratorKey = tm.descendingKeySet().iterator();
+//
+//        while (iteratorKey.hasNext()) {
+//            String key = iteratorKey.next();
+//
+//            total = 0;
+//
+//            DateItem dateItem = new DateItem();
+//            dateItem.setDate(key);
+//
+//            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
+//                total += transactionModel.getTransaction_amount();
+//            }
+//
+//            dateItem.setTotal(total);
+//            mConsolidatedList.add(dateItem);
+//
+//            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
+//                TransactionItem transactionItem = new TransactionItem();
+//                transactionItem.setTransaction(transactionModel);
+//                mConsolidatedList.add(transactionItem);
+//            }
+//        }
 
         loadData();
     }
@@ -181,7 +183,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             mSwipeRefreshLayout.setRefreshing(false);
         }
 
-        mAdapter = new TransactionAdapter(getContext(), mConsolidatedList);
+        mAdapter = new RecyclerViewDataAdapter(getContext(), groupedHashMap);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -216,7 +218,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            String hashMapkey = ""+dateFormat.format(dataModel.getTransaction_date());
+            String hashMapkey = "" + dateFormat.format(dataModel.getTransaction_date());
 
             if (groupedHashMap.containsKey(hashMapkey)) {
                 // The key is already in the HashMap; add the pojo object against the existing key.
@@ -231,5 +233,5 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         return groupedHashMap;
     }
-    
+
 }

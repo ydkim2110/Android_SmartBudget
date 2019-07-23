@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = DBHelper.class.getSimpleName();
 
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "smartbudget.db";
+    public static final String DB_NAME = "smartbudget2.db";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -86,30 +86,30 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transfer", R.drawable.ic_directions_bus_black_24dp});
 
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"택시비", 4000, "Expense", dateFormat.parse("2019-04-20 14:20:21"), 2, 1, null});
+                    new Object[]{"택시비", 4000, "Expense", dateFormat.parse("2019-04-20"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"쇼핑", 98000, "Expense", dateFormat.parse("2019-04-20 14:20:21"), 2, 1, null});
+                    new Object[]{"쇼핑", 98000, "Expense", dateFormat.parse("2019-04-20"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"저녁(술)", 50000, "Expense", dateFormat.parse("2019-04-21 14:20:21"), 2, 1, null});
+                    new Object[]{"저녁(술)", 50000, "Expense", dateFormat.parse("2019-04-21"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"피씨방", 3000, "Expense", dateFormat.parse("2019-04-21 14:20:21"), 2, 1, null});
+                    new Object[]{"피씨방", 3000, "Expense", dateFormat.parse("2019-04-21"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"책", 29000, "Expense", dateFormat.parse("2019-04-21 14:20:21"), 2, 1, null});
+                    new Object[]{"책", 29000, "Expense", dateFormat.parse("2019-04-21"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"김밥(아침)", 3500, "Expense", dateFormat.parse("2019-05-04 14:20:21"), 2, 1, null});
+                    new Object[]{"김밥(아침)", 3500, "Expense", dateFormat.parse("2019-05-04"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"버스", 1200, "Expense", dateFormat.parse("2019-05-04 14:20:21"), 2, 1, null});
+                    new Object[]{"버스", 1200, "Expense", dateFormat.parse("2019-05-04"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"햄버거(점심)", 5900, "Expense", dateFormat.parse("2019-03-21 14:20:21"), 2, 1, null});
+                    new Object[]{"햄버거(점심)", 5900, "Expense", dateFormat.parse("2019-03-21"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"콜라", 1900, "Expense", dateFormat.parse("2019-02-28 14:20:21"), 2, 1, null});
+                    new Object[]{"콜라", 1900, "Expense", dateFormat.parse("2019-02-28"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"커피", 4100, "Expense", dateFormat.parse("2019-06-20 14:20:21"), 2, 1, null});
+                    new Object[]{"커피", 4100, "Expense", dateFormat.parse("2019-06-20"), 2, 1, null});
             db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"노래방", 25000, "Expense", dateFormat.parse("2019-06-30 14:20:21"), 2, 1, null});
+                    new Object[]{"노래방", 25000, "Expense", dateFormat.parse("2019-06-30"), 2, 1, null});
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -200,7 +200,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllTransactions() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+Transaction.TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM "+Transaction.TABLE_NAME + " WHERE " + Transaction.COL_DATE + " > '2019-05-01'", null);
         if (cursor != null) {
             cursor.moveToFirst();
         }

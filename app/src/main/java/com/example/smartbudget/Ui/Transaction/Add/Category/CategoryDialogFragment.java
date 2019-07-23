@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.CategoryModel;
@@ -111,6 +112,11 @@ public class CategoryDialogFragment extends DialogFragment
         CategoryDialogAdapter categoryAdapter = new CategoryDialogAdapter(getContext(), categoryList, this);
         mCategoryRecyclerView.setAdapter(categoryAdapter);
         categoryAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCategoryLoadFailed(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 }

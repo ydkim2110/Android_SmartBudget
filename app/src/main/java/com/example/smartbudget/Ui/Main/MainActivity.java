@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity
 
         gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
         navigationView.getMenu().getItem(currentFragment).setChecked(true);
-
-        loadData();
     }
 
     private void initDrawAndNavigationView() {
@@ -92,15 +90,6 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    private void loadData() {
-        Log.d(TAG, "loadData: called!!");
-        GetAllCategoryAsync getAllCategoryAsync = new GetAllCategoryAsync();
-        getAllCategoryAsync.execute();
-
-        GetAllTransactionAsync getAllTransactionAsync = new GetAllTransactionAsync();
-        getAllTransactionAsync.execute();
     }
 
     private void initView() {
@@ -216,7 +205,6 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.container, fragment);
-        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -225,58 +213,6 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, "Budget Click!!", Toast.LENGTH_SHORT).show();
         gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
         navigationView.getMenu().getItem(currentFragment).setChecked(true);
-    }
-
-    private class GetAllCategoryAsync extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Cursor cursor = mDBHelper.getAllCategories();
-            try {
-                do {
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Category._ID));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Category.COL_NAME));
-                    String icon = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Category.COL_ICON));
-                    Log.d("GetAllCategoryAsync", "id: " + id);
-                    Log.d("GetAllCategoryAsync", "name: " + name);
-                    Log.d("GetAllCategoryAsync", "icon: " + icon);
-                }
-                while (cursor.moveToNext());
-            } finally {
-                cursor.close();
-            }
-            return null;
-        }
-    }
-
-    private class GetAllTransactionAsync extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Cursor cursor = mDBHelper.getAllTransactions();
-            try {
-                do {
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
-                    String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
-                    String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
-                    String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
-                    String category_id = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
-                    String account_id = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
-                    String to_account = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
-                    Log.d("GetAllTransactionAsync", "id: " + id);
-                    Log.d("GetAllTransactionAsync", "description: " + description);
-                    Log.d("GetAllTransactionAsync", "amount: " + amount);
-                    Log.d("GetAllTransactionAsync", "date: " + date);
-                    Log.d("GetAllTransactionAsync", "category_id: " + category_id);
-                    Log.d("GetAllTransactionAsync", "account_id: " + account_id);
-                    Log.d("GetAllTransactionAsync", "to_account: " + to_account);
-                }
-                while (cursor.moveToNext());
-            } finally {
-                cursor.close();
-            }
-            return null;
-        }
     }
 
 }
