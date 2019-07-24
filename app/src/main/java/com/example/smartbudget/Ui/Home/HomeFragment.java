@@ -70,9 +70,13 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
     private RecyclerView mRecyclerView;
     private RecyclerViewDataAdapter mAdapter;
     private ProgressBar progressBar;
+    private ProgressBar pb_circle_normal;
+    private ProgressBar pb_circle_waste;
+    private ProgressBar pb_circle_invest;
     private TextView progressBarPercentage;
     private TextView usedBudgetTv;
     private TextView totalBudgetTv;
+    private TextView tv_weekday;
 
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
@@ -88,8 +92,20 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         initView(view);
+        setProgressBar();
         handleViewClick();
 
+        mRecyclerView = view.findViewById(R.id.transaction_recyclerview);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
+
+        return view;
+    }
+
+    private void setProgressBar() {
+        Log.d(TAG, "setProgressBar: called!!");
         int maxValue = 4000000;
         int currentValue = 3200000;
 
@@ -103,13 +119,21 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
 
-        mRecyclerView = view.findViewById(R.id.transaction_recyclerview);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        ObjectAnimator progressAnim2 = ObjectAnimator.ofInt(pb_circle_normal, "progress", 0, 65);
+        progressAnim2.setDuration(500);
+        progressAnim2.setInterpolator(new LinearInterpolator());
+        progressAnim2.start();
 
-        DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
+        ObjectAnimator progressAnim3 = ObjectAnimator.ofInt(pb_circle_waste, "progress", 0, 25);
+        progressAnim3.setDuration(500);
+        progressAnim3.setInterpolator(new LinearInterpolator());
+        progressAnim3.start();
 
-        return view;
+        ObjectAnimator progressAnim4 = ObjectAnimator.ofInt(pb_circle_invest, "progress", 0, 15);
+        progressAnim4.setDuration(500);
+        progressAnim4.setInterpolator(new LinearInterpolator());
+        progressAnim4.start();
+
     }
 
     @Override
@@ -121,7 +145,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void reloadData(AddTransactionEvent event) {
         if (event != null) {
-            DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
+            DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         }
     }
 
@@ -195,7 +219,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             mIBudgetContainerClickListener.onBudgetContainerClicked();
         });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            DatabaseUtils.getAllTransaction(MainActivity.mDBHelper, this);
+            DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         });
     }
 
@@ -205,9 +229,21 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         homeBudgetContainer = view.findViewById(R.id.home_budget_container);
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_home_fragment);
         progressBar = view.findViewById(R.id.progressBar);
+        pb_circle_normal = view.findViewById(R.id.pb_circle_normal);
+        pb_circle_waste = view.findViewById(R.id.pb_circle_waste);
+        pb_circle_invest = view.findViewById(R.id.pb_circle_invest);
         progressBarPercentage = view.findViewById(R.id.progressbar_percentage);
         usedBudgetTv = view.findViewById(R.id.used_budget_tv);
         totalBudgetTv = view.findViewById(R.id.total_budget_tv);
+        tv_weekday = view.findViewById(R.id.tv_weekday);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd");
+
+        tv_weekday.setText(new StringBuilder("(")
+                .append(dateFormat.format(Common.getWeekStartDate()))
+                .append(" ~ ")
+                .append(dateFormat.format(Common.getWeekEndDate()))
+                .append(")"));
     }
 
     private HashMap<String, List<TransactionModel>> groupDataIntoHashMap(List<TransactionModel> listOfTransaction) {
@@ -218,15 +254,11 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             for (TransactionModel dataModel : listOfTransaction) {
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-                // String hashMapkey = "" + dateFormat.format(dataModel.getTransaction_date());
                 String hashMapkey = dataModel.getTransaction_date();
 
                 if (groupedHashMap.containsKey(hashMapkey)) {
-                    // The key is already in the HashMap; add the pojo object against the existing key.
                     groupedHashMap.get(hashMapkey).add(dataModel);
                 } else {
-                    // The key is not there in the HashMap; create a new key-value pair
                     List<TransactionModel> list = new ArrayList<>();
                     list.add(dataModel);
                     groupedHashMap.put(hashMapkey, list);

@@ -71,6 +71,23 @@ public class Common {
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }
 
+    public static Date getWeekStartDate() {
+        Calendar calendar = Calendar.getInstance();
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+            calendar.add(Calendar.DATE, -1);
+        }
+        return calendar.getTime();
+    }
+
+    public static Date getWeekEndDate() {
+        Calendar calendar = Calendar.getInstance();
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+            calendar.add(Calendar.DATE, 1);
+        }
+        calendar.add(Calendar.DATE, -1);
+        return calendar.getTime();
+    }
+
     public static Date stringToDate(String date) {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date tempDate = null;

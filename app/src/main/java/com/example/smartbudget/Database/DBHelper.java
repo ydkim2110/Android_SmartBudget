@@ -229,8 +229,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllTransactions() {
         SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getThisWeekTransactions() {
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME
-                + " WHERE DATE("+Transaction.COL_DATE+") >= DATE('now', 'weekday 0', '-7 days')" , null);
+                + " WHERE DATE("+Transaction.COL_DATE+") >= DATE('now', 'weekday 1', '-7 days')" , null);
         if (cursor != null) {
             cursor.moveToFirst();
         }

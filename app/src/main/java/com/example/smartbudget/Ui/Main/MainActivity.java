@@ -130,8 +130,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         if (currentFragment == HOME_FRAGMENT) {
             getMenuInflater().inflate(R.menu.nav_home_menu, menu);
-        } else if (currentFragment == ACCOUNT_FRAGMENT) {
-            getMenuInflater().inflate(R.menu.nav_account_menu, menu);
         } else if (currentFragment == TRANSACTION_FRAGMENT) {
             getMenuInflater().inflate(R.menu.nav_transaction_menu, menu);
         }
@@ -144,8 +142,6 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.nav_account_menu) {
-            Toast.makeText(this, "account menu click!!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_transaction_menu) {
             EventBus.getDefault().post(new CalendarToggleEvent());
         }

@@ -52,6 +52,10 @@ public class DatabaseUtils {
         GetAllTransactionAsync task = new GetAllTransactionAsync(db, listener);
         task.execute();
     }
+    public static void getThisWeekTransaction(DBHelper db, ITransactionLoadListener listener) {
+        GetThisWeekTransactionAsync task = new GetThisWeekTransactionAsync(db, listener);
+        task.execute();
+    }
 
     public static void insertTransactionAsync(DBHelper db, ITransactionInsertListener listener, TransactionModel... transactionModels) {
         InsertTransactionAsync task = new InsertTransactionAsync(db, listener);
@@ -227,6 +231,59 @@ public class DatabaseUtils {
         @Override
         protected List<TransactionModel> doInBackground(Void... voids) {
             Cursor cursor = db.getAllTransactions();
+
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setTransaction_description(description);
+                        transaction.setTransaction_amount(Double.parseDouble(amount));
+                        transaction.setTransaction_type(type);
+                        transaction.setTransaction_date(date);
+                        transaction.setCategory_id(Integer.parseInt(categoryId));
+                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            mListener.onTransactionLoadSuccess(transactionList);
+        }
+    }
+
+    private static class GetThisWeekTransactionAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        ITransactionLoadListener mListener;
+
+        public GetThisWeekTransactionAsync(DBHelper db, ITransactionLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getThisWeekTransactions();
 
             List<TransactionModel> transactionList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {

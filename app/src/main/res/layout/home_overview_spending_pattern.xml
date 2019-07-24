@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/white"
     android:elevation="4dp"
     android:foreground="?attr/selectableItemBackground"
@@ -22,8 +23,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ProgressBar
-        android:id="@+id/progressBar_invest"
+        android:id="@+id/pb_circle_normal"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -34,18 +36,16 @@
         android:indeterminate="false"
         android:max="100"
         android:progress="65"
-        android:progressDrawable="@drawable/rotate_circular_progressbar_invest"
+        android:progressDrawable="@drawable/rotate_circular_progressbar_normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <ProgressBar
-        android:id="@+id/progressBar_waste"
+        android:id="@+id/pb_circle_waste"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/shape_circle_progressbar"
         android:indeterminate="false"
@@ -53,7 +53,59 @@
         android:progress="25"
         android:progressDrawable="@drawable/rotate_circular_progressbar_waste"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/progressBar_invest"
+        app:layout_constraintEnd_toStartOf="@+id/pb_circle_invest"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toEndOf="@+id/pb_circle_normal" />
+
+
+    <ProgressBar
+        android:id="@+id/pb_circle_invest"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_circle_progressbar"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="10"
+        android:progressDrawable="@drawable/rotate_circular_progressbar_invest"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/tv_normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Normal\n65%"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_normal"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_normal"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_normal"
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_normal" />
+
+    <TextView
+        android:id="@+id/tv_waste"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Waste\n25%"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_waste"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_waste"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_waste"
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_waste" />
+
+    <TextView
+        android:id="@+id/tv_invest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invest\n10%"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_invest"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_invest"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_invest"
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_invest" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
