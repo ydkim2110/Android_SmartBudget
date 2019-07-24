@@ -214,21 +214,23 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         HashMap<String, List<TransactionModel>> groupedHashMap = new HashMap<>();
 
-        for (TransactionModel dataModel : listOfTransaction) {
+        if (listOfTransaction != null) {
+            for (TransactionModel dataModel : listOfTransaction) {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-           // String hashMapkey = "" + dateFormat.format(dataModel.getTransaction_date());
-           String hashMapkey = dataModel.getTransaction_date();
+                // String hashMapkey = "" + dateFormat.format(dataModel.getTransaction_date());
+                String hashMapkey = dataModel.getTransaction_date();
 
-            if (groupedHashMap.containsKey(hashMapkey)) {
-                // The key is already in the HashMap; add the pojo object against the existing key.
-                groupedHashMap.get(hashMapkey).add(dataModel);
-            } else {
-                // The key is not there in the HashMap; create a new key-value pair
-                List<TransactionModel> list = new ArrayList<>();
-                list.add(dataModel);
-                groupedHashMap.put(hashMapkey, list);
+                if (groupedHashMap.containsKey(hashMapkey)) {
+                    // The key is already in the HashMap; add the pojo object against the existing key.
+                    groupedHashMap.get(hashMapkey).add(dataModel);
+                } else {
+                    // The key is not there in the HashMap; create a new key-value pair
+                    List<TransactionModel> list = new ArrayList<>();
+                    list.add(dataModel);
+                    groupedHashMap.put(hashMapkey, list);
+                }
             }
         }
 
