@@ -218,7 +218,8 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            String hashMapkey = "" + dateFormat.format(dataModel.getTransaction_date());
+           // String hashMapkey = "" + dateFormat.format(dataModel.getTransaction_date());
+           String hashMapkey = dataModel.getTransaction_date();
 
             if (groupedHashMap.containsKey(hashMapkey)) {
                 // The key is already in the HashMap; add the pojo object against the existing key.

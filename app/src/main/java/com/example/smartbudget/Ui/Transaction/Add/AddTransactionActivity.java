@@ -293,7 +293,7 @@ public class AddTransactionActivity extends AppCompatActivity
             transactionModel.setTransaction_description(descriptionEdt.getText().toString());
             transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
             transactionModel.setTransaction_type(selectedType);
-            transactionModel.setTransaction_date(new Date());
+            transactionModel.setTransaction_date("2019-07-31");
             transactionModel.setCategory_id(requestedCategoryModel.getId());
             transactionModel.setAccount_id(requestedAccountModel.getId());
             transactionModel.setTo_account(0);

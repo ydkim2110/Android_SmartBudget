@@ -13,7 +13,9 @@ import com.example.smartbudget.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static com.example.smartbudget.Database.DBContract.*;
 
@@ -57,12 +59,12 @@ public class DBHelper extends SQLiteOpenHelper {
                     Transaction.COL_DESCRIPTION + " TEXT," +
                     Transaction.COL_AMOUNT + " INTEGER," +
                     Transaction.COL_TYPE + " TEXT," +
-                    Transaction.COL_DATE + " DATE," +
+                    Transaction.COL_DATE + " TEXT," +
                     Transaction.COL_CATEGORY_ID + " INTEGER," +
                     Transaction.COL_ACCOUNT_ID + " INTEGER ," +
-                    Transaction.COL_TO_ACCOUNT + " INT REFERENCES "+Account.TABLE_NAME+ "(_id)," +
-                    "FOREIGN KEY ("+Transaction.COL_CATEGORY_ID+") REFERENCES "+Category.TABLE_NAME+"(_id), " +
-                    "FOREIGN KEY ("+Transaction.COL_ACCOUNT_ID+") REFERENCES "+Account.TABLE_NAME+"(_id))";
+                    Transaction.COL_TO_ACCOUNT + " INT REFERENCES " + Account.TABLE_NAME + "(_id)," +
+                    "FOREIGN KEY (" + Transaction.COL_CATEGORY_ID + ") REFERENCES " + Category.TABLE_NAME + "(_id), " +
+                    "FOREIGN KEY (" + Transaction.COL_ACCOUNT_ID + ") REFERENCES " + Account.TABLE_NAME + "(_id))";
 
     private static final String SQL_DELETE_ACCOUNT_TABLE =
             "DROP TABLE IF EXISTS " + Account.TABLE_NAME;
@@ -74,46 +76,73 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_SUBCATEGORY_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
 
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Food", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transport", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Clothing", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Entertainment", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Household", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Bills", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Healthcare", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Other Expenses", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Income", R.drawable.ic_directions_bus_black_24dp});
-        db.execSQL("INSERT INTO "+ Category.TABLE_NAME+" (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transfer", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Food", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transport", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Clothing", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Entertainment", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Household", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Bills", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Healthcare", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Other Expenses", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Income", R.drawable.ic_directions_bus_black_24dp});
+        db.execSQL("INSERT INTO " + Category.TABLE_NAME + " (category_name, category_icon) VALUES(?, ?)", new Object[]{"Transfer", R.drawable.ic_directions_bus_black_24dp});
 
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Calendar calendar1 = new GregorianCalendar(2019,05, 01);
+        Calendar calendar2 = new GregorianCalendar(2019,06, 02);
+        Calendar calendar3 = new GregorianCalendar(2019,06, 03);
+        Calendar calendar4 = new GregorianCalendar(2019,06, 04);
+        Calendar calendar5 = new GregorianCalendar(2019,06, 04);
+        Calendar calendar6 = new GregorianCalendar(2019,06, 05);
+        Calendar calendar7 = new GregorianCalendar(2019,06, 06);
+        Calendar calendar8 = new GregorianCalendar(2019,06, 24);
+        Calendar calendar9 = new GregorianCalendar(2019,06, 24);
+        Calendar calendar10 = new GregorianCalendar(2019,06, 23);
+        Calendar calendar11 = new GregorianCalendar(2019,06, 22);
+        Calendar calendar12 = new GregorianCalendar(2019,06, 21);
+        Calendar calendar13 = new GregorianCalendar(2019,06, 20);
+        Calendar calendar14 = new GregorianCalendar(2019,06, 19);
+        Calendar calendar15 = new GregorianCalendar(2019,06, 18);
+        Calendar calendar16 = new GregorianCalendar(2019,06, 17);
+        Calendar calendar17 = new GregorianCalendar(2019,06, 17);
+        Calendar calendar18 = new GregorianCalendar(2019,06, 16);
 
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"택시비", 4000, "Expense", dateFormat.parse("2019-04-20"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"쇼핑", 98000, "Expense", dateFormat.parse("2019-04-20"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"저녁(술)", 50000, "Expense", dateFormat.parse("2019-04-21"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"피씨방", 3000, "Expense", dateFormat.parse("2019-04-21"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"책", 29000, "Expense", dateFormat.parse("2019-04-21"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"김밥(아침)", 3500, "Expense", dateFormat.parse("2019-05-04"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"버스", 1200, "Expense", dateFormat.parse("2019-05-04"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"햄버거(점심)", 5900, "Expense", dateFormat.parse("2019-03-21"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"콜라", 1900, "Expense", dateFormat.parse("2019-02-28"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"커피", 4100, "Expense", dateFormat.parse("2019-06-20"), 2, 1, null});
-            db.execSQL("INSERT INTO "+Transaction.TABLE_NAME+" (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"노래방", 25000, "Expense", dateFormat.parse("2019-06-30"), 2, 1, null});
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"저녁(술)", 50000, "Expense", dateFormat.format(calendar1.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"피씨방", 3000, "Expense", dateFormat.format(calendar2.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"책", 29000, "Expense", dateFormat.format(calendar3.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"김밥(아침)", 3500, "Expense", dateFormat.format(calendar4.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"버스", 1200, "Expense", dateFormat.format(calendar5.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"햄버거(점심)", 5900, "Expense", dateFormat.format(calendar6.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"콜라", 1900, "Expense", dateFormat.format(calendar7.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"커피", 4100, "Expense", dateFormat.format(calendar8.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"노래방", 21000, "Expense", dateFormat.format(calendar9.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 15000, "Expense", dateFormat.format(calendar10.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"쇼핑", 55000, "Expense", dateFormat.format(calendar11.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"버스", 9500, "Expense", dateFormat.format(calendar12.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"햄버거(점심)", 8900, "Expense", dateFormat.format(calendar13.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"콜라", 2100, "Expense", dateFormat.format(calendar14.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"커피", 2800, "Expense", dateFormat.format(calendar15.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"노래방", 32000, "Expense", dateFormat.format(calendar16.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"택시비", 7800, "Expense", dateFormat.format(calendar17.getTime()), 2, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_description, transaction_amount, transaction_type, transaction_date, category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"쇼핑", 120000, "Expense", dateFormat.format(calendar18.getTime()), 2, 1, null});
     }
 
     @Override
@@ -158,8 +187,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public int updateAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        Log.d(TAG, "updateAccount:getId "+accountModel.getId());
-        Log.d(TAG, "updateAccount:getAccount_name "+accountModel.getAccount_name());
+        Log.d(TAG, "updateAccount:getId " + accountModel.getId());
+        Log.d(TAG, "updateAccount:getAccount_name " + accountModel.getAccount_name());
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Account.COL_NAME, accountModel.getAccount_name());
@@ -169,7 +198,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getAccount_create_at()));
         contentValues.put(Account.COL_CURRENCY, accountModel.getAccount_currency());
 
-        int result = db.update(Account.TABLE_NAME, contentValues, "_id = "+accountModel.getId(), null);
+        int result = db.update(Account.TABLE_NAME, contentValues, "_id = " + accountModel.getId(), null);
 
         return result;
     }
@@ -177,12 +206,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public int deleteAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        return db.delete(Account.TABLE_NAME, "_id = "+accountModel.getId(), null);
+        return db.delete(Account.TABLE_NAME, "_id = " + accountModel.getId(), null);
     }
 
     public Cursor getAllAccounts() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+Account.TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Account.TABLE_NAME, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
@@ -191,7 +220,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllCategories() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+Category.TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Category.TABLE_NAME, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
@@ -200,7 +229,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllTransactions() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM "+Transaction.TABLE_NAME + " WHERE " + Transaction.COL_DATE + " > '2019-05-01'", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME
+                + " WHERE DATE("+Transaction.COL_DATE+") >= DATE('now', 'weekday 0', '-7 days')" , null);
         if (cursor != null) {
             cursor.moveToFirst();
         }

@@ -11,14 +11,14 @@ public class TransactionModel implements Parcelable {
     private String transaction_description;
     private double transaction_amount;
     private String transaction_type;
-    private Date transaction_date;
+    private String transaction_date;
     private int category_id;
     private int account_id;
     private int to_account;
 
     public TransactionModel() {}
 
-    public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, Date transaction_date, int category_id, int account_id) {
+    public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, String transaction_date, int category_id, int account_id) {
         this.transaction_description = transaction_description;
         this.transaction_amount = transaction_amount;
         this.transaction_type = transaction_type;
@@ -27,7 +27,7 @@ public class TransactionModel implements Parcelable {
         this.account_id = account_id;
     }
 
-    public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, Date transaction_date, int category_id, int account_id, int to_account) {
+    public TransactionModel(String transaction_description, double transaction_amount, String transaction_type, String transaction_date, int category_id, int account_id, int to_account) {
         this.transaction_description = transaction_description;
         this.transaction_amount = transaction_amount;
         this.transaction_type = transaction_type;
@@ -92,11 +92,11 @@ public class TransactionModel implements Parcelable {
         this.transaction_type = transaction_type;
     }
 
-    public Date getTransaction_date() {
+    public String getTransaction_date() {
         return transaction_date;
     }
 
-    public void setTransaction_date(Date transaction_date) {
+    public void setTransaction_date(String transaction_date) {
         this.transaction_date = transaction_date;
     }
 

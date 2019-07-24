@@ -46,7 +46,7 @@ public class SectionListDataAdapter extends RecyclerView.Adapter<SectionListData
         String description = mTransactionModelList.get(position).getTransaction_description();
         int amount = (int) mTransactionModelList.get(position).getTransaction_amount();
         String type = mTransactionModelList.get(position).getTransaction_type();
-        Date transactionDate = mTransactionModelList.get(position).getTransaction_date();
+        String transactionDate = mTransactionModelList.get(position).getTransaction_date();
         int categoryId =  mTransactionModelList.get(position).getCategory_id();
         int accountId = mTransactionModelList.get(position).getAccount_id();
 

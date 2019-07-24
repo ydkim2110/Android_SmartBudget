@@ -72,7 +72,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 String description = transactionItem.getTransaction().getTransaction_description();
                 int amount = (int) transactionItem.getTransaction().getTransaction_amount();
                 String type = transactionItem.getTransaction().getTransaction_type();
-                Date transactionDate = transactionItem.getTransaction().getTransaction_date();
+                String transactionDate = transactionItem.getTransaction().getTransaction_date();
                 int categoryId =  transactionItem.getTransaction().getCategory_id();
                 int accountId = transactionItem.getTransaction().getAccount_id();
 

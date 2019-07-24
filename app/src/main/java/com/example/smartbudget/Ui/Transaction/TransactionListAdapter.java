@@ -37,7 +37,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         String category = String.valueOf(mTransactionModelList.get(i).getCategory_id());
         String description = mTransactionModelList.get(i).getTransaction_description();
         double amount = mTransactionModelList.get(i).getTransaction_amount();
-        Date date = mTransactionModelList.get(i).getTransaction_date();
+        String date = mTransactionModelList.get(i).getTransaction_date();
 
         viewHolder.setData(category, description, amount, date);
     }
@@ -63,11 +63,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             dateTv = itemView.findViewById(R.id.transaction_list_date);
         }
 
-        private void setData(String category, String description, double amount, Date date) {
+        private void setData(String category, String description, double amount, String date) {
             categoryTv.setText(category);
             descriptionTv.setText(description);
             amountTv.setText(Common.changeNumberToComma((int) amount) + "원");
-            dateTv.setText(new SimpleDateFormat("yyyy-MM-dd").format(date));
+            dateTv.setText(date);
         }
     }
 }

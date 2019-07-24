@@ -246,7 +246,7 @@ public class DatabaseUtils {
                         transaction.setTransaction_description(description);
                         transaction.setTransaction_amount(Double.parseDouble(amount));
                         transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(new Date(date));
+                        transaction.setTransaction_date(date);
                         transaction.setCategory_id(Integer.parseInt(categoryId));
                         transaction.setAccount_id(Integer.parseInt(accountId));
                         transactionList.add(transaction);
