@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_transaction_menu"
+        android:id="@+id/nav_transaction_list"
+        android:title="Save"
+        android:icon="@drawable/ic_list_black_24dp"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nav_transaction_calendar"
         android:title="Save"
         android:icon="@drawable/ic_date_range_black_24dp"
         app:showAsAction="ifRoom" />

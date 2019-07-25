@@ -59,6 +59,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
 
         bottom_sheet = view.findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
+        sheetBehavior.setPeekHeight(180);
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -83,7 +84,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
             }
         });
 
-        mRecyclerView = view.findViewById(R.id.account_recyclerview);
+        mRecyclerView = view.findViewById(R.id.rv_account);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(layoutManager.getOrientation());

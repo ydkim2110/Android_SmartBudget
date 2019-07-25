@@ -29,8 +29,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -117,7 +119,7 @@ public class TransactionFragment extends Fragment {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
+                Log.d(TAG, "onTabSelected: "+tab.getText());
             }
 
             @Override
@@ -136,15 +138,15 @@ public class TransactionFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void toggleEvent(CalendarToggleEvent event) {
-        if (calendar_container.getVisibility() == View.VISIBLE) {
-            calendar_container.setVisibility(View.INVISIBLE);
+        if (event.getType() == Common.LIST_TYPE) {
             list_container.setVisibility(View.VISIBLE);
-        } else {
-            calendar_container.setVisibility(View.VISIBLE);
+            calendar_container.setVisibility(View.INVISIBLE);
+        } else if (event.getType() == Common.CALENDAR_TYPE) {
             list_container.setVisibility(View.INVISIBLE);
+            calendar_container.setVisibility(View.VISIBLE);
         }
     }
-    
+
     @Override
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
@@ -161,7 +163,7 @@ public class TransactionFragment extends Fragment {
         int linearLayoutMonth = view.findViewById(R.id.linearLayout_month).getMeasuredHeight();
         int linearLayoutDay = view.findViewById(R.id.linearLayout).getMeasuredHeight();
 
-        height = (size.y-statusBarHeight-linearLayoutMonth-linearLayoutDay)/5;
+        height = (size.y - statusBarHeight - linearLayoutMonth - linearLayoutDay) / 5;
 
         mRecyclerView = view.findViewById(R.id.rv_calendar);
         mLayoutManager = new GridLayoutManager(getActivity(), 7);
@@ -187,8 +189,8 @@ public class TransactionFragment extends Fragment {
 
         Calendar monthCalendar = (Calendar) mCalendar.clone();
         monthCalendar.set(Calendar.DAY_OF_MONTH, 1);
-        int firstDayOfMonth = monthCalendar.get(Calendar.DAY_OF_WEEK)-1;
-        Log.d(TAG, "setUpCalendar: firstDayOfMonth: "+firstDayOfMonth);
+        int firstDayOfMonth = monthCalendar.get(Calendar.DAY_OF_WEEK) - 1;
+        Log.d(TAG, "setUpCalendar: firstDayOfMonth: " + firstDayOfMonth);
         monthCalendar.add(Calendar.DAY_OF_MONTH, -firstDayOfMonth);
 
         while (mDateList.size() < MAX_CALENDAR_DAYS) {
@@ -201,11 +203,30 @@ public class TransactionFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        List<Date> calendarList = new ArrayList<>();
+
+        for (int i = 0; i < 12; i++) {
+            calendarList.add(calendar.getTime());
+            if (i==0) {
+                for (int j = 0; j < 2; j++) {
+                    calendar2.add(Calendar.MONTH, 1);
+                    calendarList.add(calendar2.getTime());
+                }
+            }
+            calendar.add(Calendar.MONTH, -1);
+        }
+
+        Collections.sort(calendarList);
+
         DynamicFragmentAdapter adapter = new DynamicFragmentAdapter(getChildFragmentManager());
-        for(int i=0; i<10; i++){
-            adapter.addFragment(DynamicFragment.newInstance(), "6월 "+(i+1)+"일");
+        for (int i = 0; i < calendarList.size(); i++) {
+            adapter.addFragment(DynamicFragment.newInstance(calendarList.get(i).getTime()), dateFormat.format(calendarList.get(i)));
         }
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(calendarList.size()-3);
     }
 
 }

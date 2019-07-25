@@ -14,6 +14,8 @@ import java.util.Locale;
 public class Common {
 
     public static final String KEY_SELECTED_CATEGORY = "SELECTED_CATEGORY";
+    public static final int LIST_TYPE = 0;
+    public static final int CALENDAR_TYPE = 1;
 
     public static AccountModel SELECTED_ACCOUNT = null;
 

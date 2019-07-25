@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".Ui.Account.AccountFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/account_recyclerview"
+        android:id="@+id/rv_account"
         android:background="#e9e9e9"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

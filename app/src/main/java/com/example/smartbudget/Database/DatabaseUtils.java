@@ -56,7 +56,10 @@ public class DatabaseUtils {
         GetThisWeekTransactionAsync task = new GetThisWeekTransactionAsync(db, listener);
         task.execute();
     }
-
+    public static void getThisMonthTransaction(DBHelper db, String date, ITransactionLoadListener listener) {
+        GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
+        task.execute();
+    }
     public static void insertTransactionAsync(DBHelper db, ITransactionInsertListener listener, TransactionModel... transactionModels) {
         InsertTransactionAsync task = new InsertTransactionAsync(db, listener);
         task.execute(transactionModels);
@@ -321,6 +324,62 @@ public class DatabaseUtils {
         protected void onPostExecute(List<TransactionModel> transactionList) {
             super.onPostExecute(transactionList);
             mListener.onTransactionLoadSuccess(transactionList);
+        }
+    }
+
+    private static class GetThisMonthTransactionAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        ITransactionLoadListener mListener;
+        String date = "";
+
+        public GetThisMonthTransactionAsync(DBHelper db, String date, ITransactionLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+            this.date = date;
+        }
+
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getThisMonthTransactions(date);
+            Log.d(TAG, "cursor.getCount(): "+cursor.getCount());
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setTransaction_description(description);
+                        transaction.setTransaction_amount(Double.parseDouble(amount));
+                        transaction.setTransaction_type(type);
+                        transaction.setTransaction_date(date);
+                        transaction.setCategory_id(Integer.parseInt(categoryId));
+                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return transactionList;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            if (transactionList != null)
+                mListener.onTransactionLoadSuccess(transactionList);
         }
     }
 

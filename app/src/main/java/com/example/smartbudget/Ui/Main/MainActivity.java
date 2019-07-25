@@ -2,6 +2,7 @@ package com.example.smartbudget.Ui.Main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -32,6 +34,7 @@ import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionFragment;
 import com.example.smartbudget.Ui.Travel.AddTravelActivity;
 import com.example.smartbudget.Ui.Travel.TravelFragment;
+import com.example.smartbudget.Utils.Common;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     private Toolbar mToolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawer;
+    private CoordinatorLayout content;
 
     public static DBHelper mDBHelper;
 
@@ -89,7 +93,14 @@ public class MainActivity extends AppCompatActivity
     private void initDrawAndNavigationView() {
         Log.d(TAG, "initDrawAndNavigationView: called!!");
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float slideX = drawerView.getWidth() * slideOffset / 2;
+                content.setTranslationX(slideX);
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -101,6 +112,9 @@ public class MainActivity extends AppCompatActivity
         fab = findViewById(R.id.fab);
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        content = findViewById(R.id.content);
+
+        //drawer.setScrimColor(Color.TRANSPARENT);
     }
 
     private void initToolbar() {
@@ -142,8 +156,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.nav_transaction_menu) {
-            EventBus.getDefault().post(new CalendarToggleEvent());
+        } else if (id == R.id.nav_transaction_list) {
+            EventBus.getDefault().post(new CalendarToggleEvent(Common.LIST_TYPE));
+        } else if (id == R.id.nav_transaction_calendar) {
+            EventBus.getDefault().post(new CalendarToggleEvent(Common.CALENDAR_TYPE));
         }
 
         return super.onOptionsItemSelected(item);

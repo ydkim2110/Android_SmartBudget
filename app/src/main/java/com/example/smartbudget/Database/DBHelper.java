@@ -10,6 +10,7 @@ import android.util.Log;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Utils.Common;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -238,8 +239,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getThisWeekTransactions() {
         SQLiteDatabase db = this.getWritableDatabase();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String[] args = {dateFormat.format(Common.getWeekStartDate()), dateFormat.format(Common.getWeekEndDate())};
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME
-                + " WHERE DATE("+Transaction.COL_DATE+") >= DATE('now', 'weekday 1', '-7 days')" , null);
+                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?) AND DATE(?)" , args);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getThisMonthTransactions(String date) {
+        Log.d(TAG, "getThisMonthTransactions: "+date);
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] args = {date, date};
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME
+                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')", args);
         if (cursor != null) {
             cursor.moveToFirst();
         }
