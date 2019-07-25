@@ -45,7 +45,7 @@ public class TravelDetailFragment extends Fragment implements ITransactionLoadLi
 
     @SuppressLint("WrongConstant")
     private void initView(View view) {
-        mRecyclerView = view.findViewById(R.id.transaction_list_recyclerview);
+        mRecyclerView = view.findViewById(R.id.rv_transaction_list);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(layoutManager.getOrientation());

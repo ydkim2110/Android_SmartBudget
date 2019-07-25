@@ -2,20 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
     android:background="@android:color/white"
     android:elevation="4dp"
     android:foreground="?attr/selectableItemBackground"
-    android:orientation="vertical"
-    android:layout_marginTop="16dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="Spending Pattern"
         android:textColor="#000000"
         android:textSize="20sp"
@@ -31,13 +31,11 @@
         android:layout_height="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/shape_circle_progressbar"
         android:indeterminate="false"
         android:max="100"
         android:progress="65"
         android:progressDrawable="@drawable/rotate_circular_progressbar_normal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -46,16 +44,15 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/shape_circle_progressbar"
         android:indeterminate="false"
         android:max="100"
         android:progress="25"
         android:progressDrawable="@drawable/rotate_circular_progressbar_waste"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/pb_circle_invest"
         app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toEndOf="@+id/pb_circle_normal" />
+        app:layout_constraintStart_toEndOf="@+id/pb_circle_normal"
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_normal" />
 
 
     <ProgressBar
@@ -65,13 +62,11 @@
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:background="@drawable/shape_circle_progressbar"
         android:indeterminate="false"
         android:max="100"
         android:progress="10"
         android:progressDrawable="@drawable/rotate_circular_progressbar_invest"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -107,5 +102,54 @@
         app:layout_constraintEnd_toEndOf="@+id/pb_circle_invest"
         app:layout_constraintStart_toStartOf="@+id/pb_circle_invest"
         app:layout_constraintTop_toTopOf="@+id/pb_circle_invest" />
+
+    <TextView
+        android:id="@+id/tv_total_spending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="1,230,000원"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="1,000,000원"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_normal"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_normal"
+        app:layout_constraintTop_toBottomOf="@+id/pb_circle_normal" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="200,000원"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_waste"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_waste"
+        app:layout_constraintTop_toBottomOf="@+id/pb_circle_waste" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="30,000원"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_invest"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_invest"
+        app:layout_constraintTop_toBottomOf="@+id/pb_circle_invest" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

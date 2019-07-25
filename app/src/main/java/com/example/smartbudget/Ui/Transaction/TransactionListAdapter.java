@@ -66,7 +66,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         private void setData(String category, String description, double amount, String date) {
             categoryTv.setText(category);
             descriptionTv.setText(description);
-            amountTv.setText(Common.changeNumberToComma((int) amount) + "원");
+            amountTv.setText(new StringBuilder(Common.changeNumberToComma((int) amount)).append("원"));
             dateTv.setText(date);
         }
     }

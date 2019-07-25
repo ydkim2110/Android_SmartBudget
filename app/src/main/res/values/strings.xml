@@ -45,5 +45,6 @@
 
     <!-- Toast Message -->
     <string name="toast_on_back_pressed_message">\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.</string>
+    <string name="money_unit">원</string>
 
 </resources>

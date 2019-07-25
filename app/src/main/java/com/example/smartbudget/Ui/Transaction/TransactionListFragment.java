@@ -2,68 +2,77 @@ package com.example.smartbudget.Ui.Transaction;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.TransactionModel;
-import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Utils.Common;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-public class DynamicFragment extends Fragment implements ITransactionLoadListener {
+public class TransactionListFragment extends Fragment implements ITransactionLoadListener {
 
-    private static final String TAG = DynamicFragment.class.getSimpleName();
+    private static final String TAG = TransactionListFragment.class.getSimpleName();
 
-    public static DynamicFragment newInstance(long time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static TransactionListFragment newInstance(long time) {
 
-        DynamicFragment fragment = new DynamicFragment();
+        TransactionListFragment fragment = new TransactionListFragment();
         Bundle args = new Bundle();
-        args.putString("date", dateFormat.format(time));
+        args.putString("date", Common.dateFormat.format(time));
         fragment.setArguments(args);
         return fragment;
     }
 
 
-    private RecyclerView mRecyclerView;
+    private RecyclerView rv_transaction_list;
+    private TextView tv_no_item;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dynamic_fragment_layout, container, false);
+        initView(view);
 
         DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, getArguments().getString("date"), this);
-
-        initView(view);
 
         return view;
     }
 
     @SuppressLint("WrongConstant")
     private void initView(View view) {
-        mRecyclerView = view.findViewById(R.id.transaction_list_recyclerview);
-        mRecyclerView.setHasFixedSize(true);
+        rv_transaction_list = view.findViewById(R.id.rv_transaction_list);
+        tv_no_item = view.findViewById(R.id.tv_no_item);
+
+        rv_transaction_list.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(layoutManager);
+        rv_transaction_list.setLayoutManager(layoutManager);
+        rv_transaction_list.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
 
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
+        if (transactionList.size() < 1) {
+            rv_transaction_list.setVisibility(View.INVISIBLE);
+            tv_no_item.setVisibility(View.VISIBLE);
+        } else {
+            rv_transaction_list.setVisibility(View.VISIBLE);
+            tv_no_item.setVisibility(View.INVISIBLE);
+        }
         TransactionListAdapter adapter = new TransactionListAdapter(transactionList);
-        mRecyclerView.setAdapter(adapter);
+        rv_transaction_list.setAdapter(adapter);
     }
 
     @Override

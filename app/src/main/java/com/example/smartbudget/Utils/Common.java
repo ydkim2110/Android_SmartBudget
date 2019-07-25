@@ -33,6 +33,7 @@ public class Common {
     public static final String EXTRA_EDIT_TRANSACTION = "EDIT_TRANSACTION";
 
     public static final SimpleDateFormat yearmonthDateFormate = new SimpleDateFormat("yyyy MMMM", Locale.KOREA);
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     ////// Calculator
     public static final String ACTIVITY_MODE = "ActivityMode";

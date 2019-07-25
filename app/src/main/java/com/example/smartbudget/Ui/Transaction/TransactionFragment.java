@@ -8,7 +8,6 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -58,7 +57,7 @@ public class TransactionFragment extends Fragment {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
-    private RecyclerView mRecyclerView;
+    private RecyclerView rv_calendar;
     private RecyclerView.LayoutManager mLayoutManager;
     private CalendarAdapter mAdapter;
 
@@ -165,10 +164,10 @@ public class TransactionFragment extends Fragment {
 
         height = (size.y - statusBarHeight - linearLayoutMonth - linearLayoutDay) / 5;
 
-        mRecyclerView = view.findViewById(R.id.rv_calendar);
+        rv_calendar = view.findViewById(R.id.rv_calendar);
         mLayoutManager = new GridLayoutManager(getActivity(), 7);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(0));
+        rv_calendar.setLayoutManager(mLayoutManager);
+        rv_calendar.addItemDecoration(new SpacesItemDecoration(0));
 
         setUpCalendar();
     }
@@ -199,7 +198,7 @@ public class TransactionFragment extends Fragment {
         }
 
         mAdapter = new CalendarAdapter(getActivity(), mDateList, mCalendar, height);
-        mRecyclerView.setAdapter(mAdapter);
+        rv_calendar.setAdapter(mAdapter);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -221,9 +220,9 @@ public class TransactionFragment extends Fragment {
 
         Collections.sort(calendarList);
 
-        DynamicFragmentAdapter adapter = new DynamicFragmentAdapter(getChildFragmentManager());
+        TransactionListFragmentAdapter adapter = new TransactionListFragmentAdapter(getChildFragmentManager());
         for (int i = 0; i < calendarList.size(); i++) {
-            adapter.addFragment(DynamicFragment.newInstance(calendarList.get(i).getTime()), dateFormat.format(calendarList.get(i)));
+            adapter.addFragment(TransactionListFragment.newInstance(calendarList.get(i).getTime()), dateFormat.format(calendarList.get(i)));
         }
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(calendarList.size()-3);
