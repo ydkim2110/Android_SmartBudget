@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Ui.Travel.TravelFullListActivity"></activity>
+        <activity android:name=".Ui.Transaction.Add.Category.InputCategoryActivity"></activity>
+        <activity android:name=".Ui.Travel.TravelFullListActivity" />
         <activity android:name=".Ui.Travel.AddTravelTransactionActivity" />
         <activity android:name=".Ui.Travel.TravelDetailActivity" />
         <activity android:name=".Ui.Travel.AddTravelActivity" />
@@ -38,9 +39,9 @@
         <activity android:name=".Ui.Home.Overview.OverviewActivity" />
         <activity
             android:name=".Ui.Main.MainActivity"
+            android:hardwareAccelerated="true"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:hardwareAccelerated="true"/>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -103,9 +104,7 @@ public class TransactionFragment extends Fragment {
                 mCalendar.add(Calendar.MONTH, 1);
                 setUpCalendar();
             });
-
             loadCalendar(view);
-
         });
 
         mTabLayout = view.findViewById(R.id.transaction_list_tab);
@@ -160,7 +159,12 @@ public class TransactionFragment extends Fragment {
 
         int statusBarHeight = getStatusBarHeight();
         int linearLayoutMonth = view.findViewById(R.id.linearLayout_month).getMeasuredHeight();
-        int linearLayoutDay = view.findViewById(R.id.linearLayout).getMeasuredHeight();
+        int linearLayoutDay = view.findViewById(R.id.linearLayout).getLayoutParams().height;
+
+        Log.d(TAG, "loadCalendar: size.y: "+size.y);
+        Log.d(TAG, "loadCalendar: statusBarHeight:"+statusBarHeight);
+        Log.d(TAG, "loadCalendar: linearLayoutMonth:"+linearLayoutMonth);
+        Log.d(TAG, "loadCalendar: linearLayoutDay:"+linearLayoutDay);
 
         height = (size.y - statusBarHeight - linearLayoutMonth - linearLayoutDay) / 5;
 

@@ -24,6 +24,7 @@ import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Ui.Transaction.Add.Account.InputAccountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Amount.InputAmountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Category.CategoryDialogFragment;
+import com.example.smartbudget.Ui.Transaction.Add.Category.InputCategoryActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Date.DatePickerDialogFragment;
 import com.example.smartbudget.Ui.Transaction.Add.Date.IDialogSendListener;
 import com.example.smartbudget.Ui.Transaction.Add.Note.InputNoteActivity;
@@ -46,9 +47,10 @@ public class AddTransactionActivity extends AppCompatActivity
 
     private static final String TAG = AddTransactionActivity.class.getSimpleName();
     private static final int INPUT_ACCOUNT_REQUEST = 100;
-    private static final int INPUT_NOTE_REQUEST = 200;
-    private static final int INPUT_AMOUNT_REQUEST = 300;
-    private static final int REQUEST_TAKE_PICTURE = 400;
+    private static final int INPUT_CATEGORY_REQUEST = 200;
+    private static final int INPUT_NOTE_REQUEST = 300;
+    private static final int INPUT_AMOUNT_REQUEST = 400;
+    private static final int REQUEST_TAKE_PICTURE = 500;
 
     private Toolbar mToolbar;
     private RadioGroup mRadioGroup;
@@ -253,8 +255,10 @@ public class AddTransactionActivity extends AppCompatActivity
         });
 
         categoryEdt.setOnClickListener(v -> {
-            DialogFragment dialogFragment = CategoryDialogFragment.newInstance();
-            dialogFragment.show(getSupportFragmentManager(), "category_dialog");
+//            DialogFragment dialogFragment = CategoryDialogFragment.newInstance();
+//            dialogFragment.show(getSupportFragmentManager(), "category_dialog");
+            Intent intent = new Intent(AddTransactionActivity.this, InputCategoryActivity.class);
+            startActivityForResult(intent, INPUT_CATEGORY_REQUEST);
         });
 
         descriptionEdt.setOnClickListener(v -> {
