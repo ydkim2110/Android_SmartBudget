@@ -13,10 +13,7 @@ import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DatabaseUtils {
@@ -241,7 +238,7 @@ public class DatabaseUtils {
                     do {
                         TransactionModel transaction = new TransactionModel();
                         long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
-                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
@@ -250,11 +247,11 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_description(description);
+                        transaction.setTransaction_note(description);
                         transaction.setTransaction_amount(Double.parseDouble(amount));
                         transaction.setTransaction_type(type);
                         transaction.setTransaction_date(date);
-                        transaction.setCategory_id(Integer.parseInt(categoryId));
+                        transaction.setCategory_id(categoryId);
                         transaction.setAccount_id(Integer.parseInt(accountId));
                         transactionList.add(transaction);
                     }
@@ -288,13 +285,15 @@ public class DatabaseUtils {
         protected List<TransactionModel> doInBackground(Void... voids) {
             Cursor cursor = db.getThisWeekTransactions();
 
+            Log.d(TAG, "doInBackground: cursor: "+cursor.getCount());
+
             List<TransactionModel> transactionList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 try {
                     do {
                         TransactionModel transaction = new TransactionModel();
                         long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
-                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
@@ -303,11 +302,11 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_description(description);
+                        transaction.setTransaction_note(description);
                         transaction.setTransaction_amount(Double.parseDouble(amount));
                         transaction.setTransaction_type(type);
                         transaction.setTransaction_date(date);
-                        transaction.setCategory_id(Integer.parseInt(categoryId));
+                        transaction.setCategory_id(categoryId);
                         transaction.setAccount_id(Integer.parseInt(accountId));
                         transactionList.add(transaction);
                     }
@@ -349,7 +348,7 @@ public class DatabaseUtils {
                     do {
                         TransactionModel transaction = new TransactionModel();
                         long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
-                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DESCRIPTION));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
@@ -358,11 +357,11 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_description(description);
+                        transaction.setTransaction_note(description);
                         transaction.setTransaction_amount(Double.parseDouble(amount));
                         transaction.setTransaction_type(type);
                         transaction.setTransaction_date(date);
-                        transaction.setCategory_id(Integer.parseInt(categoryId));
+                        transaction.setCategory_id(categoryId);
                         transaction.setAccount_id(Integer.parseInt(accountId));
                         transactionList.add(transaction);
                     }

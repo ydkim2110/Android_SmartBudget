@@ -8,8 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +22,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BudgetFragment extends Fragment {
+public class BudgetFragment extends Fragment implements ICategoryLoadListener {
 
     private static BudgetFragment instance;
 
@@ -53,11 +58,22 @@ public class BudgetFragment extends Fragment {
         budgetList.add(new Budget("건강", 1000000));
         budgetList.add(new Budget("기타", 550000));
 
-        BudgetAdapter budgetAdapter = new BudgetAdapter(budgetList);
-        budgetRecyclerview.setAdapter(budgetAdapter);
-        budgetAdapter.notifyDataSetChanged();
+        DatabaseUtils.getAllCategory(MainActivity.mDBHelper, this);
 
         return view;
     }
 
+    @Override
+    public void onCategoryLoadSuccess(List<CategoryModel> categoryList) {
+        if (categoryList != null) {
+            BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), categoryList);
+            budgetRecyclerview.setAdapter(budgetAdapter);
+            budgetAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onCategoryLoadFailed(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
 }

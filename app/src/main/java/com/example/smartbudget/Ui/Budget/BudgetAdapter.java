@@ -1,6 +1,7 @@
 package com.example.smartbudget.Ui.Budget;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
@@ -19,9 +22,11 @@ import java.util.List;
 
 public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder> {
 
-    private List<Budget> budgetList;
+    private Context mContext;
+    private List<CategoryModel> budgetList;
 
-    public BudgetAdapter(List<Budget> budgetList) {
+    public BudgetAdapter(Context context, List<CategoryModel> budgetList) {
+        this.mContext = context;
         this.budgetList = budgetList;
     }
 
@@ -35,8 +40,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
-        final String category = budgetList.get(i).getCategory();
-        int amount = budgetList.get(i).getAmount();
+        final String category = budgetList.get(i).getCategory_name();
+        int amount = 4000000;
 
         viewHolder.setData(category, amount);
 

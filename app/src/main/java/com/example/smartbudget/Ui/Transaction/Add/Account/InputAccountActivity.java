@@ -58,23 +58,15 @@ public class InputAccountActivity extends AppCompatActivity implements IAccountL
     private void handleClickEvent() {
         Log.d(TAG, "handleClickEvent: called!!");
 
-        mCancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mCancelBtn.setOnClickListener(v -> finish());
 
-        mSaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(InputAccountActivity.this, "selectedAccount: " + selectedAccount.getAccount_name(),
-                        Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra(Common.EXTRA_INPUT_ACCOUNT, selectedAccount);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
+        mSaveBtn.setOnClickListener(v -> {
+            Toast.makeText(InputAccountActivity.this, "selectedAccount: " + selectedAccount.getAccount_name(),
+                    Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.putExtra(Common.EXTRA_INPUT_ACCOUNT, selectedAccount);
+            setResult(RESULT_OK, intent);
+            finish();
         });
     }
 

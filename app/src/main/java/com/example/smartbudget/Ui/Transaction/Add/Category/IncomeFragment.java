@@ -47,8 +47,8 @@ public class IncomeFragment extends Fragment {
         rv_income_categories.setHasFixedSize(true);
         rv_income_categories.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        CategoryAdapter adapter = new CategoryAdapter(getContext(), Arrays.asList(DefaultCategories.getDefaultIncomeCategories()));
-//        rv_income_categories.setAdapter(adapter);
+        CategoryIncomeAdapter adapter = new CategoryIncomeAdapter(getContext(), Arrays.asList(DefaultCategories.getDefaultIncomeCategories()));
+        rv_income_categories.setAdapter(adapter);
 
         return view;
     }

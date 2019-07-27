@@ -41,88 +41,52 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RadioGroup
-                    android:id="@+id/radio_group"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <RadioButton
-                        android:id="@+id/rb_expense"
-                        android:text="Expense"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-
-                    <RadioButton
-                        android:id="@+id/rb_income"
-                        android:text="Income"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-
-                    <RadioButton
-                        android:id="@+id/rb_transfer"
-                        android:text="Transfer"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
-
-                </RadioGroup>
-
-            </LinearLayout>
-
-            <com.example.smartbudget.Utils.ClearEditText
-                android:id="@+id/add_transaction_account"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Account"
-                android:focusable="false"
-                android:padding="16dp" />
-
-            <com.example.smartbudget.Utils.ClearEditText
+            <EditText
                 android:id="@+id/add_transaction_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Category"
+                android:drawableRight="@drawable/ic_list_black_24dp"
                 android:focusable="false"
                 android:padding="16dp" />
 
-            <com.example.smartbudget.Utils.ClearEditText
+            <EditText
+                android:id="@+id/add_transaction_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Account"
+                android:drawableRight="@drawable/ic_account_balance_wallet_black_24dp"
+                android:focusable="false"
+                android:padding="16dp" />
+
+
+            <EditText
+                android:id="@+id/add_transaction_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Amount"
+                android:drawableRight="@drawable/category_default"
+                android:focusable="false"
+                android:inputType="number"
+                android:padding="16dp" />
+
+            <EditText
                 android:id="@+id/add_transaction_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Note"
+                android:drawableRight="@drawable/ic_note_add_black_24dp"
                 android:focusable="false"
                 android:padding="16dp" />
 
-            <com.example.smartbudget.Utils.ClearEditText
+            <EditText
                 android:id="@+id/add_transaction_date"
                 android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Date"
+                android:drawableRight="@drawable/ic_date_range_black_24dp"
                 android:padding="16dp" />
-
-            <com.example.smartbudget.Utils.ClearEditText
-                android:id="@+id/add_transaction_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Amount"
-                android:focusable="false"
-                android:inputType="number"
-                android:padding="16dp" />
-
-            <ImageView
-                android:id="@+id/add_transaction_photo"
-                android:src="@drawable/ic_account_balance_wallet_black_24dp"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
 
         </LinearLayout>
 

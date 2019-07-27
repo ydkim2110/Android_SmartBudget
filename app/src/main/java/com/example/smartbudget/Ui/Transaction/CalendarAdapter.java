@@ -26,14 +26,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     private Context mContext;
     private List<Date> mDateList;
-    private Calendar mCalendar;
-    private int mHeight;
+    private Calendar mCalendar;;
 
-    public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar, int height) {
+    public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar) {
         mContext = context;
         mDateList = dateList;
         mCalendar = calendar;
-        mHeight = height;
     }
 
     @NonNull

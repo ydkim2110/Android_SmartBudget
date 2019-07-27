@@ -1,14 +1,20 @@
 package com.example.smartbudget.Utils;
 
+import android.content.Context;
+
 import com.example.smartbudget.Model.AccountModel;
+import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.DefaultCategories;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Common {
@@ -16,6 +22,12 @@ public class Common {
     public static final String KEY_SELECTED_CATEGORY = "SELECTED_CATEGORY";
     public static final int LIST_TYPE = 0;
     public static final int CALENDAR_TYPE = 1;
+
+    public static final int TYPE_CATEGORY = 0;
+    public static final int TYPE_SUB_CATEGORY = 1;
+    public static final int TYPE_EXPENSE_TRANSACTION = 0;
+    public static final int TYPE_INCOME_TRANSACTION = 1;
+    public static final int TYPE_TRANSFER_TRANSACTION = 2;
 
     public static AccountModel SELECTED_ACCOUNT = null;
 
@@ -145,5 +157,15 @@ public class Common {
 
     public static String removeComma(String number) {
         return number.replace(",", "");
+    }
+
+    public static Category getCategory(String categoryId) {
+        List<Category> categoryList = Arrays.asList(DefaultCategories.getDefaultExpenseCategories());
+        for (Category category : categoryList) {
+            if (category.getCategoryID().equals(categoryId)) {
+                return category;
+            }
+        }
+        return null;
     }
 }

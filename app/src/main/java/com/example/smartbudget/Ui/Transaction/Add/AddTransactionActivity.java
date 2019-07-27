@@ -1,26 +1,27 @@
 package com.example.smartbudget.Ui.Transaction.Add;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
+import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
+import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
+import com.example.smartbudget.Model.SubCategory;
 import com.example.smartbudget.Ui.Transaction.Add.Account.InputAccountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Amount.InputAmountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Category.CategoryDialogFragment;
@@ -32,35 +33,32 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
-import com.example.smartbudget.Ui.Home.Transaction;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class AddTransactionActivity extends AppCompatActivity
         implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener {
 
     private static final String TAG = AddTransactionActivity.class.getSimpleName();
+
     private static final int INPUT_ACCOUNT_REQUEST = 100;
     private static final int INPUT_CATEGORY_REQUEST = 200;
     private static final int INPUT_NOTE_REQUEST = 300;
     private static final int INPUT_AMOUNT_REQUEST = 400;
-    private static final int REQUEST_TAKE_PICTURE = 500;
 
     private Toolbar mToolbar;
-    private RadioGroup mRadioGroup;
-    private RadioButton mRBIncome, mRBExpense, mRBTransfer;
     private EditText accountEdt;
     private EditText categoryEdt;
-    private EditText descriptionEdt;
+    private EditText noteEdt;
     private EditText dateEdt;
     private EditText amountEdt;
-    private ImageView photoImage;
     private Button saveBtn;
     private Button cancelBtn;
     private Calendar calendar;
@@ -70,31 +68,32 @@ public class AddTransactionActivity extends AppCompatActivity
     int _day;
 
     private AccountModel requestedAccountModel;
-    private CategoryModel requestedCategoryModel;
     private String selectedType = "";
+    private Category selectedCategory = null;
+    private SubCategory selectedSubCategory = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
+        Log.d(TAG, "onCreate: started!!");
 
-        initToolbar();
-        initViews();
+        initView();
 
         if (getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION) != null) {
             TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
             String passedAccount = String.valueOf(transactionModel.getAccount_id());
             String passedCategory = String.valueOf(transactionModel.getCategory_id());
-            String passedDescription = transactionModel.getTransaction_description();
+            String passedDescription = transactionModel.getTransaction_note();
             int passedAmount = (int) transactionModel.getTransaction_amount();
             String passedDate = String.valueOf(transactionModel.getTransaction_date());
 
-            getSupportActionBar().setTitle("Edit Transaction");
+            getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_edit_transaction));
             saveBtn.setText("Update");
 
             accountEdt.setText(passedAccount);
             categoryEdt.setText(passedCategory);
-            descriptionEdt.setText(passedDescription);
+            noteEdt.setText(passedDescription);
             amountEdt.setText(Common.changeNumberToComma(passedAmount));
             dateEdt.setText(passedDate);
         }
@@ -141,7 +140,7 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         });
 
-        descriptionEdt.addTextChangedListener(new TextWatcher() {
+        noteEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -181,7 +180,7 @@ public class AddTransactionActivity extends AppCompatActivity
 
         if (!TextUtils.isEmpty(accountEdt.getText())) {
             if (!TextUtils.isEmpty(categoryEdt.getText())) {
-                if (!TextUtils.isEmpty(descriptionEdt.getText())) {
+                if (!TextUtils.isEmpty(noteEdt.getText())) {
                     if (!TextUtils.isEmpty(amountEdt.getText())) {
                         saveBtn.setEnabled(true);
                     } else {
@@ -198,24 +197,17 @@ public class AddTransactionActivity extends AppCompatActivity
         }
     }
 
-    private void initToolbar() {
+    private void initView() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Add Transaction");
+        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_add_transaction));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
-    private void initViews() {
-        mRadioGroup = findViewById(R.id.radio_group);
-        mRBIncome = findViewById(R.id.rb_income);
-        mRBExpense = findViewById(R.id.rb_expense);
-        mRBTransfer = findViewById(R.id.rb_transfer);
         accountEdt = findViewById(R.id.add_transaction_account);
         categoryEdt = findViewById(R.id.add_transaction_category);
-        descriptionEdt = findViewById(R.id.add_transaction_description);
+        noteEdt = findViewById(R.id.add_transaction_description);
         dateEdt = findViewById(R.id.add_transaction_date);
         amountEdt = findViewById(R.id.add_transaction_amount);
-        photoImage = findViewById(R.id.add_transaction_photo);
         cancelBtn = findViewById(R.id.cancel_btn);
         saveBtn = findViewById(R.id.save_btn);
         saveBtn.setEnabled(false);
@@ -225,27 +217,10 @@ public class AddTransactionActivity extends AppCompatActivity
         _month = calendar.get(Calendar.MONTH) + 1;
         _day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        dateEdt.setText(new StringBuilder().append(_year).append("-").append(_month).append("-").append(_day));
-
-        mRadioGroup.check(R.id.rb_expense);
+        dateEdt.setText(Common.dateFormat.format(calendar.getTime()));
     }
 
     private void handleClickEvent() {
-        mRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            switch (checkedId) {
-                case R.id.rb_income:
-                    selectedType = "Income";
-                    break;
-                case R.id.rb_expense:
-                    selectedType = "Expense";
-                    break;
-                case R.id.rb_transfer:
-                    selectedType = "Transfer";
-                    break;
-                default:
-                    return;
-            }
-        });
         accountEdt.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputAccountActivity.class);
             if (accountEdt.getText() != null) {
@@ -255,16 +230,14 @@ public class AddTransactionActivity extends AppCompatActivity
         });
 
         categoryEdt.setOnClickListener(v -> {
-//            DialogFragment dialogFragment = CategoryDialogFragment.newInstance();
-//            dialogFragment.show(getSupportFragmentManager(), "category_dialog");
             Intent intent = new Intent(AddTransactionActivity.this, InputCategoryActivity.class);
             startActivityForResult(intent, INPUT_CATEGORY_REQUEST);
         });
 
-        descriptionEdt.setOnClickListener(v -> {
+        noteEdt.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputNoteActivity.class);
-            if (descriptionEdt.getText() != null) {
-                intent.putExtra(Common.EXTRA_PASS_INPUT_NOTE, descriptionEdt.getText().toString());
+            if (noteEdt.getText() != null) {
+                intent.putExtra(Common.EXTRA_PASS_INPUT_NOTE, noteEdt.getText().toString());
             }
             startActivityForResult(intent, INPUT_NOTE_REQUEST);
         });
@@ -276,29 +249,21 @@ public class AddTransactionActivity extends AppCompatActivity
 
         amountEdt.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputAmountActivity.class);
-            if (descriptionEdt.getText() != null) {
+            if (noteEdt.getText() != null) {
                 intent.putExtra(Common.EXTRA_PASS_INPUT_AMOUNT, amountEdt.getText().toString());
             }
             startActivityForResult(intent, INPUT_AMOUNT_REQUEST);
-        });
-
-        photoImage.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            startActivityForResult(Intent.createChooser(intent, "Choose..."), REQUEST_TAKE_PICTURE);
-
         });
 
         cancelBtn.setOnClickListener(v -> finish());
 
         saveBtn.setOnClickListener(v -> {
             TransactionModel transactionModel = new TransactionModel();
-            transactionModel.setTransaction_description(descriptionEdt.getText().toString());
+            transactionModel.setTransaction_note(noteEdt.getText().toString());
             transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
             transactionModel.setTransaction_type(selectedType);
-            transactionModel.setTransaction_date("2019-07-31");
-            transactionModel.setCategory_id(requestedCategoryModel.getId());
+            transactionModel.setTransaction_date(dateEdt.getText().toString());
+            transactionModel.setCategory_id(selectedCategory.getCategoryID());
             transactionModel.setAccount_id(requestedAccountModel.getId());
             transactionModel.setTo_account(0);
 
@@ -318,26 +283,17 @@ public class AddTransactionActivity extends AppCompatActivity
                     accountEdt.setText(requestedAccountModel.getAccount_name());
                 }
             }
-        }
-        else if (requestCode == INPUT_NOTE_REQUEST) {
+        } else if (requestCode == INPUT_NOTE_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    descriptionEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_NOTE));
+                    noteEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_NOTE));
                 }
             }
-        }
-        else if (requestCode == INPUT_AMOUNT_REQUEST) {
+        } else if (requestCode == INPUT_AMOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     amountEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_AMOUNT));
                 }
-            }
-        }
-        else if (requestCode == REQUEST_TAKE_PICTURE) {
-            if (resultCode == RESULT_OK) {
-                //data.getData returns the content URI for the selected Image
-                Uri selectedImage = data.getData();
-                photoImage.setImageURI(selectedImage);
             }
         }
     }
@@ -353,14 +309,6 @@ public class AddTransactionActivity extends AppCompatActivity
     }
 
     @Override
-    public void sendResult(CategoryModel categoryModel) {
-        requestedCategoryModel = categoryModel;
-        Log.d(TAG, "sendResult: get the result: " + requestedCategoryModel.getId());
-        Toast.makeText(this, "" + requestedCategoryModel.getCategory_name(), Toast.LENGTH_SHORT).show();
-        categoryEdt.setText(requestedCategoryModel.getCategory_name());
-    }
-
-    @Override
     public void OnSendListener(String result) {
         dateEdt.setText(result);
     }
@@ -373,4 +321,50 @@ public class AddTransactionActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void sendResult(CategoryModel categoryModel) {
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void selectedCategory(CategorySelectedEvent event) {
+        if (event.isSuccess()) {
+            if (event.getCategoryType() == Common.TYPE_CATEGORY) {
+                selectedCategory = event.getCategory();
+                categoryEdt.setText(event.getCategory().getCategoryVisibleName(getApplicationContext()));
+                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getCategory().getIconResourceID(), 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(event.getCategory().getIconColor()));
+                }
+            } else if (event.getCategoryType() == Common.TYPE_SUB_CATEGORY) {
+                selectedSubCategory = event.getSubCategory();
+                categoryEdt.setText(event.getSubCategory().getCategoryVisibleName(getApplicationContext()));
+                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getSubCategory().getIconResourceID(), 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(event.getSubCategory().getIconColor()));
+                }
+            }
+
+            if (event.getTransactionType() == Common.TYPE_EXPENSE_TRANSACTION) {
+                selectedType = "Expense";
+            } else if (event.getTransactionType() == Common.TYPE_INCOME_TRANSACTION) {
+                selectedType = "Income";
+            } else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
+                selectedType = "Transfer";
+            }
+        }
+    }
 }

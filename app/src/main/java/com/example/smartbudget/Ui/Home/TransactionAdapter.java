@@ -17,8 +17,6 @@ import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -47,7 +45,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             case ListItem.TYPE_TRANSACTION:
                 View transactionView = LayoutInflater.from(mContext)
-                        .inflate(R.layout.transaction_item_layout, viewGroup, false);
+                        .inflate(R.layout.item_transaction, viewGroup, false);
                 viewHolder = new TransactionViewHolder(transactionView);
                 break;
         }
@@ -69,15 +67,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 TransactionItem transactionItem = (TransactionItem) consolidatedList.get(i);
                 TransactionViewHolder transactionViewHolder = (TransactionViewHolder) viewHolder;
 
-                String description = transactionItem.getTransaction().getTransaction_description();
+                String description = transactionItem.getTransaction().getTransaction_note();
                 int amount = (int) transactionItem.getTransaction().getTransaction_amount();
                 String type = transactionItem.getTransaction().getTransaction_type();
                 String transactionDate = transactionItem.getTransaction().getTransaction_date();
-                int categoryId =  transactionItem.getTransaction().getCategory_id();
+                String categoryId =  transactionItem.getTransaction().getCategory_id();
+                String subCategoryId= null;
                 int accountId = transactionItem.getTransaction().getAccount_id();
 
 
-                final TransactionModel transactionModel = new TransactionModel(description, amount, type, transactionDate, categoryId, accountId);
+                final TransactionModel transactionModel = new TransactionModel(description, amount, type, transactionDate, categoryId, subCategoryId, accountId);
 
                 transactionViewHolder.setData(categoryId, description, amount);
 
@@ -136,14 +135,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             super(itemView);
 
             categoryTv = itemView.findViewById(R.id.transaction_category);
-            descriptionTv = itemView.findViewById(R.id.transaction_description);
+            descriptionTv = itemView.findViewById(R.id.transaction_note);
             amountTv = itemView.findViewById(R.id.transaction_amount);
 
             itemView.setOnClickListener(this);
         }
 
-        private void setData(int category, String description, int amount) {
-            categoryTv.setText(""+category);
+        private void setData(String category, String description, int amount) {
+            categoryTv.setText(category);
             descriptionTv.setText(description);
             amountTv.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
         }

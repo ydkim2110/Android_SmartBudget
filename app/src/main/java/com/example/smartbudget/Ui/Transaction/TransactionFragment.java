@@ -70,8 +70,6 @@ public class TransactionFragment extends Fragment {
     private ImageButton previousBtn;
     private ImageButton nextBtn;
 
-    private int height = 0;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,20 +149,6 @@ public class TransactionFragment extends Fragment {
 
     public void loadCalendar(View view) {
         Log.d(TAG, "loadCalendar: called!!");
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        int statusBarHeight = getStatusBarHeight();
-        int linearLayoutMonth = view.findViewById(R.id.linearLayout_month).getMeasuredHeight();
-        int linearLayoutDay = view.findViewById(R.id.linearLayout).getLayoutParams().height;
-
-        Log.d(TAG, "loadCalendar: size.y: "+size.y);
-        Log.d(TAG, "loadCalendar: statusBarHeight:"+statusBarHeight);
-        Log.d(TAG, "loadCalendar: linearLayoutMonth:"+linearLayoutMonth);
-        Log.d(TAG, "loadCalendar: linearLayoutDay:"+linearLayoutDay);
-
-        height = (size.y - statusBarHeight - linearLayoutMonth - linearLayoutDay) / 5;
 
         rv_calendar = view.findViewById(R.id.rv_calendar);
         mLayoutManager = new GridLayoutManager(getActivity(), 7);
@@ -172,15 +156,6 @@ public class TransactionFragment extends Fragment {
         rv_calendar.addItemDecoration(new SpacesItemDecoration(0));
 
         setUpCalendar();
-    }
-
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     private void setUpCalendar() {
@@ -199,7 +174,7 @@ public class TransactionFragment extends Fragment {
             monthCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        mAdapter = new CalendarAdapter(getActivity(), mDateList, mCalendar, height);
+        mAdapter = new CalendarAdapter(getActivity(), mDateList, mCalendar);
         rv_calendar.setAdapter(mAdapter);
     }
 

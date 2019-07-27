@@ -62,9 +62,16 @@ public class DatePickerDialogFragment extends DialogFragment {
     private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            mIDialogSendListener.OnSendListener(view.getYear() +
-                    "-" + (view.getMonth()+1) +
-                    "-" + view.getDayOfMonth());
+            mIDialogSendListener.OnSendListener(showSetDate(view.getYear(), view.getMonth()+1, view.getDayOfMonth()));
         }
     };
+
+    private String showSetDate(int year, int month, int dayOfMonth) {
+        Log.d(TAG, "showSetDate: year"+year);
+        Log.d(TAG, "showSetDate: month"+month);
+        Log.d(TAG, "showSetDate: dayOfMonth"+dayOfMonth);
+        String result = String.valueOf(new StringBuilder(""+year).append("-").append(""+String.format("%02d", month)).append("-").append(""+String.format("%02d", dayOfMonth)));
+        Log.d(TAG, "showSetDate: result: "+ result);
+        return result;
+    }
 }

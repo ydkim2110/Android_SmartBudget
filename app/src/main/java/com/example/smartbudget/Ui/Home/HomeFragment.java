@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private RecyclerViewDataAdapter mAdapter;
+    private WeekTransactionAdapter mAdapter;
     private ProgressBar progressBar;
     private ProgressBar pb_circle_normal;
     private ProgressBar pb_circle_waste;
@@ -81,7 +81,6 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
 
-    private List<ListItem> mConsolidatedList;
     private HashMap<String, List<TransactionModel>> groupedHashMap;
 
     @Override
@@ -109,9 +108,9 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         int maxValue = 4000000;
         int currentValue = 3200000;
 
-        usedBudgetTv.setText(Common.changeNumberToComma(currentValue) + "원");
-        totalBudgetTv.setText(Common.changeNumberToComma(maxValue) + "원");
-        progressBarPercentage.setText(Common.calcPercentage(currentValue, maxValue) + "%");
+        usedBudgetTv.setText(new StringBuilder(Common.changeNumberToComma(currentValue)).append("원"));
+        totalBudgetTv.setText(new StringBuilder(Common.changeNumberToComma(maxValue)).append("원"));
+        progressBarPercentage.setText(new StringBuilder(Common.calcPercentage(currentValue, maxValue)).append("%"));
 
         progressBar.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, currentValue);
@@ -151,7 +150,6 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        mConsolidatedList = new ArrayList<>();
 
         groupedHashMap = groupDataIntoHashMap(transactionList);
 
@@ -163,35 +161,6 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             Map.Entry entry = (Map.Entry) iterator.next();
             Log.d(TAG, "onTransactionLoadSuccess: " + entry.getKey());
         }
-
-
-//        int total;
-//
-//        TreeMap<String, List<TransactionModel>> tm = new TreeMap<String, List<TransactionModel>>(groupedHashMap);
-//
-//        Iterator<String> iteratorKey = tm.descendingKeySet().iterator();
-//
-//        while (iteratorKey.hasNext()) {
-//            String key = iteratorKey.next();
-//
-//            total = 0;
-//
-//            DateItem dateItem = new DateItem();
-//            dateItem.setDate(key);
-//
-//            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
-//                total += transactionModel.getTransaction_amount();
-//            }
-//
-//            dateItem.setTotal(total);
-//            mConsolidatedList.add(dateItem);
-//
-//            for (TransactionModel transactionModel : groupedHashMap.get(key)) {
-//                TransactionItem transactionItem = new TransactionItem();
-//                transactionItem.setTransaction(transactionModel);
-//                mConsolidatedList.add(transactionItem);
-//            }
-//        }
 
         loadData();
     }
@@ -207,7 +176,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
             mSwipeRefreshLayout.setRefreshing(false);
         }
 
-        mAdapter = new RecyclerViewDataAdapter(getContext(), groupedHashMap);
+        mAdapter = new WeekTransactionAdapter(getContext(), groupedHashMap);
         mRecyclerView.setAdapter(mAdapter);
     }
 

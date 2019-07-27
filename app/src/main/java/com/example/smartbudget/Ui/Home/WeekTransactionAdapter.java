@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,18 +22,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-public class RecyclerViewDataAdapter extends RecyclerView.Adapter<RecyclerViewDataAdapter.MyViewHolder> {
-    private static final String TAG = "RecyclerViewDataAdapter";
+public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransactionAdapter.MyViewHolder> {
+    private static final String TAG = "WeekTransactionAdapter";
 
     private Context mContext;
     private HashMap<String, List<TransactionModel>> mHashMap;
     private ArrayList<String> mKeys = new ArrayList<>();
 
-
-    public RecyclerViewDataAdapter(Context mContext, HashMap<String, List<TransactionModel>> hashMap) {
+    public WeekTransactionAdapter(Context mContext, HashMap<String, List<TransactionModel>> hashMap) {
         this.mContext = mContext;
         this.mHashMap = hashMap;
         for (String aKey : mHashMap.keySet()) {
@@ -56,7 +52,7 @@ public class RecyclerViewDataAdapter extends RecyclerView.Adapter<RecyclerViewDa
         int total = 0;
         Date date = Common.stringToDate(mKeys.get(position));
         holder.tv_date.setText(new SimpleDateFormat("dd").format(date));
-        holder.tv_date_2.setText(new SimpleDateFormat("E").format(date));
+        holder.tv_date_2.setText(new SimpleDateFormat("EE").format(date));
         holder.tv_date_3.setText(new SimpleDateFormat("MMMM yyyy").format(date));
 
         List<TransactionModel> value = mHashMap.get(mKeys.get(position));
@@ -66,16 +62,10 @@ public class RecyclerViewDataAdapter extends RecyclerView.Adapter<RecyclerViewDa
         }
 
         holder.tv_date_total.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
-
         holder.rv_transaction_list.setHasFixedSize(true);
         holder.rv_transaction_list.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
 
-//        DividerItemDecoration dividerItemDecoration =
-//                new DividerItemDecoration(mContext, new LinearLayoutManager(mContext).getOrientation());
-//
-//        holder.rv_transaction_list.addItemDecoration(dividerItemDecoration);
-
-        SectionListDataAdapter adapter = new SectionListDataAdapter(mContext, value);
+        WeekSubTransactionAdapter adapter = new WeekSubTransactionAdapter(mContext, value);
         holder.rv_transaction_list.setAdapter(adapter);
     }
 

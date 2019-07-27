@@ -11,8 +11,6 @@ import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.ViewHolder> {
@@ -27,7 +25,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.transaction_list_item_layout, viewGroup, false);
+                .inflate(R.layout.item_transaction_list, viewGroup, false);
 
         return new ViewHolder(view);
     }
@@ -35,7 +33,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         String category = String.valueOf(mTransactionModelList.get(i).getCategory_id());
-        String description = mTransactionModelList.get(i).getTransaction_description();
+        String description = mTransactionModelList.get(i).getTransaction_note();
         double amount = mTransactionModelList.get(i).getTransaction_amount();
         String date = mTransactionModelList.get(i).getTransaction_date();
 
@@ -58,7 +56,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             super(itemView);
 
             categoryTv = itemView.findViewById(R.id.transaction_category);
-            descriptionTv = itemView.findViewById(R.id.transaction_description);
+            descriptionTv = itemView.findViewById(R.id.transaction_note);
             amountTv = itemView.findViewById(R.id.transaction_amount);
             dateTv = itemView.findViewById(R.id.transaction_list_date);
         }

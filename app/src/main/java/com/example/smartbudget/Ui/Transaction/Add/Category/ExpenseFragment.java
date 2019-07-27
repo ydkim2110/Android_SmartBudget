@@ -47,7 +47,7 @@ public class ExpenseFragment extends Fragment {
     private List<CategoryListItem> mConsolidatedList;
     private HashMap<String, List<SubCategory>> groupedHashMap;
 
-    private List<CategoryAdapter.Item> data;
+    private List<CategoryExpenseAdapter.Item> data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,38 +66,38 @@ public class ExpenseFragment extends Fragment {
 
         List<Category> categoryList = Arrays.asList(DefaultCategories.getDefaultExpenseCategories());
 
-        CategoryAdapter.Item noneExpandableData = new CategoryAdapter.Item();
+        CategoryExpenseAdapter.Item noneExpandableData = new CategoryExpenseAdapter.Item();
         noneExpandableData.invisibleChildren = new ArrayList<>();
 
         for (Category category : categoryList) {
             if (category.getCategoryID().equals(":food&drink")) {
                 Log.d(TAG, "onCreateView: first");
-                data.add(new CategoryAdapter.Item(CategoryAdapter.HEADER, category));
+                data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.HEADER, category));
 
                 if (groupedHashMap.get(category.getCategoryID()) != null) {
                     for (SubCategory subCategory : groupedHashMap.get(category.getCategoryID())) {
                         if (category.getCategoryID().equals(subCategory.getCategoryId())) {
                             Log.d(TAG, "onCreateView: first sub called!! "+subCategory.getId());
-                            data.add(new CategoryAdapter.Item( CategoryAdapter.CHILD, subCategory));
+                            data.add(new CategoryExpenseAdapter.Item( CategoryExpenseAdapter.CHILD, subCategory));
                         }
                     }
                 }
             }
             else {
-                data.add(new CategoryAdapter.Item(CategoryAdapter.HEADER, category));
+                data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.HEADER, category));
                 if (groupedHashMap.get(category.getCategoryID()) != null) {
                     noneExpandableData.invisibleChildren.clear();
                     for (SubCategory subCategory : groupedHashMap.get(category.getCategoryID())) {
                         if (category.getCategoryID().equals(subCategory.getCategoryId())) {
                             Log.d(TAG, "onCreateView: first sub called!! "+subCategory.getId());
-                            data.add(new CategoryAdapter.Item(CategoryAdapter.CHILD, subCategory));
+                            data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.CHILD, subCategory));
                         }
                     }
                 }
             }
         }
 
-        CategoryAdapter adapter = new CategoryAdapter(getContext(), data);
+        CategoryExpenseAdapter adapter = new CategoryExpenseAdapter(getContext(), data);
         rv_expense_categories.setAdapter(adapter);
 
         return view;
@@ -124,4 +124,5 @@ public class ExpenseFragment extends Fragment {
 
         return groupedHashMap;
     }
+
 }
