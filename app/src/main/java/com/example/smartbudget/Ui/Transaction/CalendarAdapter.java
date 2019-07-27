@@ -42,9 +42,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.item_calendar_day, parent, false);
 
-        GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams) view.getLayoutParams();
-        params.height = mHeight;
-        view.setLayoutParams(params);
+        view.post(() -> {
+
+            GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams) view.getLayoutParams();
+            params.height = parent.getMeasuredHeight()/5;
+
+            view.setLayoutParams(params);
+
+        });
 
         return new MyViewHolder(view);
     }

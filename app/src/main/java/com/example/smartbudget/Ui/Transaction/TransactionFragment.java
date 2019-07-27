@@ -90,22 +90,20 @@ public class TransactionFragment extends Fragment {
         list_container = view.findViewById(R.id.list_container);
         calendar_container = view.findViewById(R.id.calendar_container);
 
-        view.post(() -> {
+        mCurrentDate = view.findViewById(R.id.current_date);
+        previousBtn = view.findViewById(R.id.previousBtn);
+        nextBtn = view.findViewById(R.id.nextBtn);
 
-            mCurrentDate = view.findViewById(R.id.current_date);
-            previousBtn = view.findViewById(R.id.previousBtn);
-            nextBtn = view.findViewById(R.id.nextBtn);
-
-            previousBtn.setOnClickListener(v -> {
-                mCalendar.add(Calendar.MONTH, -1);
-                setUpCalendar();
-            });
-            nextBtn.setOnClickListener(v -> {
-                mCalendar.add(Calendar.MONTH, 1);
-                setUpCalendar();
-            });
-            loadCalendar(view);
+        previousBtn.setOnClickListener(v -> {
+            mCalendar.add(Calendar.MONTH, -1);
+            setUpCalendar();
         });
+        nextBtn.setOnClickListener(v -> {
+            mCalendar.add(Calendar.MONTH, 1);
+            setUpCalendar();
+        });
+
+        loadCalendar(view);
 
         mTabLayout = view.findViewById(R.id.transaction_list_tab);
         mViewPager = view.findViewById(R.id.transaction_viewPager);
