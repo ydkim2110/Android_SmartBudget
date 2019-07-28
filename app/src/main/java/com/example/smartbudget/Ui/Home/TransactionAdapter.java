@@ -70,13 +70,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 String description = transactionItem.getTransaction().getTransaction_note();
                 int amount = (int) transactionItem.getTransaction().getTransaction_amount();
                 String type = transactionItem.getTransaction().getTransaction_type();
+                String pattern = transactionItem.getTransaction().getTransaction_pattern();
                 String transactionDate = transactionItem.getTransaction().getTransaction_date();
                 String categoryId =  transactionItem.getTransaction().getCategory_id();
                 String subCategoryId= null;
                 int accountId = transactionItem.getTransaction().getAccount_id();
 
 
-                final TransactionModel transactionModel = new TransactionModel(description, amount, type, transactionDate, categoryId, subCategoryId, accountId);
+                final TransactionModel transactionModel = new TransactionModel(description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
 
                 transactionViewHolder.setData(categoryId, description, amount);
 
@@ -134,9 +135,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TransactionViewHolder(@NonNull final View itemView) {
             super(itemView);
 
-            categoryTv = itemView.findViewById(R.id.transaction_category);
-            descriptionTv = itemView.findViewById(R.id.transaction_note);
-            amountTv = itemView.findViewById(R.id.transaction_amount);
+            categoryTv = itemView.findViewById(R.id.tv_transaction_category);
+            descriptionTv = itemView.findViewById(R.id.tv_transaction_note);
+            amountTv = itemView.findViewById(R.id.tv_transaction_amount);
 
             itemView.setOnClickListener(this);
         }

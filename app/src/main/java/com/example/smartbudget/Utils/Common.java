@@ -80,8 +80,14 @@ public class Common {
         return NumberFormat.getNumberInstance().format(number);
     }
 
-    public static String calcPercentage (int currentValue, int maxValue) {
+    public static String calcPercentageDownToTwo(int currentValue, int maxValue) {
         return new DecimalFormat("0.00").format(
+                (Double.parseDouble(String.valueOf(currentValue)) * 100/
+                        (Double.parseDouble(String.valueOf(maxValue)))));
+    }
+
+    public static String calcPercentageDownToOne (int currentValue, int maxValue) {
+        return new DecimalFormat("0.0").format(
                 (Double.parseDouble(String.valueOf(currentValue)) * 100/
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }

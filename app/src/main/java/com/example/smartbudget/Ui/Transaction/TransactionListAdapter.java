@@ -2,42 +2,61 @@ package com.example.smartbudget.Ui.Transaction;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.ViewHolder> {
 
+    private Context mContext;
     private List<TransactionModel> mTransactionModelList;
 
-    public TransactionListAdapter(List<TransactionModel> transactionModelList) {
+    public TransactionListAdapter(Context context, List<TransactionModel> transactionModelList) {
+        mContext = context;
         mTransactionModelList = transactionModelList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_transaction_list, viewGroup, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_transaction_list, parent, false);
 
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        String category = String.valueOf(mTransactionModelList.get(i).getCategory_id());
-        String description = mTransactionModelList.get(i).getTransaction_note();
-        double amount = mTransactionModelList.get(i).getTransaction_amount();
-        String date = mTransactionModelList.get(i).getTransaction_date();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        TransactionModel transaction = mTransactionModelList.get(position);
+        Category category = Common.getCategory(mTransactionModelList.get(position).getCategory_id());
 
-        viewHolder.setData(category, description, amount, date);
+        holder.iv_category_icon.setImageResource(category.getIconResourceID());
+        holder.iv_category_icon.setColorFilter(category.getIconColor());
+        holder.tv_transaction_category.setText(category.getCategoryVisibleName(mContext));
+        holder.tv_transaction_note.setText(transaction.getTransaction_note());
+        holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
+        holder.tv_transaction_date.setText(transaction.getTransaction_date());
+
+        holder.setIRecyclerItemSelectedListener((view, i) -> {
+            Toast.makeText(mContext, "[SELECTED]"+transaction.getCategory_id(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
@@ -45,27 +64,37 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         return mTransactionModelList != null ? mTransactionModelList.size() : 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView categoryTv;
-        private TextView descriptionTv;
-        private TextView amountTv;
-        private TextView dateTv;
+        @BindView(R.id.iv_category_icon)
+        ImageView iv_category_icon;
+        @BindView(R.id.tv_transaction_category)
+        TextView tv_transaction_category;
+        @BindView(R.id.tv_transaction_note)
+        TextView tv_transaction_note;
+        @BindView(R.id.tv_transaction_amount)
+        TextView tv_transaction_amount;
+        @BindView(R.id.tv_transaction_date)
+        TextView tv_transaction_date;
+
+        IRecyclerItemSelectedListener mIRecyclerItemSelectedListener;
+
+        public void setIRecyclerItemSelectedListener(IRecyclerItemSelectedListener IRecyclerItemSelectedListener) {
+            mIRecyclerItemSelectedListener = IRecyclerItemSelectedListener;
+        }
+
+        Unbinder mUnbinder;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            categoryTv = itemView.findViewById(R.id.transaction_category);
-            descriptionTv = itemView.findViewById(R.id.transaction_note);
-            amountTv = itemView.findViewById(R.id.transaction_amount);
-            dateTv = itemView.findViewById(R.id.transaction_list_date);
+            mUnbinder = ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
 
-        private void setData(String category, String description, double amount, String date) {
-            categoryTv.setText(category);
-            descriptionTv.setText(description);
-            amountTv.setText(new StringBuilder(Common.changeNumberToComma((int) amount)).append("원"));
-            dateTv.setText(date);
+        @Override
+        public void onClick(View v) {
+            mIRecyclerItemSelectedListener.onItemSelected(v, getAdapterPosition());
         }
     }
 }

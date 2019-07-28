@@ -71,7 +71,7 @@ public class TransactionListFragment extends Fragment implements ITransactionLoa
             rv_transaction_list.setVisibility(View.VISIBLE);
             tv_no_item.setVisibility(View.INVISIBLE);
         }
-        TransactionListAdapter adapter = new TransactionListAdapter(transactionList);
+        TransactionListAdapter adapter = new TransactionListAdapter(getContext(), transactionList);
         rv_transaction_list.setAdapter(adapter);
     }
 

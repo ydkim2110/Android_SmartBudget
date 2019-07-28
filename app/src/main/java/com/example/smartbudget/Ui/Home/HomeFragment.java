@@ -20,10 +20,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Home.Spending.SpendingActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
@@ -34,16 +36,21 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements ITransactionLoadListener {
+public class HomeFragment extends Fragment implements ITransactionLoadListener, IThisMonthTransactionPatternLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -66,22 +73,48 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         mIBudgetContainerClickListener = IBudgetContainerClickListener;
     }
 
+    Unbinder mUnbinder;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private WeekTransactionAdapter mAdapter;
     private ProgressBar progressBar;
-    private ProgressBar pb_circle_normal;
-    private ProgressBar pb_circle_waste;
-    private ProgressBar pb_circle_invest;
     private TextView progressBarPercentage;
     private TextView usedBudgetTv;
     private TextView totalBudgetTv;
     private TextView tv_weekday;
+    @BindView(R.id.pb_circle_normal)
+    ProgressBar pb_circle_normal;
+    @BindView(R.id.pb_circle_waste)
+    ProgressBar pb_circle_waste;
+    @BindView(R.id.pb_circle_invest)
+    ProgressBar pb_circle_invest;
+    @BindView(R.id.tv_normal)
+    TextView tv_normal;
+    @BindView(R.id.tv_waste)
+    TextView tv_waste;
+    @BindView(R.id.tv_invest)
+    TextView tv_invest;
+    @BindView(R.id.tv_normal_sum)
+    TextView tv_normal_sum;
+    @BindView(R.id.tv_waste_sum)
+    TextView tv_waste_sum;
+    @BindView(R.id.tv_invest_sum)
+    TextView tv_invest_sum;
+    @BindView(R.id.tv_total_spending)
+    TextView tv_total_spending;
 
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
+    @BindView(R.id.home_spending_pattern_container)
+    ConstraintLayout home_spending_pattern_container;
 
     private HashMap<String, List<TransactionModel>> groupedHashMap;
+
+    private int total = 0;
+    private int normal_percentage = 0;
+    private int waste_percentage = 0;
+    private int invest_percentage = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,6 +122,8 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         EventBus.getDefault().register(this);
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        mUnbinder = ButterKnife.bind(this, view);
 
         initView(view);
         setProgressBar();
@@ -98,6 +133,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
         DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
 
         return view;
@@ -110,29 +146,13 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         usedBudgetTv.setText(new StringBuilder(Common.changeNumberToComma(currentValue)).append("원"));
         totalBudgetTv.setText(new StringBuilder(Common.changeNumberToComma(maxValue)).append("원"));
-        progressBarPercentage.setText(new StringBuilder(Common.calcPercentage(currentValue, maxValue)).append("%"));
+        progressBarPercentage.setText(new StringBuilder(Common.calcPercentageDownToTwo(currentValue, maxValue)).append("%"));
 
         progressBar.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, currentValue);
         progressAnim.setDuration(500);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
-
-        ObjectAnimator progressAnim2 = ObjectAnimator.ofInt(pb_circle_normal, "progress", 0, 65);
-        progressAnim2.setDuration(500);
-        progressAnim2.setInterpolator(new LinearInterpolator());
-        progressAnim2.start();
-
-        ObjectAnimator progressAnim3 = ObjectAnimator.ofInt(pb_circle_waste, "progress", 0, 25);
-        progressAnim3.setDuration(500);
-        progressAnim3.setInterpolator(new LinearInterpolator());
-        progressAnim3.start();
-
-        ObjectAnimator progressAnim4 = ObjectAnimator.ofInt(pb_circle_invest, "progress", 0, 15);
-        progressAnim4.setDuration(500);
-        progressAnim4.setInterpolator(new LinearInterpolator());
-        progressAnim4.start();
-
     }
 
     @Override
@@ -144,30 +164,9 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void reloadData(AddTransactionEvent event) {
         if (event != null) {
+            DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         }
-    }
-
-    @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-
-        groupedHashMap = groupDataIntoHashMap(transactionList);
-
-        Set set = groupedHashMap.entrySet();
-
-        Iterator iterator = set.iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            Log.d(TAG, "onTransactionLoadSuccess: " + entry.getKey());
-        }
-
-        loadData();
-    }
-
-    @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
-
     }
 
     private void loadData() {
@@ -187,7 +186,11 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         homeBudgetContainer.setOnClickListener(v -> {
             mIBudgetContainerClickListener.onBudgetContainerClicked();
         });
+        home_spending_pattern_container.setOnClickListener(v -> {
+            getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
+        });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         });
     }
@@ -221,8 +224,6 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
 
         if (listOfTransaction != null) {
             for (TransactionModel dataModel : listOfTransaction) {
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String hashMapkey = dataModel.getTransaction_date();
 
                 if (groupedHashMap.containsKey(hashMapkey)) {
@@ -236,6 +237,85 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener {
         }
 
         return groupedHashMap;
+    }
+
+
+    @Override
+    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
+
+        groupedHashMap = groupDataIntoHashMap(transactionList);
+
+        Set set = groupedHashMap.entrySet();
+
+        Iterator iterator = set.iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Log.d(TAG, "onTransactionLoadSuccess: " + entry.getKey());
+        }
+
+        loadData();
+    }
+
+    @Override
+    public void onTransactionDeleteSuccess(boolean isSuccess) {
+
+    }
+
+    @Override
+    public void onThisMonthTransactionPatternLoadSuccess(List<SpendingPattern> spendingPatternList) {
+        total = 0;
+        normal_percentage = 0;
+        waste_percentage = 0;
+        invest_percentage = 0;
+        for (SpendingPattern spendingPattern : spendingPatternList) {{
+            total += (int) spendingPattern.getSum();
+        }}
+        tv_total_spending.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
+
+        for (SpendingPattern spendingPattern : spendingPatternList) {
+            if (spendingPattern.getPattern().equals("Normal")) {
+                normal_percentage = (int) (spendingPattern.getSum() / total * 100);
+                tv_normal.setText(new StringBuilder("Normal\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
+                tv_normal_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
+            }
+            else if (spendingPattern.getPattern().equals("Waste")) {
+                waste_percentage =  (int) (spendingPattern.getSum() / total * 100);
+                tv_waste.setText(new StringBuilder("Waste\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
+                tv_waste_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
+            }
+            else if (spendingPattern.getPattern().equals("Invest")) {
+                invest_percentage =  (int) (spendingPattern.getSum() / total * 100);
+                tv_invest.setText(new StringBuilder("Invest\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
+                tv_invest_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
+            }
+        }
+        setProgressBar();
+        setCircleProgressbar(normal_percentage, waste_percentage, invest_percentage);
+    }
+
+    private void setCircleProgressbar(int normal_percentage, int waste_percentage, int invest_percentage) {
+        Log.d(TAG, "setCircleProgressbar: called!!"+normal_percentage);
+
+        ObjectAnimator progressAnim2 = ObjectAnimator.ofInt(pb_circle_normal, "progress", 0, normal_percentage);
+        progressAnim2.setDuration(500);
+        progressAnim2.setInterpolator(new LinearInterpolator());
+        progressAnim2.start();
+
+        ObjectAnimator progressAnim3 = ObjectAnimator.ofInt(pb_circle_waste, "progress", 0, waste_percentage);
+        progressAnim3.setDuration(500);
+        progressAnim3.setInterpolator(new LinearInterpolator());
+        progressAnim3.start();
+
+        ObjectAnimator progressAnim4 = ObjectAnimator.ofInt(pb_circle_invest, "progress", 0, invest_percentage);
+        progressAnim4.setDuration(500);
+        progressAnim4.setInterpolator(new LinearInterpolator());
+        progressAnim4.start();
+    }
+
+    @Override
+    public void onThisMonthTransactionPatternLoadFailed(String message) {
+
     }
 
 }

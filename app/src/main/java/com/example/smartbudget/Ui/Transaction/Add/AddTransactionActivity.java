@@ -1,7 +1,9 @@
 package com.example.smartbudget.Ui.Transaction.Add;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -15,8 +17,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
@@ -43,6 +47,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AddTransactionActivity extends AppCompatActivity
         implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener {
 
@@ -63,6 +70,13 @@ public class AddTransactionActivity extends AppCompatActivity
     private Button cancelBtn;
     private Calendar calendar;
 
+    @BindView(R.id.tv_normal)
+    TextView tv_normal;
+    @BindView(R.id.tv_waste)
+    TextView tv_waste;
+    @BindView(R.id.tv_invest)
+    TextView tv_invest;
+
     int _year;
     int _month;
     int _day;
@@ -72,28 +86,40 @@ public class AddTransactionActivity extends AppCompatActivity
     private Category selectedCategory = null;
     private SubCategory selectedSubCategory = null;
 
+    private String selectedPattern = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
         Log.d(TAG, "onCreate: started!!");
 
+        ButterKnife.bind(this);
+
         initView();
 
         if (getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION) != null) {
+
             TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
-            String passedAccount = String.valueOf(transactionModel.getAccount_id());
+
             String passedCategory = String.valueOf(transactionModel.getCategory_id());
-            String passedDescription = transactionModel.getTransaction_note();
+            String passedAccount = String.valueOf(transactionModel.getAccount_id());
+            String passedNote = transactionModel.getTransaction_note();
+            String passedDate = transactionModel.getTransaction_date();
+            String passedPattern = transactionModel.getTransaction_pattern();
             int passedAmount = (int) transactionModel.getTransaction_amount();
-            String passedDate = String.valueOf(transactionModel.getTransaction_date());
+
+            Log.d(TAG, "onCreate: passedDate: "+passedDate);
+            Log.d(TAG, "onCreate: passedPattern: "+passedPattern);
 
             getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_edit_transaction));
-            saveBtn.setText("Update");
+            saveBtn.setText(getResources().getString(R.string.btn_update));
+
+            Log.d(TAG, "onCreate: passedCategory: "+passedCategory);
 
             accountEdt.setText(passedAccount);
             categoryEdt.setText(passedCategory);
-            noteEdt.setText(passedDescription);
+            noteEdt.setText(passedNote);
             amountEdt.setText(Common.changeNumberToComma(passedAmount));
             dateEdt.setText(passedDate);
         }
@@ -197,6 +223,7 @@ public class AddTransactionActivity extends AppCompatActivity
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private void initView() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -218,6 +245,46 @@ public class AddTransactionActivity extends AppCompatActivity
         _day = calendar.get(Calendar.DAY_OF_MONTH);
 
         dateEdt.setText(Common.dateFormat.format(calendar.getTime()));
+
+        tv_normal.setBackgroundResource(R.drawable.shape_tv_normal_pressed);
+        tv_normal.setTextColor(Color.WHITE);
+        selectedPattern = "Normal";
+
+        tv_normal.setOnClickListener(v -> {
+            selectedPattern = "Normal";
+            tv_normal.setBackgroundResource(R.drawable.shape_tv_normal_pressed);
+            tv_normal.setTextColor(Color.WHITE);
+
+            tv_waste.setBackgroundResource(R.drawable.shape_tv_waste);
+            tv_waste.setTextColor(Color.GRAY);
+
+            tv_invest.setBackgroundResource(R.drawable.shape_tv_invest);
+            tv_invest.setTextColor(Color.GRAY);
+        });
+
+        tv_waste.setOnClickListener(v -> {
+            selectedPattern = "Waste";
+            tv_waste.setBackgroundResource(R.drawable.shape_tv_waste_pressed);
+            tv_waste.setTextColor(Color.WHITE);
+
+            tv_normal.setBackgroundResource(R.drawable.shape_tv_normal);
+            tv_normal.setTextColor(Color.GRAY);
+
+            tv_invest.setBackgroundResource(R.drawable.shape_tv_invest);
+            tv_invest.setTextColor(Color.GRAY);
+        });
+
+        tv_invest.setOnClickListener(v -> {
+            selectedPattern = "Invest";
+            tv_invest.setBackgroundResource(R.drawable.shape_tv_invest_pressed);
+            tv_invest.setTextColor(Color.WHITE);
+
+            tv_normal.setBackgroundResource(R.drawable.shape_tv_normal);
+            tv_normal.setTextColor(Color.GRAY);
+
+            tv_waste.setBackgroundResource(R.drawable.shape_tv_waste);
+            tv_waste.setTextColor(Color.GRAY);
+        });
     }
 
     private void handleClickEvent() {
@@ -262,6 +329,7 @@ public class AddTransactionActivity extends AppCompatActivity
             transactionModel.setTransaction_note(noteEdt.getText().toString());
             transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
             transactionModel.setTransaction_type(selectedType);
+            transactionModel.setTransaction_pattern(selectedPattern);
             transactionModel.setTransaction_date(dateEdt.getText().toString());
             transactionModel.setCategory_id(selectedCategory.getCategoryID());
             transactionModel.setAccount_id(requestedAccountModel.getId());
@@ -340,7 +408,9 @@ public class AddTransactionActivity extends AppCompatActivity
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void selectedCategory(CategorySelectedEvent event) {
+    public void onEvent(CategorySelectedEvent event) {
+        Log.d(TAG, "onEvent: called!!");
+        EventBus.getDefault().removeStickyEvent(event);
         if (event.isSuccess()) {
             if (event.getCategoryType() == Common.TYPE_CATEGORY) {
                 selectedCategory = event.getCategory();
@@ -365,6 +435,8 @@ public class AddTransactionActivity extends AppCompatActivity
             } else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
                 selectedType = "Transfer";
             }
+        } else {
+            Log.d(TAG, "onEvent: else!!");
         }
     }
 }

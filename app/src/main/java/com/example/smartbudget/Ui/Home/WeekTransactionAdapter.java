@@ -59,12 +59,13 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
 
         for (TransactionModel model : value) {
             total += model.getTransaction_amount();
+            Log.d(TAG, "onBindViewHolder: date: "+model.getTransaction_date());
         }
 
         holder.tv_date_total.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
+
         holder.rv_transaction_list.setHasFixedSize(true);
         holder.rv_transaction_list.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-
         WeekSubTransactionAdapter adapter = new WeekSubTransactionAdapter(mContext, value);
         holder.rv_transaction_list.setAdapter(adapter);
     }

@@ -55,7 +55,7 @@ public class TravelDetailFragment extends Fragment implements ITransactionLoadLi
 
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        TransactionListAdapter adapter = new TransactionListAdapter(transactionList);
+        TransactionListAdapter adapter = new TransactionListAdapter(getContext(), transactionList);
         mRecyclerView.setAdapter(adapter);
     }
 

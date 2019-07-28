@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.example.smartbudget.Ui.Account.IAccountInsertListener;
 import com.example.smartbudget.Ui.Account.IAccountLoadListener;
+import com.example.smartbudget.Ui.Home.IThisMonthTransactionPatternLoadListener;
+import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.example.smartbudget.Ui.Transaction.Add.ITransactionInsertListener;
 import com.example.smartbudget.Model.AccountModel;
@@ -55,6 +57,14 @@ public class DatabaseUtils {
     }
     public static void getThisMonthTransaction(DBHelper db, String date, ITransactionLoadListener listener) {
         GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
+        task.execute();
+    }
+    public static void getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, ITransactionLoadListener listener) {
+        getThisMonthTransactionListPattern task = new getThisMonthTransactionListPattern(db, date, pattern, listener);
+        task.execute();
+    }
+    public static void getThisMonthTransactionPattern(DBHelper db, String date, IThisMonthTransactionPatternLoadListener listener) {
+        GetThisMonthTransactionPatternAsync task = new GetThisMonthTransactionPatternAsync(db, date, listener);
         task.execute();
     }
     public static void insertTransactionAsync(DBHelper db, ITransactionInsertListener listener, TransactionModel... transactionModels) {
@@ -167,7 +177,6 @@ public class DatabaseUtils {
         }
     }
 
-
     private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<AccountModel>> {
 
         DBHelper db;
@@ -242,6 +251,7 @@ public class DatabaseUtils {
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
                         String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
                         String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
@@ -251,6 +261,7 @@ public class DatabaseUtils {
                         transaction.setTransaction_amount(Double.parseDouble(amount));
                         transaction.setTransaction_type(type);
                         transaction.setTransaction_date(date);
+                        transaction.setTransaction_pattern(pattern);
                         transaction.setCategory_id(categoryId);
                         transaction.setAccount_id(Integer.parseInt(accountId));
                         transactionList.add(transaction);
@@ -297,6 +308,7 @@ public class DatabaseUtils {
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
                         String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
                         String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
@@ -306,6 +318,7 @@ public class DatabaseUtils {
                         transaction.setTransaction_amount(Double.parseDouble(amount));
                         transaction.setTransaction_type(type);
                         transaction.setTransaction_date(date);
+                        transaction.setTransaction_pattern(pattern);
                         transaction.setCategory_id(categoryId);
                         transaction.setAccount_id(Integer.parseInt(accountId));
                         transactionList.add(transaction);
@@ -352,6 +365,66 @@ public class DatabaseUtils {
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setTransaction_note(description);
+                        transaction.setTransaction_amount(Double.parseDouble(amount));
+                        transaction.setTransaction_type(type);
+                        transaction.setTransaction_date(date);
+                        transaction.setTransaction_pattern(pattern);
+                        transaction.setCategory_id(categoryId);
+                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return transactionList;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            if (transactionList != null)
+                mListener.onTransactionLoadSuccess(transactionList);
+        }
+    }
+
+    private static class getThisMonthTransactionListPattern extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        ITransactionLoadListener mListener;
+        String date = "";
+        String pattern = "";
+
+        public getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, ITransactionLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+            this.date = date;
+            this.pattern = pattern;
+        }
+
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getThisMonthTransactionsPatternList(date, pattern);
+            Log.d(TAG, "cursor.getCount(): "+cursor.getCount());
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
                         String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
                         String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
@@ -379,6 +452,53 @@ public class DatabaseUtils {
             super.onPostExecute(transactionList);
             if (transactionList != null)
                 mListener.onTransactionLoadSuccess(transactionList);
+        }
+    }
+
+    private static class GetThisMonthTransactionPatternAsync extends AsyncTask<Void, Void, List<SpendingPattern>> {
+
+        DBHelper db;
+        IThisMonthTransactionPatternLoadListener mListener;
+        String date = "";
+
+        public GetThisMonthTransactionPatternAsync(DBHelper db, String date, IThisMonthTransactionPatternLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+            this.date = date;
+        }
+
+        @Override
+        protected List<SpendingPattern> doInBackground(Void... voids) {
+            Cursor cursor = db.getThisMonthTransactionPattern(date);
+            Log.d(TAG, "cursor.getCount(): "+cursor.getCount());
+            List<SpendingPattern> spendingPatternList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        SpendingPattern spendingPattern = new SpendingPattern();
+                        String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
+                        String patternSum = cursor.getString(cursor.getColumnIndexOrThrow("pattern_sum"));
+                        String patternCount = cursor.getString(cursor.getColumnIndexOrThrow("pattern_count"));
+
+                        spendingPattern.setPattern(pattern);
+                        spendingPattern.setSum(Double.parseDouble(patternSum));
+                        spendingPattern.setCount(Integer.parseInt(patternCount));
+                        spendingPatternList.add(spendingPattern);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return spendingPatternList;
+            }
+            return spendingPatternList;
+        }
+
+        @Override
+        protected void onPostExecute(List<SpendingPattern> spendingPatternList) {
+            super.onPostExecute(spendingPatternList);
+            if (spendingPatternList != null)
+                mListener.onThisMonthTransactionPatternLoadSuccess(spendingPatternList);
         }
     }
 

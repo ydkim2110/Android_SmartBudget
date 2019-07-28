@@ -1,7 +1,9 @@
 package com.example.smartbudget.Ui.Home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +46,17 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         return new MyViewHolder(view);
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         String description = mTransactionModelList.get(position).getTransaction_note();
         int amount = (int) mTransactionModelList.get(position).getTransaction_amount();
         String type = mTransactionModelList.get(position).getTransaction_type();
+        String pattern = mTransactionModelList.get(position).getTransaction_pattern();
         String transactionDate = mTransactionModelList.get(position).getTransaction_date();
         String categoryId =  mTransactionModelList.get(position).getCategory_id();
-        String subCategoryId =  null;
+        String subCategoryId = null;
         int accountId = mTransactionModelList.get(position).getAccount_id();
 
         Category category = Common.getCategory(mTransactionModelList.get(position).getCategory_id());
@@ -63,7 +67,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         holder.tv_transaction_note.setText(mTransactionModelList.get(position).getTransaction_note());
         holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
 
-        final TransactionModel transactionModel = new TransactionModel(description, amount, type, transactionDate, categoryId, subCategoryId, accountId);
+        final TransactionModel transactionModel = new TransactionModel(description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);
@@ -100,14 +104,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             super(itemView);
 
             mUnbinder = ButterKnife.bind(this, itemView);
-
             itemView.setOnClickListener(this);
-        }
-
-        private void setData(String category, String description, int amount) {
-            tv_transaction_category.setText(category);
-            tv_transaction_note.setText(description);
-            tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
         }
 
         @Override

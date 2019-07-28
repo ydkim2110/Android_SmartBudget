@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_spending_pattern_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -114,7 +115,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView18"
+        android:id="@+id/tv_normal_sum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -127,7 +128,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pb_circle_normal" />
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/tv_waste_sum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -140,7 +141,7 @@
         app:layout_constraintTop_toBottomOf="@+id/pb_circle_waste" />
 
     <TextView
-        android:id="@+id/textView20"
+        android:id="@+id/tv_invest_sum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

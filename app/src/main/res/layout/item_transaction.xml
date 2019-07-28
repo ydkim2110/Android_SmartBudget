@@ -45,7 +45,7 @@
         android:text="택시비"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_transaction_icon"
-        app:layout_constraintTop_toBottomOf="@+id/transaction_category" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_category" />
 
     <TextView
         android:id="@+id/tv_transaction_amount"

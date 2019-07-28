@@ -12,17 +12,16 @@ import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.CategoryModel;
+import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class BudgetFragment extends Fragment implements ICategoryLoadListener {
+public class BudgetFragment extends Fragment {
 
     private static BudgetFragment instance;
 
@@ -34,46 +33,24 @@ public class BudgetFragment extends Fragment implements ICategoryLoadListener {
     }
 
     public BudgetFragment() {
-        // Required empty public constructor
     }
 
-    private RecyclerView budgetRecyclerview;
+    private RecyclerView rv_budget;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_budget, container, false);
 
-        budgetRecyclerview = view.findViewById(R.id.budget_recyclerview);
-        budgetRecyclerview.setHasFixedSize(true);
-        budgetRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_budget = view.findViewById(R.id.rv_budget);
+        rv_budget.setHasFixedSize(true);
+        rv_budget.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        List<Budget> budgetList = new ArrayList<>();
-        budgetList.add(new Budget("교통", 200000));
-        budgetList.add(new Budget("식비", 500000));
-        budgetList.add(new Budget("쇼핑", 300000));
-        budgetList.add(new Budget("엔터테이먼트", 400000));
-        budgetList.add(new Budget("집", 700000));
-        budgetList.add(new Budget("선물기부", 900000));
-        budgetList.add(new Budget("건강", 1000000));
-        budgetList.add(new Budget("기타", 550000));
-
-        DatabaseUtils.getAllCategory(MainActivity.mDBHelper, this);
+        BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), Arrays.asList(DefaultCategories.getDefaultExpenseCategories()));
+        rv_budget.setAdapter(budgetAdapter);
+        budgetAdapter.notifyDataSetChanged();
 
         return view;
     }
 
-    @Override
-    public void onCategoryLoadSuccess(List<CategoryModel> categoryList) {
-        if (categoryList != null) {
-            BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), categoryList);
-            budgetRecyclerview.setAdapter(budgetAdapter);
-            budgetAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onCategoryLoadFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
 }

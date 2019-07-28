@@ -48,5 +48,7 @@
     <string name="money_unit">원</string>
     <string name="toolbar_add_transaction">Add Transaction</string>
     <string name="toolbar_edit_transaction">Edit Transaction</string>
+    <string name="toolbar_spending_pattern">Spending Pattern</string>
+    <string name="btn_update">Update</string>
 
 </resources>

@@ -22,7 +22,7 @@
                 android:focusableInTouchMode="true"
                 android:orientation="vertical">
 
-                <include layout="@layout/home_overview2_layout" />
+                <include layout="@layout/home_overview_layout" />
 
                 <include layout="@layout/home_overview_budget_layout" />
 

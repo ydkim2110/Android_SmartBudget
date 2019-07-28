@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Ui.Transaction.Add.Category.InputCategoryActivity"></activity>
+        <activity android:name=".Ui.Home.Spending.SpendingActivity"></activity>
+        <activity android:name=".Ui.Transaction.Add.Category.InputCategoryActivity" />
         <activity android:name=".Ui.Travel.TravelFullListActivity" />
         <activity android:name=".Ui.Travel.AddTravelTransactionActivity" />
         <activity android:name=".Ui.Travel.TravelDetailActivity" />

@@ -1,22 +1,18 @@
 package com.example.smartbudget.Ui.Home.Overview;
 
 import android.graphics.Color;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Model.CategoryModel;
+import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Main.Spending;
-import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,9 +25,9 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-public class OverviewActivity extends AppCompatActivity implements ICategoryLoadListener {
+public class OverviewActivity extends AppCompatActivity {
 
     private static final String TAG = OverviewActivity.class.getSimpleName();
 
@@ -66,17 +62,8 @@ public class OverviewActivity extends AppCompatActivity implements ICategoryLoad
 
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        List<Spending> list = new ArrayList<>();
-
-        DatabaseUtils.getAllCategory(MainActivity.mDBHelper, this);
-
-        list.add(new Spending("42%", "Food", "320,000원"));
-        list.add(new Spending("42%", "Transport", "320,000원"));
-        list.add(new Spending("42%", "Clothing", "320,000원"));
-        list.add(new Spending("42%", "Entertainment", "320,000원"));
-        list.add(new Spending("42%", "Household", "320,000원"));
-        list.add(new Spending("42%", "Bills", "320,000원"));
-        list.add(new Spending("42%", "Other Expenses", "320,000원"));
+        adapter = new SpendingAdapter(OverviewActivity.this, Arrays.asList(DefaultCategories.getDefaultExpenseCategories()));
+        recyclerView.setAdapter(adapter);
 
     }
 
@@ -178,14 +165,4 @@ public class OverviewActivity extends AppCompatActivity implements ICategoryLoad
         }
     }
 
-    @Override
-    public void onCategoryLoadSuccess(List<CategoryModel> categoryList) {
-        adapter = new SpendingAdapter(categoryList);
-        recyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    public void onCategoryLoadFailed(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
 }
