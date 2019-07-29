@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -40,6 +41,7 @@ import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
+import com.example.smartbudget.Utils.DateHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -287,6 +289,7 @@ public class AddTransactionActivity extends AppCompatActivity
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void handleClickEvent() {
         accountEdt.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputAccountActivity.class);
@@ -330,7 +333,7 @@ public class AddTransactionActivity extends AppCompatActivity
             transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
             transactionModel.setTransaction_type(selectedType);
             transactionModel.setTransaction_pattern(selectedPattern);
-            transactionModel.setTransaction_date(dateEdt.getText().toString());
+            transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
             transactionModel.setCategory_id(selectedCategory.getCategoryID());
             transactionModel.setAccount_id(requestedAccountModel.getId());
             transactionModel.setTo_account(0);

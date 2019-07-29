@@ -19,8 +19,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
+import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.SpacesItemDecoration;
 import com.google.android.material.tabs.TabLayout;
@@ -37,7 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class TransactionFragment extends Fragment {
+public class TransactionFragment extends Fragment implements ITransactionLoadListener {
 
     private static final String TAG = TransactionFragment.class.getSimpleName();
 
@@ -69,6 +72,8 @@ public class TransactionFragment extends Fragment {
     private TextView mCurrentDate;
     private ImageButton previousBtn;
     private ImageButton nextBtn;
+
+    private List<TransactionModel> mTransactionList = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -169,13 +174,12 @@ public class TransactionFragment extends Fragment {
         Log.d(TAG, "setUpCalendar: firstDayOfMonth: " + firstDayOfMonth);
         monthCalendar.add(Calendar.DAY_OF_MONTH, -firstDayOfMonth);
 
+        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(Calendar.getInstance().getTime()), this);
+
         while (mDateList.size() < MAX_CALENDAR_DAYS) {
             mDateList.add(monthCalendar.getTime());
             monthCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-
-        mAdapter = new CalendarAdapter(getActivity(), mDateList, mCalendar);
-        rv_calendar.setAdapter(mAdapter);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -205,4 +209,16 @@ public class TransactionFragment extends Fragment {
         viewPager.setCurrentItem(calendarList.size()-3);
     }
 
+    @Override
+    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
+        Log.d(TAG, "onTransactionLoadSuccess: called!!");
+
+        mAdapter = new CalendarAdapter(getActivity(), mDateList, mCalendar, transactionList);
+        rv_calendar.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onTransactionDeleteSuccess(boolean isSuccess) {
+
+    }
 }

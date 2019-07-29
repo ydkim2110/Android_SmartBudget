@@ -5,11 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Utils.Common;
+import com.example.smartbudget.Utils.DateHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -231,10 +235,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public Cursor getThisWeekTransactions() {
         SQLiteDatabase db = this.getWritableDatabase();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String[] args = {dateFormat.format(Common.getWeekStartDate()), dateFormat.format(Common.getWeekEndDate())};
+        String[] args = {dateFormat.format(DateHelper.getWeekStartDate()), dateFormat.format(DateHelper.getWeekEndDate())};
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?) AND DATE(?)" , args);
         if (cursor != null) {

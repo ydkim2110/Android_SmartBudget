@@ -3,9 +3,12 @@ package com.example.smartbudget.Ui.Home;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +32,7 @@ import com.example.smartbudget.Ui.Home.Spending.SpendingActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
+import com.example.smartbudget.Utils.DateHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,6 +107,8 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     TextView tv_invest_sum;
     @BindView(R.id.tv_total_spending)
     TextView tv_total_spending;
+    @BindView(R.id.nsv_container)
+    NestedScrollView nsv_container;
 
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
@@ -116,6 +122,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     private int waste_percentage = 0;
     private int invest_percentage = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -195,6 +202,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initView(View view) {
         Log.d(TAG, "initView: called!!");
         homeOverviewContainer = view.findViewById(R.id.home_overview_container);
@@ -212,19 +220,27 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd");
 
         tv_weekday.setText(new StringBuilder("(")
-                .append(dateFormat.format(Common.getWeekStartDate()))
+                .append(dateFormat.format(DateHelper.getWeekStartDate()))
                 .append(" ~ ")
-                .append(dateFormat.format(Common.getWeekEndDate()))
+                .append(dateFormat.format(DateHelper.getWeekEndDate()))
                 .append(")"));
+
+        nsv_container.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                Log.d(TAG, "onScrollChange: called!!");
+            }
+        });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private HashMap<String, List<TransactionModel>> groupDataIntoHashMap(List<TransactionModel> listOfTransaction) {
 
         HashMap<String, List<TransactionModel>> groupedHashMap = new HashMap<>();
 
         if (listOfTransaction != null) {
             for (TransactionModel dataModel : listOfTransaction) {
-                String hashMapkey = dataModel.getTransaction_date();
+                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getTransaction_date()));
 
                 if (groupedHashMap.containsKey(hashMapkey)) {
                     groupedHashMap.get(hashMapkey).add(dataModel);
@@ -240,6 +256,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
 

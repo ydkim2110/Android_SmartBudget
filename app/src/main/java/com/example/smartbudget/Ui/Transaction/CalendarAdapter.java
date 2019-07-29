@@ -1,6 +1,7 @@
 package com.example.smartbudget.Ui.Transaction;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +10,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
+import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Utils.Common;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
 
@@ -27,11 +39,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     private Context mContext;
     private List<Date> mDateList;
     private Calendar mCalendar;;
+    private List<TransactionModel> mTransactionList;
 
-    public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar) {
+    public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar, List<TransactionModel> transactionList) {
         mContext = context;
         mDateList = dateList;
         mCalendar = calendar;
+        mTransactionList = transactionList;
     }
 
     @NonNull
@@ -52,6 +66,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         return new MyViewHolder(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
@@ -93,10 +108,42 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
         holder.tv_calendar_day.setText(""+dayNo);
 
+        Calendar eventCalendar = Calendar.getInstance();
+        ArrayList<Integer> arrayList = new ArrayList<>();
+
+        for (int i = 0; i < mTransactionList.size(); i++) {
+            eventCalendar.setTime(convertStringToDate(mTransactionList.get(i).getTransaction_date()));
+            if (dayNo == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
+                    && displayYear == eventCalendar.get(Calendar.YEAR)) {
+                arrayList.add((int) mTransactionList.get(i).getTransaction_amount());
+                if (arrayList.stream().mapToInt(n -> n).sum() > 1000000) {
+                    holder.tv_expense.setTextSize(10);
+                }
+                else if (arrayList.stream().mapToInt(n -> n).sum() > 10000000) {
+                    holder.tv_expense.setTextSize(8);
+                }
+                holder.tv_expense.setText(Common.changeNumberToComma(arrayList.stream().mapToInt(n -> n).sum()) +"원");
+            }
+        }
+
+
         holder.setIRecyclerClickListener((view, i) -> {
             Toast.makeText(mContext, "Selected Day: "+mDateList.get(i), Toast.LENGTH_SHORT).show();
         });
 
+    }
+
+    private Date convertStringToDate(String eventDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+        Date date = null;
+
+        try {
+            date = dateFormat.parse(eventDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return date;
     }
 
     @Override
@@ -106,8 +153,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ConstraintLayout container;
-        private TextView tv_calendar_day;
+        @BindView(R.id.container)
+        ConstraintLayout container;
+        @BindView(R.id.tv_calendar_day)
+        TextView tv_calendar_day;
+        @BindView(R.id.tv_income)
+        TextView tv_income;
+        @BindView(R.id.tv_expense)
+        TextView tv_expense;
 
         private IRecyclerItemSelectedListener mIRecyclerClickListener;
 
@@ -115,12 +168,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             mIRecyclerClickListener = IRecyclerClickListener;
         }
 
+        Unbinder mUnbinder;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            container = itemView.findViewById(R.id.container);
-            tv_calendar_day = itemView.findViewById(R.id.tv_calendar_day);
-
+            mUnbinder = ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 
