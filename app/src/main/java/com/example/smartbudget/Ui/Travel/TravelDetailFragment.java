@@ -17,7 +17,7 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 import com.example.smartbudget.Ui.Transaction.TransactionListAdapter;
 
 import java.util.List;

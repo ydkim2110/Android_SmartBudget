@@ -26,7 +26,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = DBHelper.class.getSimpleName();
 
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "smartbudget2.db";
+    public static final String DB_NAME = "smartbudget.db";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -102,6 +102,8 @@ public class DBHelper extends SQLiteOpenHelper {
         Calendar calendar16 = new GregorianCalendar(2019,06, 17);
         Calendar calendar17 = new GregorianCalendar(2019,06, 17);
         Calendar calendar18 = new GregorianCalendar(2019,06, 16);
+        Calendar calendar19 = new GregorianCalendar(2019,06, 01);
+        Calendar calendar20 = new GregorianCalendar(2019,06, 04);
 
         db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new Object[]{"저녁(술)", 50000, "Expense", "Normal", dateFormat.format(calendar1.getTime()), ":food&drink", null, 1, null});
@@ -139,6 +141,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 new Object[]{"택시비", 7800, "Expense", "Normal", dateFormat.format(calendar17.getTime()), ":transportation", null, 1, null});
         db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new Object[]{"쇼핑", 120000, "Expense", "Waste", dateFormat.format(calendar18.getTime()), ":clothing&beauty", null, 1, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"월급", 3000000, "Income", "", dateFormat.format(calendar19.getTime()), ":salary", null, null, null});
+        db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"이자", 150000, "Income", "", dateFormat.format(calendar20.getTime()), ":interest&dividend", null, null, null});
     }
 
     @Override
@@ -204,9 +210,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int deleteAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         return db.delete(Account.TABLE_NAME, "_id = " + accountModel.getId(), null);
     }
+
+    public int deleteTransaction(TransactionModel transactionModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d(TAG, "deleteTransaction: getId(): "+transactionModel.getId());
+        return db.delete(Transaction.TABLE_NAME, "_id = " + transactionModel.getId(), null);
+    }
+
 
     public Cursor getAllAccounts() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -284,6 +296,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String query = "SELECT "+Transaction.COL_PATTERN+", SUM("+Transaction.COL_AMOUNT+") AS pattern_sum, COUNT("+Transaction.COL_AMOUNT+") AS pattern_count"
                 + " FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
+                + " AND " + Transaction.COL_TYPE + " LIKE 'Expense'"
                 + " GROUP BY " + Transaction.COL_PATTERN;
         String[] args = {date, date};
         Cursor cursor = db.rawQuery(query, args);

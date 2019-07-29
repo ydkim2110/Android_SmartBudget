@@ -1,7 +1,5 @@
 package com.example.smartbudget.Ui.Home.Spending;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,7 +15,7 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.Date;

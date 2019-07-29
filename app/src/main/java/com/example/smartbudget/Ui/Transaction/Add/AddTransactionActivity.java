@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.smartbudget.Model.Category;
@@ -51,6 +52,7 @@ import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class AddTransactionActivity extends AppCompatActivity
         implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener {
@@ -78,18 +80,29 @@ public class AddTransactionActivity extends AppCompatActivity
     TextView tv_waste;
     @BindView(R.id.tv_invest)
     TextView tv_invest;
+    @BindView(R.id.iv_delete)
+    ImageView iv_delete;
+
+    @OnClick(R.id.iv_delete)
+    void deleteTransaction() {
+        DatabaseUtils.deleteTransactionAsync(MainActivity.mDBHelper, mTransactionModel);
+        finish();
+    }
+
 
     int _year;
     int _month;
     int _day;
 
     private AccountModel requestedAccountModel;
+    private TransactionModel mTransactionModel;
     private String selectedType = "";
     private Category selectedCategory = null;
     private SubCategory selectedSubCategory = null;
 
     private String selectedPattern = "";
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,25 +115,39 @@ public class AddTransactionActivity extends AppCompatActivity
 
         if (getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION) != null) {
 
+            iv_delete.setVisibility(View.VISIBLE);
+
+            getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_edit_transaction));
+            saveBtn.setText(getResources().getString(R.string.btn_update));
+
             TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
 
-            String passedCategory = String.valueOf(transactionModel.getCategory_id());
+            mTransactionModel = transactionModel;
+
+            String passedCategory = "default";
+            if (transactionModel.getTransaction_type().equals("Expense")) {
+                Category expenseCategory = Common.getExpenseCategory(transactionModel.getCategory_id());
+                passedCategory = expenseCategory.getCategoryVisibleName(this);
+                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
+                }
+            } else if (transactionModel.getTransaction_type().equals("Income")) {
+                Category incomeCategory = Common.getIncomeCategory(transactionModel.getCategory_id());
+                passedCategory = incomeCategory.getCategoryVisibleName(this);
+                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
+                }
+            }
             String passedAccount = String.valueOf(transactionModel.getAccount_id());
             String passedNote = transactionModel.getTransaction_note();
             String passedDate = transactionModel.getTransaction_date();
             String passedPattern = transactionModel.getTransaction_pattern();
             int passedAmount = (int) transactionModel.getTransaction_amount();
 
-            Log.d(TAG, "onCreate: passedDate: "+passedDate);
-            Log.d(TAG, "onCreate: passedPattern: "+passedPattern);
-
-            getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_edit_transaction));
-            saveBtn.setText(getResources().getString(R.string.btn_update));
-
-            Log.d(TAG, "onCreate: passedCategory: "+passedCategory);
-
-            accountEdt.setText(passedAccount);
             categoryEdt.setText(passedCategory);
+            accountEdt.setText(passedAccount);
             noteEdt.setText(passedNote);
             amountEdt.setText(Common.changeNumberToComma(passedAmount));
             dateEdt.setText(passedDate);
@@ -240,6 +267,8 @@ public class AddTransactionActivity extends AppCompatActivity
         cancelBtn = findViewById(R.id.cancel_btn);
         saveBtn = findViewById(R.id.save_btn);
         saveBtn.setEnabled(false);
+
+        iv_delete.setVisibility(View.GONE);
 
         calendar = Calendar.getInstance();
         _year = calendar.get(Calendar.YEAR);

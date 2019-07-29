@@ -49,7 +49,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         TransactionModel transaction = mTransactionModelList.get(position);
 
-        Category category = Common.getCategory(mTransactionModelList.get(position).getCategory_id());
+        Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
 
         holder.iv_category_icon.setImageResource(category.getIconResourceID());
         holder.iv_category_icon.setColorFilter(category.getIconColor());

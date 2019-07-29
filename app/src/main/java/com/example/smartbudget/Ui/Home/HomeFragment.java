@@ -2,6 +2,7 @@ package com.example.smartbudget.Ui.Home;
 
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,13 +25,17 @@ import android.widget.TextView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.SpendingPattern;
+import com.example.smartbudget.Interface.IBudgetContainerClickListener;
+import com.example.smartbudget.Interface.INSVScrollChangeListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionPatternLoadListener;
+import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.Spending.SpendingActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 
@@ -54,7 +59,8 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements ITransactionLoadListener, IThisMonthTransactionPatternLoadListener {
+public class HomeFragment extends Fragment implements
+        ITransactionLoadListener, IThisMonthTransactionPatternLoadListener, IThisWeekTransactionLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -67,15 +73,8 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     public HomeFragment() {
     }
 
-    public interface IBudgetContainerClickListener {
-        void onBudgetContainerClicked();
-    }
-
     private IBudgetContainerClickListener mIBudgetContainerClickListener;
-
-    public void setIBudgetContainerClickListener(IBudgetContainerClickListener IBudgetContainerClickListener) {
-        mIBudgetContainerClickListener = IBudgetContainerClickListener;
-    }
+    private INSVScrollChangeListener mINSVScrollChangeListener;
 
     Unbinder mUnbinder;
 
@@ -87,6 +86,14 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     private TextView usedBudgetTv;
     private TextView totalBudgetTv;
     private TextView tv_weekday;
+    
+    @BindView(R.id.tv_income_total)
+    TextView tv_income_total;
+    @BindView(R.id.tv_expense_total)
+    TextView tv_expense_total;
+    @BindView(R.id.tv_balance)
+    TextView tv_balance;
+    
     @BindView(R.id.pb_circle_normal)
     ProgressBar pb_circle_normal;
     @BindView(R.id.pb_circle_waste)
@@ -107,6 +114,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     TextView tv_invest_sum;
     @BindView(R.id.tv_total_spending)
     TextView tv_total_spending;
+    
     @BindView(R.id.nsv_container)
     NestedScrollView nsv_container;
 
@@ -121,6 +129,13 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     private int normal_percentage = 0;
     private int waste_percentage = 0;
     private int invest_percentage = 0;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mIBudgetContainerClickListener = (IBudgetContainerClickListener) context;
+        mINSVScrollChangeListener = (INSVScrollChangeListener) context;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -140,6 +155,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
         DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
         DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
 
@@ -171,6 +187,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void reloadData(AddTransactionEvent event) {
         if (event != null) {
+            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
             DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         }
@@ -197,6 +214,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
             getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
         });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
             DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         });
@@ -228,7 +246,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
         nsv_container.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                Log.d(TAG, "onScrollChange: called!!");
+                mINSVScrollChangeListener.onNSVScrollChangeListener(scrollY > oldScrollY);
             }
         });
     }
@@ -255,11 +273,33 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
         return groupedHashMap;
     }
 
+    @Override
+    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
+        int expense = 0;
+        int income = 0;
+        if (transactionList != null) {
+            for (TransactionModel model : transactionList) {
+                if (model.getTransaction_type().equals("Income")) {
+                    income += model.getTransaction_amount();
+                } else if (model.getTransaction_type().equals("Expense")) {
+                    expense += model.getTransaction_amount();
+                }
+            }
+        }
+        tv_income_total.setText(new StringBuilder(Common.changeNumberToComma(income)).append("원"));
+        tv_expense_total.setText(new StringBuilder(Common.changeNumberToComma(expense)).append("원"));
+        tv_balance.setText(new StringBuilder(Common.changeNumberToComma(income-expense)).append("원"));
+    }
+
+
+    @Override
+    public void onTransactionDeleteSuccess(boolean isSuccess) {
+
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-
+    public void onThisWeekTransactionLoadSuccess(List<TransactionModel> transactionList) {
         groupedHashMap = groupDataIntoHashMap(transactionList);
 
         Set set = groupedHashMap.entrySet();
@@ -275,7 +315,7 @@ public class HomeFragment extends Fragment implements ITransactionLoadListener, 
     }
 
     @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
+    public void onThisWeekTransactionDeleteSuccess(boolean isSuccess) {
 
     }
 

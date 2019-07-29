@@ -25,6 +25,18 @@ public class TransactionModel implements Parcelable, Comparable<TransactionModel
 
     public TransactionModel() {}
 
+    public TransactionModel(int id, String transaction_note, double transaction_amount, String transaction_type, String transaction_pattern, String transaction_date, String category_id, String sub_category_id, int account_id) {
+        this.id = id;
+        this.transaction_note = transaction_note;
+        this.transaction_amount = transaction_amount;
+        this.transaction_type = transaction_type;
+        this.transaction_pattern = transaction_pattern;
+        this.transaction_date = transaction_date;
+        this.category_id = category_id;
+        this.sub_category_id = sub_category_id;
+        this.account_id = account_id;
+    }
+
     public TransactionModel(String transaction_note, double transaction_amount, String transaction_type, String transaction_pattern, String transaction_date, String category_id, String sub_category_id, int account_id) {
         this.transaction_note = transaction_note;
         this.transaction_amount = transaction_amount;

@@ -3,7 +3,6 @@ package com.example.smartbudget.Ui.Home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +49,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        int id = mTransactionModelList.get(position).getId();
         String description = mTransactionModelList.get(position).getTransaction_note();
         int amount = (int) mTransactionModelList.get(position).getTransaction_amount();
         String type = mTransactionModelList.get(position).getTransaction_type();
@@ -59,7 +59,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         String subCategoryId = null;
         int accountId = mTransactionModelList.get(position).getAccount_id();
 
-        Category category = Common.getCategory(mTransactionModelList.get(position).getCategory_id());
+        Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
 
         holder.iv_transaction_icon.setImageResource(category.getIconResourceID());
         holder.iv_transaction_icon.setColorFilter(category.getIconColor());
@@ -67,7 +67,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         holder.tv_transaction_note.setText(mTransactionModelList.get(position).getTransaction_note());
         holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
 
-        final TransactionModel transactionModel = new TransactionModel(description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
+        final TransactionModel transactionModel = new TransactionModel(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);

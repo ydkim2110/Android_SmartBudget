@@ -45,11 +45,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TransactionModel transaction = mTransactionModelList.get(position);
-        Category category = Common.getCategory(mTransactionModelList.get(position).getCategory_id());
+        if (transaction.getTransaction_type().equals("Expense")) {
+            Category expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
+            holder.iv_category_icon.setImageResource(expenseCategory.getIconResourceID());
+            holder.iv_category_icon.setColorFilter(expenseCategory.getIconColor());
+            holder.tv_transaction_category.setText(expenseCategory.getCategoryVisibleName(mContext));
+        }
+        else if (transaction.getTransaction_type().equals("Income")) {
+            Category IncomeCategory = Common.getIncomeCategory(mTransactionModelList.get(position).getCategory_id());
+            holder.iv_category_icon.setImageResource(IncomeCategory.getIconResourceID());
+            holder.iv_category_icon.setColorFilter(IncomeCategory.getIconColor());
+            holder.tv_transaction_category.setText(IncomeCategory.getCategoryVisibleName(mContext));
+        }
 
-        holder.iv_category_icon.setImageResource(category.getIconResourceID());
-        holder.iv_category_icon.setColorFilter(category.getIconColor());
-        holder.tv_transaction_category.setText(category.getCategoryVisibleName(mContext));
+
+
         holder.tv_transaction_note.setText(transaction.getTransaction_note());
         holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
         holder.tv_transaction_date.setText(transaction.getTransaction_date());

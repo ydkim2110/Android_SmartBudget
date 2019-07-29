@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Home;
+package com.example.smartbudget.Interface;
 
 import com.example.smartbudget.Database.Model.SpendingPattern;
 

@@ -9,14 +9,15 @@ import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Ui.Account.IAccountInsertListener;
 import com.example.smartbudget.Ui.Account.IAccountLoadListener;
-import com.example.smartbudget.Ui.Home.IThisMonthTransactionPatternLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionPatternLoadListener;
 import com.example.smartbudget.Database.Model.SpendingPattern;
+import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.example.smartbudget.Ui.Transaction.Add.ITransactionInsertListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
-import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,11 @@ public class DatabaseUtils {
         task.execute(accountModels);
     }
 
+    public static void deleteTransactionAsync(DBHelper db, TransactionModel... transactionModels) {
+        DeleteTransactionAsync task = new DeleteTransactionAsync(db);
+        task.execute(transactionModels);
+    }
+
     public static void getAllAccount(DBHelper db, IAccountLoadListener listener) {
         GetAllAccountAsync task = new GetAllAccountAsync(db, listener);
         task.execute();
@@ -54,7 +60,7 @@ public class DatabaseUtils {
         GetAllTransactionAsync task = new GetAllTransactionAsync(db, listener);
         task.execute();
     }
-    public static void getThisWeekTransaction(DBHelper db, ITransactionLoadListener listener) {
+    public static void getThisWeekTransaction(DBHelper db, IThisWeekTransactionLoadListener listener) {
         GetThisWeekTransactionAsync task = new GetThisWeekTransactionAsync(db, listener);
         task.execute();
     }
@@ -180,6 +186,25 @@ public class DatabaseUtils {
         }
     }
 
+    private static class DeleteTransactionAsync extends AsyncTask<TransactionModel, Void, Void> {
+
+        DBHelper db;
+
+        public DeleteTransactionAsync(DBHelper db) {
+            this.db = db;
+        }
+
+        @Override
+        protected Void doInBackground(TransactionModel... transactionModels) {
+            try {
+                long result = db.deleteTransaction(transactionModels[0]);
+            } catch (Exception e) {
+                Log.d(TAG, "doInBackground: Error-" + e.getMessage());
+            }
+            return null;
+        }
+    }
+
     private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<AccountModel>> {
 
         DBHelper db;
@@ -288,13 +313,14 @@ public class DatabaseUtils {
     private static class GetThisWeekTransactionAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
 
         DBHelper db;
-        ITransactionLoadListener mListener;
+        IThisWeekTransactionLoadListener mListener;
 
-        public GetThisWeekTransactionAsync(DBHelper db, ITransactionLoadListener listener) {
+        public GetThisWeekTransactionAsync(DBHelper db, IThisWeekTransactionLoadListener listener) {
             this.db = db;
             mListener = listener;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected List<TransactionModel> doInBackground(Void... voids) {
             Cursor cursor = db.getThisWeekTransactions();
@@ -338,7 +364,7 @@ public class DatabaseUtils {
         @Override
         protected void onPostExecute(List<TransactionModel> transactionList) {
             super.onPostExecute(transactionList);
-            mListener.onTransactionLoadSuccess(transactionList);
+            mListener.onThisWeekTransactionLoadSuccess(transactionList);
         }
     }
 
@@ -370,6 +396,7 @@ public class DatabaseUtils {
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
                         String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
                         String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String subCategoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_SUB_CATEGORY_ID));
                         String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
@@ -380,7 +407,8 @@ public class DatabaseUtils {
                         transaction.setTransaction_date(date);
                         transaction.setTransaction_pattern(pattern);
                         transaction.setCategory_id(categoryId);
-                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transaction.setSub_category_id(subCategoryId);
+                        transaction.setAccount_id(accountId != null ? Integer.parseInt(accountId) : 0);
                         transactionList.add(transaction);
                     }
                     while (cursor.moveToNext());
@@ -473,7 +501,7 @@ public class DatabaseUtils {
         @Override
         protected List<SpendingPattern> doInBackground(Void... voids) {
             Cursor cursor = db.getThisMonthTransactionPattern(date);
-            Log.d(TAG, "cursor.getCount(): "+cursor.getCount());
+
             List<SpendingPattern> spendingPatternList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 try {

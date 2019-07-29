@@ -1,7 +1,9 @@
 package com.example.smartbudget.Ui.Transaction;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.IRVScrollChangeListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -26,6 +30,8 @@ public class TransactionListFragment extends Fragment implements ITransactionLoa
 
     private static final String TAG = TransactionListFragment.class.getSimpleName();
 
+    private IRVScrollChangeListener mIRVScrollChangeListener;
+
     public static TransactionListFragment newInstance(long time) {
 
         TransactionListFragment fragment = new TransactionListFragment();
@@ -35,9 +41,18 @@ public class TransactionListFragment extends Fragment implements ITransactionLoa
         return fragment;
     }
 
-
     private RecyclerView rv_transaction_list;
     private TextView tv_no_item;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mIRVScrollChangeListener = (IRVScrollChangeListener) context;
+        } catch (Exception e) {
+
+        }
+    }
 
     @Nullable
     @Override
@@ -60,6 +75,14 @@ public class TransactionListFragment extends Fragment implements ITransactionLoa
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv_transaction_list.setLayoutManager(layoutManager);
         rv_transaction_list.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+
+        rv_transaction_list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mIRVScrollChangeListener.onRVScrollChangeListener(dy > 0);
+            }
+        });
     }
 
     @Override

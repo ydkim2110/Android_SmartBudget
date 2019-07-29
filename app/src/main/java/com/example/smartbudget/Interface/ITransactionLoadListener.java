@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction;
+package com.example.smartbudget.Interface;
 
 import com.example.smartbudget.Model.TransactionModel;
 

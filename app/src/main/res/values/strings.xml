@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">SmartBudget</string>
+
+    <string name="FACEBOOK_APP_ID">518205832277386</string>
+    <string name="ACCOUNT_KIT_CLIENT_TOKEN">68956d81187e481ce22609858708b5da</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -50,5 +54,7 @@
     <string name="toolbar_edit_transaction">Edit Transaction</string>
     <string name="toolbar_spending_pattern">Spending Pattern</string>
     <string name="btn_update">Update</string>
+    <string name="success_login_message">로그인에 성공 하셨습니다.</string>
+    <string name="cancelled_login_message">로그인이 취소되었습니다.</string>
 
 </resources>

@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,9 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Transaction.ITransactionLoadListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 

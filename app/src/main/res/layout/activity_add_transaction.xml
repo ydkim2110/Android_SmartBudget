@@ -215,6 +215,15 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/iv_delete"
+                android:visibility="gone"
+                android:src="@drawable/ic_delete_black_24dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
         </LinearLayout>
 
     </ScrollView>
@@ -245,6 +254,7 @@
             android:background="@color/colorRevenue"
             android:foreground="?attr/selectableItemBackground"
             android:text="Save" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,6 +28,7 @@ public class Common {
     public static final int TYPE_EXPENSE_TRANSACTION = 0;
     public static final int TYPE_INCOME_TRANSACTION = 1;
     public static final int TYPE_TRANSFER_TRANSACTION = 2;
+    public static final String LOGGED_KEY = "";
 
     public static AccountModel SELECTED_ACCOUNT = null;
 
@@ -165,8 +166,18 @@ public class Common {
         return number.replace(",", "");
     }
 
-    public static Category getCategory(String categoryId) {
+    public static Category getExpenseCategory(String categoryId) {
         List<Category> categoryList = Arrays.asList(DefaultCategories.getDefaultExpenseCategories());
+        for (Category category : categoryList) {
+            if (category.getCategoryID().equals(categoryId)) {
+                return category;
+            }
+        }
+        return null;
+    }
+
+    public static Category getIncomeCategory(String categoryId) {
+        List<Category> categoryList = Arrays.asList(DefaultCategories.getDefaultIncomeCategories());
         for (Category category : categoryList) {
             if (category.getCategoryID().equals(categoryId)) {
                 return category;

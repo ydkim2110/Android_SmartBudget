@@ -26,6 +26,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Interface.IBudgetContainerClickListener;
+import com.example.smartbudget.Interface.INSVScrollChangeListener;
+import com.example.smartbudget.Interface.IRVScrollChangeListener;
 import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Account.AccountFragment;
@@ -35,6 +38,7 @@ import com.example.smartbudget.Ui.Home.HomeFragment;
 import com.example.smartbudget.Ui.Report.ReportFragment;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionFragment;
+import com.example.smartbudget.Ui.Transaction.TransactionListFragment;
 import com.example.smartbudget.Ui.Travel.AddTravelActivity;
 import com.example.smartbudget.Ui.Travel.TravelFragment;
 import com.example.smartbudget.Utils.Common;
@@ -47,7 +51,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.IBudgetContainerClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, IBudgetContainerClickListener, INSVScrollChangeListener, IRVScrollChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -71,14 +75,6 @@ public class MainActivity extends AppCompatActivity
     private long backKeyPressedTime = 0;
 
     private int clickedNavItem = 0;
-
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        if (fragment instanceof HomeFragment) {
-            HomeFragment homeFragment = (HomeFragment) fragment;
-            ((HomeFragment) fragment).setIBudgetContainerClickListener(this);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,4 +280,26 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(currentFragment).setChecked(true);
     }
 
+    @Override
+    public void onNSVScrollChangeListener(boolean isDown) {
+        if (isDown) {
+            fab.hide();
+        } else {
+            fab.show();
+        }
+    }
+
+    @Override
+    public void onRVScrollChangeListener(boolean isDown) {
+        if (isDown) {
+            if (fab.isShown()) {
+                fab.hide();
+            }
+        }
+        else {
+            if (!fab.isShown()) {
+                fab.show();
+            }
+        }
+    }
 }

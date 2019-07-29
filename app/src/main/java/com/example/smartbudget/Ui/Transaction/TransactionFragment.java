@@ -1,10 +1,9 @@
 package com.example.smartbudget.Ui.Transaction;
 
 
-import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.INSVScrollChangeListener;
+import com.example.smartbudget.Interface.IRVScrollChangeListener;
+import com.example.smartbudget.Interface.ITransactionLoadListener;
 import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
@@ -73,14 +76,13 @@ public class TransactionFragment extends Fragment implements ITransactionLoadLis
     private ImageButton previousBtn;
     private ImageButton nextBtn;
 
-    private List<TransactionModel> mTransactionList = new ArrayList<>();
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called!!");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,6 +92,7 @@ public class TransactionFragment extends Fragment implements ITransactionLoadLis
 
         View view = inflater.inflate(R.layout.fragment_transaction, container, false);
 
+        rv_calendar = view.findViewById(R.id.rv_calendar);
         list_container = view.findViewById(R.id.list_container);
         calendar_container = view.findViewById(R.id.calendar_container);
 
@@ -106,7 +109,7 @@ public class TransactionFragment extends Fragment implements ITransactionLoadLis
             setUpCalendar();
         });
 
-        loadCalendar(view);
+        loadCalendar();
 
         mTabLayout = view.findViewById(R.id.transaction_list_tab);
         mViewPager = view.findViewById(R.id.transaction_viewPager);
@@ -152,10 +155,8 @@ public class TransactionFragment extends Fragment implements ITransactionLoadLis
         super.onDestroyView();
     }
 
-    public void loadCalendar(View view) {
+    public void loadCalendar() {
         Log.d(TAG, "loadCalendar: called!!");
-
-        rv_calendar = view.findViewById(R.id.rv_calendar);
         mLayoutManager = new GridLayoutManager(getActivity(), 7);
         rv_calendar.setLayoutManager(mLayoutManager);
         rv_calendar.addItemDecoration(new SpacesItemDecoration(0));
