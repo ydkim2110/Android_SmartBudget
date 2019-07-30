@@ -7,6 +7,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
         this.mCategoryList = categoryList;
     }
 
+    int total = 3800000;
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -51,6 +54,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
         holder.iv_category_icon.setImageResource(mCategoryList.get(position).getIconResourceID());
         holder.iv_category_icon.setColorFilter(mCategoryList.get(position).getIconColor());
+        holder.pb_budget.setProgressTintList(ColorStateList.valueOf(mCategoryList.get(position).getIconColor()));
 
         holder.setData(category, amount);
 
@@ -104,14 +108,16 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
         private void setData(String category, int amount) {
             tv_budget_category.setText(category);
+            tv_budget_used.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
             tv_budget_total.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
-            tv_budget_percentage.setText(new StringBuilder(Common.calcPercentageDownToTwo(100000, amount)).append("%"));
+            tv_budget_percentage.setText(new StringBuilder(Common.calcPercentage(total, amount)).append("%"));
 
             pb_budget.setMax(amount);
-            ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_budget, "progress", 0, 100000);
+            ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_budget, "progress", 0, total);
             progressAnim.setDuration(500);
             progressAnim.setInterpolator(new LinearInterpolator());
             progressAnim.start();
+            total = total-200000;
         }
 
         @Override

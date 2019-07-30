@@ -26,7 +26,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = DBHelper.class.getSimpleName();
 
     public static final int DB_VERSION = 1;
-    public static final String DB_NAME = "smartbudget.db";
+    public static final String DB_NAME = "smart_budget.db";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

@@ -2,10 +2,12 @@ package com.example.smartbudget.Ui.Account;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,8 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.IFABClickListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
@@ -27,7 +31,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountFragment extends Fragment implements IAccountLoadListener {
+public class AccountFragment extends Fragment implements IAccountLoadListener, IFABClickListener {
+
+    private static final String TAG = AccountFragment.class.getSimpleName();
+
+    public static BSAccountAddFragment mBSAccountAddFragment;
+    public static BSAccountMenuFragment mBSAccountMenuFragment;
 
     private static AccountFragment instance;
 
@@ -41,15 +50,17 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
     private RecyclerView mRecyclerView;
     private AccountAdapter mAccountAdapter;
 
-    private LinearLayout bottom_sheet;
-    private BottomSheetBehavior sheetBehavior;
-    private FloatingActionButton fab;
-
     @Override
     public void onResume() {
         super.onResume();
         Common.SELECTED_ACCOUNT = null;
         DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((MainActivity)getActivity()).setmIFABClickListener(this);
     }
 
     @SuppressLint("WrongConstant")
@@ -60,40 +71,6 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
 
         DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
 
-        bottom_sheet = view.findViewById(R.id.bottom_sheet);
-        fab = view.findViewById(R.id.fab);
-        sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
-        sheetBehavior.setPeekHeight(180);
-
-        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        fab.setTag("expanded");
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        fab.setTag("collapsed");
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View view, float v) {
-
-            }
-        });
-
-        fab.setOnClickListener(v -> {
-            toggleBottomSheet();
-        });
-
         mRecyclerView = view.findViewById(R.id.rv_account);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -101,14 +78,6 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
         mRecyclerView.setLayoutManager(layoutManager);
 
         return view;
-    }
-
-    private void toggleBottomSheet() {
-        if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else {
-            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
     }
 
     @Override
@@ -130,5 +99,11 @@ public class AccountFragment extends Fragment implements IAccountLoadListener {
         if (isSuccess) {
             DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
         }
+    }
+
+    @Override
+    public void onFABClicked() {
+        mBSAccountAddFragment = BSAccountAddFragment.getInstance();
+        mBSAccountAddFragment.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), mBSAccountAddFragment.getTag());
     }
 }

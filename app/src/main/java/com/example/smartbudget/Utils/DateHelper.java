@@ -1,6 +1,7 @@
 package com.example.smartbudget.Utils;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -15,8 +16,9 @@ import java.util.Date;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class DateHelper {
 
+
     private static LocalDate today = LocalDate.now();
-    private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static Date getWeekStartDate() {
         LocalDate monday = today;
@@ -37,7 +39,7 @@ public class DateHelper {
     public static Date changeStringToDate(String date) {
         Date tempDate = null;
         try {
-            tempDate = dateTimeFormat.parse(date);
+            tempDate = dateFormat.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
             tempDate = new Date();
@@ -46,7 +48,7 @@ public class DateHelper {
     }
 
     public static String changeDateToString(Date date) {
-        return dateTimeFormat.format(date);
+        return dateFormat.format(date);
     }
 
 }

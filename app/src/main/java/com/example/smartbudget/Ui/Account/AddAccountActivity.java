@@ -25,6 +25,9 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
     private static final String TAG = AddAccountActivity.class.getSimpleName();
 
+    private BSAccountAddFragment mBSAccountAddFragment;
+    private BSAccountMenuFragment mBSAccountMenuFragment;
+
     private Toolbar mToolbar;
 
     private EditText accountName;

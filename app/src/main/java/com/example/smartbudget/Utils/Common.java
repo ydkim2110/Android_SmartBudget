@@ -93,6 +93,12 @@ public class Common {
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }
 
+    public static String calcPercentage (int currentValue, int maxValue) {
+        return new DecimalFormat("0").format(
+                (Double.parseDouble(String.valueOf(currentValue)) * 100/
+                        (Double.parseDouble(String.valueOf(maxValue)))));
+    }
+
     public static Date getWeekStartDate() {
         Calendar calendar = Calendar.getInstance();
         while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {

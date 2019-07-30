@@ -27,20 +27,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
         android:text="교통"
-        android:textStyle="bold"
-        android:textSize="16sp"
         android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/iv_transaction_icon"
-        app:layout_constraintTop_toTopOf="@+id/iv_transaction_icon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_transaction_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="2dp"
         android:layout_marginBottom="8dp"
         android:text="택시비"
         app:layout_constraintBottom_toBottomOf="parent"

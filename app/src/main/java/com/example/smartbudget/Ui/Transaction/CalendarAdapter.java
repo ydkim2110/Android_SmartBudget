@@ -38,7 +38,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     private Context mContext;
     private List<Date> mDateList;
-    private Calendar mCalendar;;
+    private Calendar mCalendar;
+    ;
     private List<TransactionModel> mTransactionList;
 
     public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar, List<TransactionModel> transactionList) {
@@ -57,7 +58,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         view.post(() -> {
 
             GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams) view.getLayoutParams();
-            params.height = parent.getMeasuredHeight()/5;
+            params.height = parent.getMeasuredHeight() / 5;
 
             view.setLayoutParams(params);
 
@@ -78,26 +79,24 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         int displayYear = dateCalendar.get(Calendar.YEAR);
         int displayMonth = dateCalendar.get(Calendar.MONTH) + 1;
         int displayDay = dateCalendar.get(Calendar.DAY_OF_MONTH);
-        Log.d(TAG, "onBindViewHolder: displayDate: "+displayYear+", "+displayMonth+", "+displayDay);
+        Log.d(TAG, "onBindViewHolder: displayDate: " + displayYear + ", " + displayMonth + ", " + displayDay);
         int currentYear = mCalendar.get(Calendar.YEAR);
         int currentMonth = mCalendar.get(Calendar.MONTH) + 1;
         int currentDay = mCalendar.get(Calendar.DAY_OF_MONTH);
-        Log.d(TAG, "onBindViewHolder: currentDate: "+currentYear+", "+currentMonth+", "+currentDay);
+        Log.d(TAG, "onBindViewHolder: currentDate: " + currentYear + ", " + currentMonth + ", " + currentDay);
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
-        int todayMonth = Calendar.getInstance().get(Calendar.MONTH)+1;
+        int todayMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
         int todayDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
         if (position % 7 == 0) {
             holder.tv_calendar_day.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
-        }
-        else if (position % 7 == 6) {
+        } else if (position % 7 == 6) {
             holder.tv_calendar_day.setTextColor(mContext.getResources().getColor(android.R.color.holo_blue_dark));
         }
 
         if (displayMonth == currentMonth && displayYear == currentYear) {
 
-        }
-        else {
+        } else {
             holder.tv_calendar_day.setTextColor(mContext.getResources().getColor(android.R.color.darker_gray));
         }
 
@@ -106,29 +105,40 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             holder.tv_calendar_day.setTextColor(mContext.getResources().getColor(android.R.color.white));
         }
 
-        holder.tv_calendar_day.setText(""+dayNo);
+        holder.tv_calendar_day.setText("" + dayNo);
 
         Calendar eventCalendar = Calendar.getInstance();
-        ArrayList<Integer> arrayList = new ArrayList<>();
+        ArrayList<Integer> expenseTotal = new ArrayList<>();
+        ArrayList<Integer> incomeTotal = new ArrayList<>();
+
 
         for (int i = 0; i < mTransactionList.size(); i++) {
             eventCalendar.setTime(convertStringToDate(mTransactionList.get(i).getTransaction_date()));
             if (dayNo == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
                     && displayYear == eventCalendar.get(Calendar.YEAR)) {
-                arrayList.add((int) mTransactionList.get(i).getTransaction_amount());
-                if (arrayList.stream().mapToInt(n -> n).sum() > 1000000) {
-                    holder.tv_expense.setTextSize(10);
+                if (mTransactionList.get(i).getTransaction_type().equals("Expense")) {
+                    expenseTotal.add((int) mTransactionList.get(i).getTransaction_amount());
+                    if (expenseTotal.stream().mapToInt(n -> n).sum() > 1000000) {
+                        holder.tv_expense.setTextSize(10);
+                    } else if (expenseTotal.stream().mapToInt(n -> n).sum() > 10000000) {
+                        holder.tv_expense.setTextSize(8);
+                    }
+                    holder.tv_expense.setText(Common.changeNumberToComma(expenseTotal.stream().mapToInt(n -> n).sum()) + "원");
                 }
-                else if (arrayList.stream().mapToInt(n -> n).sum() > 10000000) {
-                    holder.tv_expense.setTextSize(8);
+                else if (mTransactionList.get(i).getTransaction_type().equals("Income")) {
+                    incomeTotal.add((int) mTransactionList.get(i).getTransaction_amount());
+                    if (incomeTotal.stream().mapToInt(n -> n).sum() > 1000000) {
+                        holder.tv_income.setTextSize(10);
+                    } else if (incomeTotal.stream().mapToInt(n -> n).sum() > 10000000) {
+                        holder.tv_income.setTextSize(8);
+                    }
+                    holder.tv_income.setText(Common.changeNumberToComma(incomeTotal.stream().mapToInt(n -> n).sum()) + "원");
                 }
-                holder.tv_expense.setText(Common.changeNumberToComma(arrayList.stream().mapToInt(n -> n).sum()) +"원");
             }
         }
 
-
         holder.setIRecyclerClickListener((view, i) -> {
-            Toast.makeText(mContext, "Selected Day: "+mDateList.get(i), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Selected Day: " + mDateList.get(i), Toast.LENGTH_SHORT).show();
         });
 
     }

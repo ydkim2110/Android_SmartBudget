@@ -27,11 +27,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Interface.IBudgetContainerClickListener;
+import com.example.smartbudget.Interface.IFABClickListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
 import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Account.AccountFragment;
+import com.example.smartbudget.Ui.Account.AddAccountActivity;
 import com.example.smartbudget.Ui.Budget.BudgetFragment;
 import com.example.smartbudget.Ui.Calculator.CalculatorFragment;
 import com.example.smartbudget.Ui.Home.HomeFragment;
@@ -54,6 +56,12 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IBudgetContainerClickListener, INSVScrollChangeListener, IRVScrollChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private IFABClickListener mIFABClickListener;
+
+    public void setmIFABClickListener(IFABClickListener mIFABClickListener) {
+        this.mIFABClickListener = mIFABClickListener;
+    }
 
     private static final int HOME_FRAGMENT = 0;
     private static final int ACCOUNT_FRAGMENT = 1;
@@ -250,17 +258,22 @@ public class MainActivity extends AppCompatActivity
     private void setFragment(Fragment fragment, final int currentFragmentNUM) {
         Log.d(TAG, "setFragment: called");
 
-        if (currentFragmentNUM == ACCOUNT_FRAGMENT || currentFragmentNUM == REPORT_FRAGMENT ||
-                currentFragmentNUM == CALCULATOR_FRAGMENT) {
+        if (currentFragmentNUM == REPORT_FRAGMENT || currentFragmentNUM == CALCULATOR_FRAGMENT) {
             fab.setVisibility(View.INVISIBLE);
-        } else {
+        }
+        else {
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(view -> {
                 if (currentFragmentNUM == HOME_FRAGMENT || currentFragmentNUM == TRANSACTION_FRAGMENT) {
                     startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
-                } else if (currentFragmentNUM == BUDGET_FRAGMENT) {
+                }
+                else if (currentFragmentNUM == ACCOUNT_FRAGMENT) {
+                    mIFABClickListener.onFABClicked();
+                }
+                else if (currentFragmentNUM == BUDGET_FRAGMENT) {
                     Toast.makeText(MainActivity.this, "Budget FAB Click!", Toast.LENGTH_SHORT).show();
-                } else if (currentFragmentNUM == TRAVEL_FRAGMENT) {
+                }
+                else if (currentFragmentNUM == TRAVEL_FRAGMENT) {
                     startActivity(new Intent(MainActivity.this, AddTravelActivity.class));
                 }
             });
@@ -302,4 +315,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 }
