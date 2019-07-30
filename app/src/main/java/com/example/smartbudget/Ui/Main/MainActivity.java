@@ -32,6 +32,7 @@ import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
 import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Account.AccountActivity;
 import com.example.smartbudget.Ui.Account.AccountFragment;
 import com.example.smartbudget.Ui.Account.AddAccountActivity;
 import com.example.smartbudget.Ui.Budget.BudgetFragment;
@@ -181,21 +182,29 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_home) {
             clickedNavItem = R.id.nav_home;
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_account) {
             clickedNavItem = R.id.nav_account;
+            startActivity(new Intent(MainActivity.this, AccountActivity.class));
         } else if (id == R.id.nav_budget) {
             clickedNavItem = R.id.nav_budget;
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_transaction) {
             clickedNavItem = R.id.nav_transaction;
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_report) {
             clickedNavItem = R.id.nav_report;
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_calculator) {
             clickedNavItem = R.id.nav_calculator;
+            drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_travel) {
             clickedNavItem = R.id.nav_travel;
+            drawer.closeDrawer(GravityCompat.START);
         }
 
-        drawer.closeDrawer(GravityCompat.START);
+        //drawer.closeDrawer(GravityCompat.START);
+
 
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -214,9 +223,9 @@ public class MainActivity extends AppCompatActivity
                     case R.id.nav_home:
                         gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
                         break;
-                    case R.id.nav_account:
-                        gotoFragment(getResources().getString(R.string.menu_account), AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
-                        break;
+//                    case R.id.nav_account:
+//                        gotoFragment(getResources().getString(R.string.menu_account), AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
+//                        break;
                     case R.id.nav_budget:
                         gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
                         break;

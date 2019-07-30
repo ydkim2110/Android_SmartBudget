@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -20,9 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.INSVScrollChangeListener;
-import com.example.smartbudget.Interface.IRVScrollChangeListener;
-import com.example.smartbudget.Interface.ITransactionLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
@@ -43,7 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class TransactionFragment extends Fragment implements ITransactionLoadListener {
+public class TransactionFragment extends Fragment implements IThisMonthTransactionLoadListener {
 
     private static final String TAG = TransactionFragment.class.getSimpleName();
 
@@ -175,7 +172,9 @@ public class TransactionFragment extends Fragment implements ITransactionLoadLis
         Log.d(TAG, "setUpCalendar: firstDayOfMonth: " + firstDayOfMonth);
         monthCalendar.add(Calendar.DAY_OF_MONTH, -firstDayOfMonth);
 
-        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(Calendar.getInstance().getTime()), this);
+        Log.d(TAG, "setUpCalendar: monthCalendar.getTime(): "+monthCalendar.getTime());
+
+        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(mCalendar.getTime()), this);
 
         while (mDateList.size() < MAX_CALENDAR_DAYS) {
             mDateList.add(monthCalendar.getTime());

@@ -16,7 +16,7 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Interface.ITransactionLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.Date;
@@ -29,7 +29,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WasteFragment extends Fragment implements ITransactionLoadListener {
+public class WasteFragment extends Fragment implements IThisMonthTransactionLoadListener {
 
     private static final String TAG = WasteFragment.class.getSimpleName();
 

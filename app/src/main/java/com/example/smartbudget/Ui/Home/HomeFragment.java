@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.Spending.SpendingActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Interface.ITransactionLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 
@@ -60,7 +61,7 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment implements
-        ITransactionLoadListener, IThisMonthTransactionPatternLoadListener, IThisWeekTransactionLoadListener {
+        IThisMonthTransactionLoadListener, IThisMonthTransactionPatternLoadListener, IThisWeekTransactionLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -79,7 +80,7 @@ public class HomeFragment extends Fragment implements
     Unbinder mUnbinder;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView mRecyclerView;
+    private RecyclerView rv_transaction;
     private WeekTransactionAdapter mAdapter;
     private ProgressBar progressBar;
     private TextView progressBarPercentage;
@@ -117,6 +118,8 @@ public class HomeFragment extends Fragment implements
     
     @BindView(R.id.nsv_container)
     NestedScrollView nsv_container;
+    @BindView(R.id.ll_no_items)
+    LinearLayout ll_no_items;
 
     private ConstraintLayout homeOverviewContainer;
     private ConstraintLayout homeBudgetContainer;
@@ -151,9 +154,9 @@ public class HomeFragment extends Fragment implements
         setProgressBar();
         handleViewClick();
 
-        mRecyclerView = view.findViewById(R.id.transaction_recyclerview);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_transaction = view.findViewById(R.id.rv_transaction);
+        rv_transaction.setHasFixedSize(true);
+        rv_transaction.setLayoutManager(new LinearLayoutManager(getContext()));
 
         DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
         DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
@@ -200,7 +203,7 @@ public class HomeFragment extends Fragment implements
         }
 
         mAdapter = new WeekTransactionAdapter(getContext(), groupedHashMap);
-        mRecyclerView.setAdapter(mAdapter);
+        rv_transaction.setAdapter(mAdapter);
     }
 
     private void handleViewClick() {
@@ -300,6 +303,14 @@ public class HomeFragment extends Fragment implements
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onThisWeekTransactionLoadSuccess(List<TransactionModel> transactionList) {
+        if (transactionList.size() == 0) {
+            rv_transaction.setVisibility(View.GONE);
+            ll_no_items.setVisibility(View.VISIBLE);
+        } else {
+            rv_transaction.setVisibility(View.VISIBLE);
+            ll_no_items.setVisibility(View.GONE);
+        }
+
         groupedHashMap = groupDataIntoHashMap(transactionList);
 
         Set set = groupedHashMap.entrySet();

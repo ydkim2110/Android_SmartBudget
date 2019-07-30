@@ -3,7 +3,6 @@ package com.example.smartbudget.Ui.Transaction;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
-import com.example.smartbudget.Interface.ITransactionLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -26,7 +25,7 @@ import com.example.smartbudget.Utils.Common;
 
 import java.util.List;
 
-public class TransactionListFragment extends Fragment implements ITransactionLoadListener {
+public class TransactionListFragment extends Fragment implements IThisMonthTransactionLoadListener {
 
     private static final String TAG = TransactionListFragment.class.getSimpleName();
 
@@ -36,7 +35,7 @@ public class TransactionListFragment extends Fragment implements ITransactionLoa
 
         TransactionListFragment fragment = new TransactionListFragment();
         Bundle args = new Bundle();
-        args.putString("date", Common.dateFormat.format(time));
+        args.putString("date", Common.dateFormat.format(time)); 
         fragment.setArguments(args);
         return fragment;
     }

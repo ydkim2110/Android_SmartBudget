@@ -56,5 +56,8 @@
     <string name="btn_update">Update</string>
     <string name="success_login_message">로그인에 성공 하셨습니다.</string>
     <string name="cancelled_login_message">로그인이 취소되었습니다.</string>
+    <string name="tab_title_asset">Asset</string>
+    <string name="tab_title_debt">Debt</string>
+    <string name="toolbar_account">Account</string>
 
 </resources>

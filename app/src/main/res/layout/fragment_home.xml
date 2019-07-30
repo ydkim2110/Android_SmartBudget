@@ -61,9 +61,26 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/transaction_recyclerview"
+                    android:id="@+id/rv_transaction"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:id="@+id/ll_no_items"
+                    android:visibility="gone"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    android:background="@android:color/white"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+
+                    <TextView
+                        android:text="No items..."
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

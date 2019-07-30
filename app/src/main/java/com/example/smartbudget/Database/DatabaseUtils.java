@@ -17,7 +17,7 @@ import com.example.smartbudget.Ui.Transaction.Add.ITransactionInsertListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
-import com.example.smartbudget.Interface.ITransactionLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class DatabaseUtils {
         task.execute();
     }
 
-    public static void getAllTransaction(DBHelper db, ITransactionLoadListener listener) {
+    public static void getAllTransaction(DBHelper db, IThisMonthTransactionLoadListener listener) {
         GetAllTransactionAsync task = new GetAllTransactionAsync(db, listener);
         task.execute();
     }
@@ -64,11 +64,11 @@ public class DatabaseUtils {
         GetThisWeekTransactionAsync task = new GetThisWeekTransactionAsync(db, listener);
         task.execute();
     }
-    public static void getThisMonthTransaction(DBHelper db, String date, ITransactionLoadListener listener) {
+    public static void getThisMonthTransaction(DBHelper db, String date, IThisMonthTransactionLoadListener listener) {
         GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
         task.execute();
     }
-    public static void getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, ITransactionLoadListener listener) {
+    public static void getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, IThisMonthTransactionLoadListener listener) {
         getThisMonthTransactionListPattern task = new getThisMonthTransactionListPattern(db, date, pattern, listener);
         task.execute();
     }
@@ -258,9 +258,9 @@ public class DatabaseUtils {
     private static class GetAllTransactionAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
 
         DBHelper db;
-        ITransactionLoadListener mListener;
+        IThisMonthTransactionLoadListener mListener;
 
-        public GetAllTransactionAsync(DBHelper db, ITransactionLoadListener listener) {
+        public GetAllTransactionAsync(DBHelper db, IThisMonthTransactionLoadListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -300,7 +300,7 @@ public class DatabaseUtils {
                 }
                 return transactionList;
             }
-            return null;
+            return transactionList;
         }
 
         @Override
@@ -358,7 +358,7 @@ public class DatabaseUtils {
                 }
                 return transactionList;
             }
-            return null;
+            return transactionList;
         }
 
         @Override
@@ -371,10 +371,10 @@ public class DatabaseUtils {
     private static class GetThisMonthTransactionAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
 
         DBHelper db;
-        ITransactionLoadListener mListener;
+        IThisMonthTransactionLoadListener mListener;
         String date = "";
 
-        public GetThisMonthTransactionAsync(DBHelper db, String date, ITransactionLoadListener listener) {
+        public GetThisMonthTransactionAsync(DBHelper db, String date, IThisMonthTransactionLoadListener listener) {
             this.db = db;
             mListener = listener;
             this.date = date;
@@ -431,11 +431,11 @@ public class DatabaseUtils {
     private static class getThisMonthTransactionListPattern extends AsyncTask<Void, Void, List<TransactionModel>> {
 
         DBHelper db;
-        ITransactionLoadListener mListener;
+        IThisMonthTransactionLoadListener mListener;
         String date = "";
         String pattern = "";
 
-        public getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, ITransactionLoadListener listener) {
+        public getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, IThisMonthTransactionLoadListener listener) {
             this.db = db;
             mListener = listener;
             this.date = date;
