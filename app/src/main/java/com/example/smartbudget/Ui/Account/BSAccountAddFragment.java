@@ -26,7 +26,7 @@ public class BSAccountAddFragment extends BottomSheetDialogFragment {
     public BSAccountAddFragment() {
     }
 
-    private RecyclerView mRecyclerView;
+    private RecyclerView rv_add_account;
     private String[] title = {"현금", "수시입출금", "예금", "적금", "주식", "펀드", "보험", "부동산", "기타자산", "대출", "기타부채"};
 
     @Override
@@ -39,15 +39,14 @@ public class BSAccountAddFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bsaccount_add, container, false);
 
-        mRecyclerView = view.findViewById(R.id.account_add_recyclerview);
+        rv_add_account = view.findViewById(R.id.rv_add_account);
 
         BSAccountAddAdapter adapter = new BSAccountAddAdapter(getActivity(), title);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
-        mRecyclerView.setLayoutManager(layoutManager);
+        rv_add_account.setLayoutManager(layoutManager);
 
-        mRecyclerView.setAdapter(adapter);
-
+        rv_add_account.setAdapter(adapter);
 
         return view;
     }

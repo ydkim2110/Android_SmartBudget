@@ -26,7 +26,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.account_name_item_layout, viewGroup, false);
+                .inflate(R.layout.item_account, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -40,7 +40,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
                 Intent intent = new Intent(mContext, AddAccountActivity.class);
                 intent.putExtra("type", title[position]);
                 mContext.startActivity(intent);
-                AccountAdapter.mBSAccountAddFragment.dismiss();
+                AccountActivity.mBSAccountAddFragment.dismiss();
             }
         });
     }

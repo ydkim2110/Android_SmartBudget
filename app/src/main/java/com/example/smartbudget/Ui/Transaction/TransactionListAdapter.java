@@ -7,6 +7,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         TransactionModel transaction = mTransactionModelList.get(position);
+
         if (transaction.getTransaction_type().equals("Expense")) {
             Category expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
             holder.iv_category_icon.setImageResource(expenseCategory.getIconResourceID());

@@ -13,6 +13,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.smartbudget.R;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -23,8 +24,13 @@ public class AccountActivity extends AppCompatActivity {
 
     private static final String TAG = AccountActivity.class.getSimpleName();
 
+    public static BSAccountAddFragment mBSAccountAddFragment;
+    public static BSAccountMenuFragment mBSAccountMenuFragment;
+
     @BindView(R.id.app_bar)
     AppBarLayout app_bar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsing_toolbar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tab_account)
@@ -59,19 +65,53 @@ public class AccountActivity extends AppCompatActivity {
         tab_account.setupWithViewPager(vp_account);
 
         fab.setOnClickListener(v -> {
-            Toast.makeText(this, "[FAB CLICK]", Toast.LENGTH_SHORT).show();
+            mBSAccountAddFragment = BSAccountAddFragment.getInstance();
+            mBSAccountAddFragment.show(getSupportFragmentManager(), mBSAccountAddFragment.getTag());
         });
 
+        vp_account.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab_account));
+        tab_account.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                changeColor(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        app_bar.setBackgroundResource(R.color.colorBlack);
+
+
         app_bar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-            if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() == 0) {
+            if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
                 Log.d(TAG, "onOffsetChanged: collapsed");
                 tab_account.setTabTextColors(ColorStateList.valueOf(Color.BLACK));
-            }
-            else {
+            } else {
                 Log.d(TAG, "onOffsetChanged: expanded");
                 tab_account.setTabTextColors(ColorStateList.valueOf(Color.WHITE));
             }
         });
+    }
+
+    private void changeColor(int position) {
+        Log.d(TAG, "changeColor: called!!");
+        if (position == 0) {
+            Log.d(TAG, "onTabSelected: 0");
+            app_bar.setBackgroundResource(R.color.colorRevenue);
+            tab_account.setSelectedTabIndicator(R.color.colorRevenue);
+        } else if (position == 1) {
+            Log.d(TAG, "onTabSelected: 1");
+            app_bar.setBackgroundResource(R.color.colorExpense);
+            tab_account.setSelectedTabIndicator(R.color.colorExpense);
+        }
     }
 
     @Override

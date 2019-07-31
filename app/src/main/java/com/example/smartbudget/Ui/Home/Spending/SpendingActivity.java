@@ -25,6 +25,8 @@ public class SpendingActivity extends AppCompatActivity {
     @BindView(R.id.vp_spending_pattern)
     ViewPager vp_spending_pattern;
 
+    PagerAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +43,7 @@ public class SpendingActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_spending_pattern));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), this);
+        adapter = new PagerAdapter(getSupportFragmentManager(), this);
         vp_spending_pattern.setAdapter(adapter);
         tab_spending_pattern.setupWithViewPager(vp_spending_pattern);
     }

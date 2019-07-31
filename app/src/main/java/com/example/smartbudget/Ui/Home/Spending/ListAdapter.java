@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +48,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+
+        holder.itemView.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_transition_animation));
+
         TransactionModel transaction = mTransactionModelList.get(position);
 
         Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
@@ -63,6 +67,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     public int getItemCount() {
         return mTransactionModelList != null ? mTransactionModelList.size() : 0;
     }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 

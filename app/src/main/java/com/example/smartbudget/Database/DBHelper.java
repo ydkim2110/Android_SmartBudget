@@ -17,6 +17,7 @@ import com.example.smartbudget.Utils.DateHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static com.example.smartbudget.Database.DBContract.*;
@@ -104,6 +105,15 @@ public class DBHelper extends SQLiteOpenHelper {
         Calendar calendar18 = new GregorianCalendar(2019,06, 16);
         Calendar calendar19 = new GregorianCalendar(2019,06, 01);
         Calendar calendar20 = new GregorianCalendar(2019,06, 04);
+
+        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+                new Object[]{"현금", "내돈", 150000, "cash", new Date(), "KRW"});
+        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+                new Object[]{"한국투자증권", "주식", 12000000, "stock", new Date(), "KRW"});
+        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+                new Object[]{"우리은행", "예금", 50000000, "saving_account", new Date(), "KRW"});
+        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+                new Object[]{"하나은행", "수시입출금", 2200000, "checking_account", new Date(), "KRW"});
 
         db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new Object[]{"저녁(술)", 50000, "Expense", "Normal", dateFormat.format(calendar1.getTime()), ":food&drink", null, 1, null});
