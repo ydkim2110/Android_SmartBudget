@@ -22,8 +22,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
@@ -55,7 +58,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AddTransactionActivity extends AppCompatActivity
-        implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener {
+        implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener, IAccountLoadListener {
 
     private static final String TAG = AddTransactionActivity.class.getSimpleName();
 
@@ -82,6 +85,8 @@ public class AddTransactionActivity extends AppCompatActivity
     TextView tv_invest;
     @BindView(R.id.iv_delete)
     ImageView iv_delete;
+    @BindView(R.id.ll_pattern_container)
+    LinearLayout ll_pattern_container;
 
     @OnClick(R.id.iv_delete)
     void deleteTransaction() {
@@ -94,7 +99,7 @@ public class AddTransactionActivity extends AppCompatActivity
     int _month;
     int _day;
 
-    private AccountModel requestedAccountModel;
+    private AccountModel mAccountModel;
     private TransactionModel mTransactionModel;
     private String selectedType = "";
     private Category selectedCategory = null;
@@ -122,35 +127,9 @@ public class AddTransactionActivity extends AppCompatActivity
 
             TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
 
+            DatabaseUtils.getAccount(MainActivity.mDBHelper, transactionModel.getAccount_id(), this);
+
             mTransactionModel = transactionModel;
-
-            String passedCategory = "default";
-            if (transactionModel.getTransaction_type().equals("Expense")) {
-                Category expenseCategory = Common.getExpenseCategory(transactionModel.getCategory_id());
-                passedCategory = expenseCategory.getCategoryVisibleName(this);
-                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
-                }
-            } else if (transactionModel.getTransaction_type().equals("Income")) {
-                Category incomeCategory = Common.getIncomeCategory(transactionModel.getCategory_id());
-                passedCategory = incomeCategory.getCategoryVisibleName(this);
-                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
-                }
-            }
-            String passedAccount = String.valueOf(transactionModel.getAccount_id());
-            String passedNote = transactionModel.getTransaction_note();
-            String passedDate = transactionModel.getTransaction_date();
-            String passedPattern = transactionModel.getTransaction_pattern();
-            int passedAmount = (int) transactionModel.getTransaction_amount();
-
-            categoryEdt.setText(passedCategory);
-            accountEdt.setText(passedAccount);
-            noteEdt.setText(passedNote);
-            amountEdt.setText(Common.changeNumberToComma(passedAmount));
-            dateEdt.setText(passedDate);
         }
 
         handleClickEvent();
@@ -357,17 +336,31 @@ public class AddTransactionActivity extends AppCompatActivity
         cancelBtn.setOnClickListener(v -> finish());
 
         saveBtn.setOnClickListener(v -> {
+
             TransactionModel transactionModel = new TransactionModel();
+
             transactionModel.setTransaction_note(noteEdt.getText().toString());
             transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
             transactionModel.setTransaction_type(selectedType);
             transactionModel.setTransaction_pattern(selectedPattern);
             transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
             transactionModel.setCategory_id(selectedCategory.getCategoryID());
-            transactionModel.setAccount_id(requestedAccountModel.getId());
-            transactionModel.setTo_account(0);
+            transactionModel.setSub_category_id("");
+            transactionModel.setAccount_id(mAccountModel.getId());
 
-            DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
+            if (saveBtn.getText().toString().toLowerCase().equals("save")) {
+                if (selectedType.equals("Expense") || selectedType.equals("Income")) {
+                    DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
+                } else if (selectedType.equals("Transfer")) {
+                    transactionModel.setTo_account(0);
+                    // todo: transfer
+
+                }
+            } else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
+                Toast.makeText(this, "UPdate", Toast.LENGTH_SHORT).show();
+            }
+
+
         });
     }
 
@@ -378,9 +371,8 @@ public class AddTransactionActivity extends AppCompatActivity
         if (requestCode == INPUT_ACCOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    requestedAccountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
-                    Log.d(TAG, "onActivityResult: data: " + requestedAccountModel.getAccount_name());
-                    accountEdt.setText(requestedAccountModel.getAccount_name());
+                    mAccountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
+                    accountEdt.setText(mAccountModel.getAccount_name());
                 }
             }
         } else if (requestCode == INPUT_NOTE_REQUEST) {
@@ -462,13 +454,66 @@ public class AddTransactionActivity extends AppCompatActivity
 
             if (event.getTransactionType() == Common.TYPE_EXPENSE_TRANSACTION) {
                 selectedType = "Expense";
+                if (ll_pattern_container.getVisibility() == View.GONE)
+                    ll_pattern_container.setVisibility(View.VISIBLE);
             } else if (event.getTransactionType() == Common.TYPE_INCOME_TRANSACTION) {
                 selectedType = "Income";
+                if (ll_pattern_container.getVisibility() == View.VISIBLE)
+                    ll_pattern_container.setVisibility(View.GONE);
             } else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
                 selectedType = "Transfer";
+                if (ll_pattern_container.getVisibility() == View.VISIBLE)
+                    ll_pattern_container.setVisibility(View.GONE);
             }
         } else {
             Log.d(TAG, "onEvent: else!!");
         }
+    }
+
+    @Override
+    public void onAccountLoadSuccess(AccountModel accountModel) {
+        Log.d(TAG, "onAccountLoadSuccess: called!!");
+        Log.d(TAG, "onAccountLoadSuccess: called!!"+accountModel.getId());
+
+        mAccountModel = accountModel;
+
+        String passedCategory = "default";
+        if (mTransactionModel.getTransaction_type().equals("Expense")) {
+            if (ll_pattern_container.getVisibility() == View.GONE)
+                ll_pattern_container.setVisibility(View.VISIBLE);
+            Category expenseCategory = Common.getExpenseCategory(mTransactionModel.getCategory_id());
+            selectedCategory = expenseCategory;
+            passedCategory = expenseCategory.getCategoryVisibleName(this);
+            categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
+            }
+        } else if (mTransactionModel.getTransaction_type().equals("Income")) {
+            if (ll_pattern_container.getVisibility() == View.VISIBLE)
+                ll_pattern_container.setVisibility(View.GONE);
+            Category incomeCategory = Common.getIncomeCategory(mTransactionModel.getCategory_id());
+            selectedCategory = incomeCategory;
+            passedCategory = incomeCategory.getCategoryVisibleName(this);
+            categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
+            }
+        }
+        String passedAccount = mAccountModel.getAccount_name();
+        String passedNote = mTransactionModel.getTransaction_note();
+        String passedDate = mTransactionModel.getTransaction_date();
+        String passedPattern = mTransactionModel.getTransaction_pattern();
+        int passedAmount = (int) mTransactionModel.getTransaction_amount();
+
+        categoryEdt.setText(passedCategory);
+        accountEdt.setText(passedAccount);
+        noteEdt.setText(passedNote);
+        amountEdt.setText(Common.changeNumberToComma(passedAmount));
+        dateEdt.setText(passedDate);
+    }
+
+    @Override
+    public void onAccountLoadFailed(String message) {
+
     }
 }

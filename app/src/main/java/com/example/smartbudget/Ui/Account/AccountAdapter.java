@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -29,9 +30,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     private List<AccountModel> accountList;
 
     private int count = 0;
-    public static IAccountLoadListener mListener;
+    public static IAccountsLoadListener mListener;
 
-    public AccountAdapter(Context context, List<AccountModel> accountList, IAccountLoadListener listener) {
+    public AccountAdapter(Context context, List<AccountModel> accountList, IAccountsLoadListener listener) {
         this.mContext = context;
         this.accountList = accountList;
         this.mListener = listener;

@@ -1,5 +1,6 @@
 package com.example.smartbudget.Ui.Transaction.Add.Category;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Utils.Common;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -47,7 +52,8 @@ public class CategoryIncomeAdapter extends RecyclerView.Adapter<CategoryIncomeAd
         holder.btn_expand_toggle.setVisibility(View.INVISIBLE);
 
         holder.setIRecyclerItemSelectedListener((v, i) -> {
-            Toast.makeText(mContext, "Selected Item: "+mCategoryList.get(i).getCategoryVisibleName(mContext), Toast.LENGTH_SHORT).show();
+            EventBus.getDefault().postSticky(new CategorySelectedEvent(true, Common.TYPE_CATEGORY, Common.TYPE_INCOME_TRANSACTION, mCategoryList.get(i)));
+            ((Activity) mContext).finish();
         });
     }
 

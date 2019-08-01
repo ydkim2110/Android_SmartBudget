@@ -60,6 +60,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         holder.transaction_category.setText(category.getCategoryVisibleName(mContext));
         holder.transaction_note.setText(transaction.getTransaction_note());
         holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
+        holder.transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         holder.transaction_list_date.setText(transaction.getTransaction_date());
     }
 

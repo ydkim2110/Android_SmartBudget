@@ -58,8 +58,12 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
         List<TransactionModel> value = mHashMap.get(mKeys.get(position));
 
         for (TransactionModel model : value) {
-            total += model.getTransaction_amount();
-            Log.d(TAG, "onBindViewHolder: date: "+model.getTransaction_date());
+            if(model.getTransaction_type().equals("Expense")) {
+                total -= model.getTransaction_amount();
+            }
+            else if (model.getTransaction_type().equals("Income")) {
+                total += model.getTransaction_amount();
+            }
         }
 
         holder.tv_date_total.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));

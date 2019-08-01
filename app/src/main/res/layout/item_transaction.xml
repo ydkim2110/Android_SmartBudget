@@ -23,28 +23,34 @@
         tools:ignore="VectorDrawableCompat" />
 
     <TextView
-        android:id="@+id/tv_transaction_category"
+        android:id="@+id/tv_transaction_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="교통"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        android:text="택시비"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/iv_transaction_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_transaction_note"
+        android:id="@+id/tv_transaction_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
-        android:text="택시비"
+        android:text="교통"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="@drawable/shape_bg_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_transaction_icon"
-        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_category" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_note" />
+
 
     <TextView
         android:id="@+id/tv_transaction_amount"

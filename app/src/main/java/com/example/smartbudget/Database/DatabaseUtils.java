@@ -7,11 +7,13 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Ui.Account.IAccountInsertListener;
-import com.example.smartbudget.Ui.Account.IAccountLoadListener;
+import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionPatternLoadListener;
 import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
+import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.example.smartbudget.Ui.Transaction.Add.ITransactionInsertListener;
 import com.example.smartbudget.Model.AccountModel;
@@ -36,7 +38,7 @@ public class DatabaseUtils {
         task.execute(accountModels);
     }
 
-    public static void deleteAccountAsync(DBHelper db, IAccountLoadListener listener, AccountModel... accountModels) {
+    public static void deleteAccountAsync(DBHelper db, IAccountsLoadListener listener, AccountModel... accountModels) {
         DeleteAccountAsync task = new DeleteAccountAsync(db, listener);
         task.execute(accountModels);
     }
@@ -46,7 +48,12 @@ public class DatabaseUtils {
         task.execute(transactionModels);
     }
 
-    public static void getAllAccount(DBHelper db, IAccountLoadListener listener) {
+    public static void getAccount(DBHelper db, int accountId, IAccountLoadListener listener) {
+        GetAccountAsync task = new GetAccountAsync(db, accountId, listener);
+        task.execute();
+    }
+
+    public static void getAllAccount(DBHelper db, IAccountsLoadListener listener) {
         GetAllAccountAsync task = new GetAllAccountAsync(db, listener);
         task.execute();
     }
@@ -60,22 +67,27 @@ public class DatabaseUtils {
         GetAllTransactionAsync task = new GetAllTransactionAsync(db, listener);
         task.execute();
     }
+
     public static void getThisWeekTransaction(DBHelper db, IThisWeekTransactionLoadListener listener) {
         GetThisWeekTransactionAsync task = new GetThisWeekTransactionAsync(db, listener);
         task.execute();
     }
+
     public static void getThisMonthTransaction(DBHelper db, String date, IThisMonthTransactionLoadListener listener) {
         GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
         task.execute();
     }
+
     public static void getThisMonthTransactionListPattern(DBHelper db, String date, String pattern, IThisMonthTransactionLoadListener listener) {
         getThisMonthTransactionListPattern task = new getThisMonthTransactionListPattern(db, date, pattern, listener);
         task.execute();
     }
+
     public static void getThisMonthTransactionPattern(DBHelper db, String date, IThisMonthTransactionPatternLoadListener listener) {
         GetThisMonthTransactionPatternAsync task = new GetThisMonthTransactionPatternAsync(db, date, listener);
         task.execute();
     }
+
     public static void insertTransactionAsync(DBHelper db, ITransactionInsertListener listener, TransactionModel... transactionModels) {
         InsertTransactionAsync task = new InsertTransactionAsync(db, listener);
         task.execute(transactionModels);
@@ -161,9 +173,9 @@ public class DatabaseUtils {
     private static class DeleteAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
-        IAccountLoadListener mListener;
+        IAccountsLoadListener mListener;
 
-        public DeleteAccountAsync(DBHelper db, IAccountLoadListener listener) {
+        public DeleteAccountAsync(DBHelper db, IAccountsLoadListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -205,12 +217,60 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+    private static class GetAccountAsync extends AsyncTask<Void, Void, AccountModel> {
 
         DBHelper db;
         IAccountLoadListener mListener;
+        int accountId = 0;
 
-        public GetAllAccountAsync(DBHelper db, IAccountLoadListener listener) {
+        public GetAccountAsync(DBHelper db, int accountId, IAccountLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+            this.accountId = accountId;
+        }
+
+        @Override
+        protected AccountModel doInBackground(Void... voids) {
+            Cursor cursor = db.getAccount(accountId);
+            AccountModel accountModel = new AccountModel();
+            Log.d(TAG, "doInBackground: cursor.getCount(): "+cursor.getCount());
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
+                    String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+                    String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+                    String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
+                    String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
+
+                    accountModel.setId((int) id);
+                    accountModel.setAccount_name(name);
+                    accountModel.setAccount_description(description);
+                    accountModel.setAccount_amount(Double.parseDouble(amount));
+                    accountModel.setAccount_type(type);
+                    accountModel.setAccount_currency(currency);
+                } finally {
+                    cursor.close();
+                }
+                return accountModel;
+            }
+            return accountModel;
+        }
+
+        @Override
+        protected void onPostExecute(AccountModel accountModel) {
+            super.onPostExecute(accountModel);
+            mListener.onAccountLoadSuccess(accountModel);
+        }
+    }
+
+    private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+
+        DBHelper db;
+        IAccountsLoadListener mListener;
+
+        public GetAllAccountAsync(DBHelper db, IAccountsLoadListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -251,7 +311,7 @@ public class DatabaseUtils {
         @Override
         protected void onPostExecute(List<AccountModel> accountList) {
             super.onPostExecute(accountList);
-            mListener.onAccountLoadSuccess(accountList);
+            mListener.onAccountsLoadSuccess(accountList);
         }
     }
 
@@ -325,7 +385,7 @@ public class DatabaseUtils {
         protected List<TransactionModel> doInBackground(Void... voids) {
             Cursor cursor = db.getThisWeekTransactions();
 
-            Log.d(TAG, "doInBackground: cursor: "+cursor.getCount());
+            Log.d(TAG, "doInBackground: cursor: " + cursor.getCount());
 
             List<TransactionModel> transactionList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
@@ -383,7 +443,7 @@ public class DatabaseUtils {
         @Override
         protected List<TransactionModel> doInBackground(Void... voids) {
             Cursor cursor = db.getThisMonthTransactions(date);
-            Log.d(TAG, "cursor.getCount(): "+cursor.getCount());
+            Log.d(TAG, "cursor.getCount(): " + cursor.getCount());
             List<TransactionModel> transactionList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 try {
@@ -445,7 +505,7 @@ public class DatabaseUtils {
         @Override
         protected List<TransactionModel> doInBackground(Void... voids) {
             Cursor cursor = db.getThisMonthTransactionsPatternList(date, pattern);
-            Log.d(TAG, "cursor.getCount(): "+cursor.getCount());
+            Log.d(TAG, "cursor.getCount(): " + cursor.getCount());
             List<TransactionModel> transactionList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 try {

@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.smartbudget.Ui.Account.IAccountLoadListener;
+import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -23,7 +23,7 @@ import com.example.smartbudget.Utils.Common;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputAccountActivity extends AppCompatActivity implements IAccountLoadListener, InputAccountAdapter.SaveButtonListener {
+public class InputAccountActivity extends AppCompatActivity implements IAccountsLoadListener, InputAccountAdapter.SaveButtonListener {
 
     private static final String TAG = InputAccountActivity.class.getSimpleName();
 
@@ -103,7 +103,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccountL
     }
 
     @Override
-    public void onAccountLoadSuccess(List<AccountModel> accountList) {
+    public void onAccountsLoadSuccess(List<AccountModel> accountList) {
         if (accountList == null) {
             mNoAccountMessage.setVisibility(View.VISIBLE);
             accountList = new ArrayList<>();

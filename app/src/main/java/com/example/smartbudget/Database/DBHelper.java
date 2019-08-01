@@ -85,34 +85,34 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-        Calendar calendar1 = new GregorianCalendar(2019,05, 01);
-        Calendar calendar2 = new GregorianCalendar(2019,06, 02);
-        Calendar calendar3 = new GregorianCalendar(2019,06, 03);
-        Calendar calendar4 = new GregorianCalendar(2019,06, 04);
-        Calendar calendar5 = new GregorianCalendar(2019,06, 04);
-        Calendar calendar6 = new GregorianCalendar(2019,06, 05);
-        Calendar calendar7 = new GregorianCalendar(2019,06, 06);
-        Calendar calendar8 = new GregorianCalendar(2019,06, 24);
-        Calendar calendar9 = new GregorianCalendar(2019,06, 24);
-        Calendar calendar10 = new GregorianCalendar(2019,06, 23);
-        Calendar calendar11 = new GregorianCalendar(2019,06, 22);
-        Calendar calendar12 = new GregorianCalendar(2019,06, 21);
-        Calendar calendar13 = new GregorianCalendar(2019,06, 20);
-        Calendar calendar14 = new GregorianCalendar(2019,06, 19);
-        Calendar calendar15 = new GregorianCalendar(2019,06, 18);
-        Calendar calendar16 = new GregorianCalendar(2019,06, 17);
-        Calendar calendar17 = new GregorianCalendar(2019,06, 17);
-        Calendar calendar18 = new GregorianCalendar(2019,06, 16);
-        Calendar calendar19 = new GregorianCalendar(2019,06, 01);
-        Calendar calendar20 = new GregorianCalendar(2019,06, 04);
+        Calendar calendar1 = new GregorianCalendar(2019, 05, 01);
+        Calendar calendar2 = new GregorianCalendar(2019, 06, 02);
+        Calendar calendar3 = new GregorianCalendar(2019, 06, 03);
+        Calendar calendar4 = new GregorianCalendar(2019, 06, 04);
+        Calendar calendar5 = new GregorianCalendar(2019, 06, 04);
+        Calendar calendar6 = new GregorianCalendar(2019, 06, 05);
+        Calendar calendar7 = new GregorianCalendar(2019, 06, 06);
+        Calendar calendar8 = new GregorianCalendar(2019, 06, 24);
+        Calendar calendar9 = new GregorianCalendar(2019, 06, 24);
+        Calendar calendar10 = new GregorianCalendar(2019, 06, 23);
+        Calendar calendar11 = new GregorianCalendar(2019, 06, 22);
+        Calendar calendar12 = new GregorianCalendar(2019, 06, 21);
+        Calendar calendar13 = new GregorianCalendar(2019, 06, 20);
+        Calendar calendar14 = new GregorianCalendar(2019, 06, 19);
+        Calendar calendar15 = new GregorianCalendar(2019, 06, 18);
+        Calendar calendar16 = new GregorianCalendar(2019, 06, 17);
+        Calendar calendar17 = new GregorianCalendar(2019, 06, 17);
+        Calendar calendar18 = new GregorianCalendar(2019, 06, 16);
+        Calendar calendar19 = new GregorianCalendar(2019, 06, 01);
+        Calendar calendar20 = new GregorianCalendar(2019, 06, 04);
 
-        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
                 new Object[]{"현금", "내돈", 150000, "cash", new Date(), "KRW"});
-        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
                 new Object[]{"한국투자증권", "주식", 12000000, "stock", new Date(), "KRW"});
-        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
                 new Object[]{"우리은행", "예금", 50000000, "saving_account", new Date(), "KRW"});
-        db.execSQL("INSERT INTO "+Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
                 new Object[]{"하나은행", "수시입출금", 2200000, "checking_account", new Date(), "KRW"});
 
         db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -196,7 +196,48 @@ public class DBHelper extends SQLiteOpenHelper {
 
         long result = db.insert(Transaction.TABLE_NAME, null, contentValues);
 
+        String query = "";
+        if (transactionModel.getTransaction_type().equals("Expense")) {
+            query = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " - "
+                    + transactionModel.getTransaction_amount() + " WHERE _id = " + transactionModel.getAccount_id();
+        } else if (transactionModel.getTransaction_type().equals("Income")) {
+            query = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " + "
+                    + transactionModel.getTransaction_amount() + " WHERE _id = " + transactionModel.getAccount_id();
+        }
+
+        db.execSQL(query);
+
         return result != -1;
+    }
+
+    public boolean updateTransaction(TransactionModel transactionModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(Transaction.COL_NOTE, transactionModel.getTransaction_note());
+        cv.put(Transaction.COL_AMOUNT, transactionModel.getTransaction_amount());
+        cv.put(Transaction.COL_TYPE, transactionModel.getTransaction_type());
+        cv.put(Transaction.COL_PATTERN, transactionModel.getTransaction_pattern());
+        cv.put(Transaction.COL_DATE, transactionModel.getTransaction_date());
+        cv.put(Transaction.COL_CATEGORY_ID, transactionModel.getCategory_id());
+        cv.put(Transaction.COL_SUB_CATEGORY_ID, transactionModel.getSub_category_id());
+        cv.put(Transaction.COL_ACCOUNT_ID, transactionModel.getAccount_id());
+        cv.put(Transaction.COL_TO_ACCOUNT, "");
+
+        long result = db.update(Transaction.TABLE_NAME, cv, "_id = " + transactionModel.getId(), null);
+
+        String query = "";
+        if (transactionModel.getTransaction_type().equals("Expense")) {
+            query = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " - "
+                    + transactionModel.getTransaction_amount() + " WHERE _id = " + transactionModel.getAccount_id();
+        } else if (transactionModel.getTransaction_type().equals("Income")) {
+            query = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " + "
+                    + transactionModel.getTransaction_amount() + " WHERE _id = " + transactionModel.getAccount_id();
+        }
+
+        db.execSQL(query);
+
+        return result != 0;
     }
 
     public int updateAccount(AccountModel accountModel) {
@@ -225,10 +266,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int deleteTransaction(TransactionModel transactionModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.d(TAG, "deleteTransaction: getId(): "+transactionModel.getId());
+        Log.d(TAG, "deleteTransaction: getId(): " + transactionModel.getId());
         return db.delete(Transaction.TABLE_NAME, "_id = " + transactionModel.getId(), null);
     }
 
+    public Cursor getAccount(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Account.TABLE_NAME + " WHERE _id = " + id, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
 
     public Cursor getAllAccounts() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -263,7 +312,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String[] args = {dateFormat.format(DateHelper.getWeekStartDate()), dateFormat.format(DateHelper.getWeekEndDate())};
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transaction.TABLE_NAME
-                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?) AND DATE(?)" , args);
+                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?) AND DATE(?)", args);
         if (cursor != null) {
             cursor.moveToFirst();
         }
@@ -271,11 +320,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getThisMonthTransactions(String date) {
-        Log.d(TAG, "getThisMonthTransactions: "+date);
+        Log.d(TAG, "getThisMonthTransactions: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
-                + " ORDER BY "+Transaction.COL_DATE+" DESC";;
+                + " ORDER BY " + Transaction.COL_DATE + " DESC";
+        ;
         String[] args = {date, date};
         Cursor cursor = db.rawQuery(query, args);
         if (cursor != null) {
@@ -285,13 +335,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getThisMonthTransactionsPatternList(String date, String pattern) {
-        Log.d(TAG, "getThisMonthTransactions: "+date);
+        Log.d(TAG, "getThisMonthTransactions: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * "
-                + " FROM "+Transaction.TABLE_NAME
-                + " WHERE "+Transaction.COL_DATE+" BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
-                + " AND "+Transaction.COL_PATTERN+" LIKE ?"
-                + " ORDER BY "+Transaction.COL_DATE+" DESC";
+                + " FROM " + Transaction.TABLE_NAME
+                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
+                + " AND " + Transaction.COL_PATTERN + " LIKE ?"
+                + " AND " + Transaction.COL_TYPE + " LIKE 'Expense'"
+                + " ORDER BY " + Transaction.COL_DATE + " DESC";
         String[] args = {date, date, pattern};
         Cursor cursor = db.rawQuery(query, args);
         if (cursor != null) {
@@ -301,9 +352,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getThisMonthTransactionPattern(String date) {
-        Log.d(TAG, "getThisMonthTransactionPattern: "+date);
+        Log.d(TAG, "getThisMonthTransactionPattern: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT "+Transaction.COL_PATTERN+", SUM("+Transaction.COL_AMOUNT+") AS pattern_sum, COUNT("+Transaction.COL_AMOUNT+") AS pattern_count"
+        String query = "SELECT " + Transaction.COL_PATTERN + ", SUM(" + Transaction.COL_AMOUNT + ") AS pattern_sum, COUNT(" + Transaction.COL_AMOUNT + ") AS pattern_count"
                 + " FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
                 + " AND " + Transaction.COL_TYPE + " LIKE 'Expense'"

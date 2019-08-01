@@ -2,13 +2,10 @@ package com.example.smartbudget.Ui.Account;
 
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,22 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Interface.IFABClickListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountFragment extends Fragment implements IAccountLoadListener, IFABClickListener {
+public class AccountFragment extends Fragment implements IAccountsLoadListener, IFABClickListener {
 
     private static final String TAG = AccountFragment.class.getSimpleName();
 
@@ -81,7 +75,7 @@ public class AccountFragment extends Fragment implements IAccountLoadListener, I
     }
 
     @Override
-    public void onAccountLoadSuccess(List<AccountModel> accountList) {
+    public void onAccountsLoadSuccess(List<AccountModel> accountList) {
         if (accountList == null) {
             accountList = new ArrayList<>();
             mAccountAdapter = new AccountAdapter(getActivity(), accountList, this);

@@ -62,7 +62,7 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
             viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
                 @Override
                 public void onItemSelected(View view, int position) {
-                    Toast.makeText(view.getContext(), "Name: " + mAccountModelList.get(position).getAccount_name(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), "Name: " + mAccountModelList.get(position).getId(), Toast.LENGTH_SHORT).show();
                     for (CardView cardView : mCardViewList) {
                         cardView.setBackgroundColor(Color.WHITE);
                     }

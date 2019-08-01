@@ -159,6 +159,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_pattern_container"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:orientation="horizontal"
