@@ -8,14 +8,15 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Interface.IAccountLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
+import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Ui.Account.IAccountInsertListener;
 import com.example.smartbudget.Interface.IAccountsLoadListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionPatternLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
-import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
-import com.example.smartbudget.Ui.Transaction.Add.ITransactionInsertListener;
+import com.example.smartbudget.Interface.ITransactionInsertListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
@@ -27,16 +28,6 @@ import java.util.List;
 public class DatabaseUtils {
 
     private static final String TAG = DatabaseUtils.class.getSimpleName();
-
-    public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
-        InsertAccountAsync task = new InsertAccountAsync(db, listener);
-        task.execute(accountModels);
-    }
-
-    public static void updateAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
-        UpdateAccountAsync task = new UpdateAccountAsync(db, listener);
-        task.execute(accountModels);
-    }
 
     public static void deleteAccountAsync(DBHelper db, IAccountsLoadListener listener, AccountModel... accountModels) {
         DeleteAccountAsync task = new DeleteAccountAsync(db, listener);
@@ -83,13 +74,32 @@ public class DatabaseUtils {
         task.execute();
     }
 
-    public static void getThisMonthTransactionPattern(DBHelper db, String date, IThisMonthTransactionPatternLoadListener listener) {
-        GetThisMonthTransactionPatternAsync task = new GetThisMonthTransactionPatternAsync(db, date, listener);
+    public static void getThisMonthTransactionByPattern(DBHelper db, String date, IThisMonthTransactionByPatternLoadListener listener) {
+        GetThisMonthTransactionByPatternAsync task = new GetThisMonthTransactionByPatternAsync(db, date, listener);
+        task.execute();
+    }
+
+    public static void getThisMonthTransactionByCategory(DBHelper db, String date, IThisMonthTransactionByCategoryLoadListener listener) {
+        GetThisMonthTransactionByCategoryAsync task = new GetThisMonthTransactionByCategoryAsync(db, date, listener);
         task.execute();
     }
 
     public static void insertTransactionAsync(DBHelper db, ITransactionInsertListener listener, TransactionModel... transactionModels) {
         InsertTransactionAsync task = new InsertTransactionAsync(db, listener);
+        task.execute(transactionModels);
+    }
+
+    public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
+        InsertAccountAsync task = new InsertAccountAsync(db, listener);
+        task.execute(accountModels);
+    }
+    public static void updateAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
+        UpdateAccountAsync task = new UpdateAccountAsync(db, listener);
+        task.execute(accountModels);
+    }
+
+    public static void updateTransactionAsync(DBHelper db, ITransactionUpdateListener listener, TransactionModel... transactionModels) {
+        UpdateTransactionAsync task = new UpdateTransactionAsync(db, listener);
         task.execute(transactionModels);
     }
 
@@ -167,6 +177,34 @@ public class DatabaseUtils {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             mListener.onAccountUpdateSuccess(aBoolean);
+        }
+    }
+
+    public static class UpdateTransactionAsync extends AsyncTask<TransactionModel, Void, Boolean> {
+
+        DBHelper db;
+        ITransactionUpdateListener mListener;
+
+        public UpdateTransactionAsync(DBHelper db, ITransactionUpdateListener listener) {
+            this.db = db;
+            this.mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(TransactionModel... transactionModels) {
+            try {
+                long result = db.updateTransaction(transactionModels[0]);
+                return result == 1;
+            } catch (Exception e) {
+                Log.d(TAG, "doInBackground: Error-" + e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onTransactionUpdateSuccess(aBoolean);
         }
     }
 
@@ -546,13 +584,13 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetThisMonthTransactionPatternAsync extends AsyncTask<Void, Void, List<SpendingPattern>> {
+    private static class GetThisMonthTransactionByPatternAsync extends AsyncTask<Void, Void, List<SpendingPattern>> {
 
         DBHelper db;
-        IThisMonthTransactionPatternLoadListener mListener;
+        IThisMonthTransactionByPatternLoadListener mListener;
         String date = "";
 
-        public GetThisMonthTransactionPatternAsync(DBHelper db, String date, IThisMonthTransactionPatternLoadListener listener) {
+        public GetThisMonthTransactionByPatternAsync(DBHelper db, String date, IThisMonthTransactionByPatternLoadListener listener) {
             this.db = db;
             mListener = listener;
             this.date = date;
@@ -560,7 +598,7 @@ public class DatabaseUtils {
 
         @Override
         protected List<SpendingPattern> doInBackground(Void... voids) {
-            Cursor cursor = db.getThisMonthTransactionPattern(date);
+            Cursor cursor = db.getThisMonthTransactionByPattern(date);
 
             List<SpendingPattern> spendingPatternList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
@@ -589,7 +627,63 @@ public class DatabaseUtils {
         protected void onPostExecute(List<SpendingPattern> spendingPatternList) {
             super.onPostExecute(spendingPatternList);
             if (spendingPatternList != null)
-                mListener.onThisMonthTransactionPatternLoadSuccess(spendingPatternList);
+                mListener.onThisMonthTransactionByPatternLoadSuccess(spendingPatternList);
+        }
+    }
+
+    private static class GetThisMonthTransactionByCategoryAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        IThisMonthTransactionByCategoryLoadListener mListener;
+        String date = "";
+
+        public GetThisMonthTransactionByCategoryAsync(DBHelper db, String date, IThisMonthTransactionByCategoryLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+            this.date = date;
+        }
+
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getThisMonthTransactionByCategory(date);
+
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setTransaction_note(description);
+                        transaction.setTransaction_amount(Double.parseDouble(amount));
+                        transaction.setTransaction_type(type);
+                        transaction.setTransaction_date(date);
+                        transaction.setCategory_id(categoryId);
+                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return transactionList;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            if (transactionList != null)
+                mListener.onThisMonthTransactionByCategoryLoadSuccess(transactionList);
         }
     }
 

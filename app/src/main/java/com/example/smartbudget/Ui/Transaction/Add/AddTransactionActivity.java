@@ -24,9 +24,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Interface.IAccountLoadListener;
+import com.example.smartbudget.Interface.ITransactionInsertListener;
+import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
@@ -58,7 +59,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AddTransactionActivity extends AppCompatActivity
-        implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener, IAccountLoadListener {
+        implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener, IAccountLoadListener, ITransactionUpdateListener {
 
     private static final String TAG = AddTransactionActivity.class.getSimpleName();
 
@@ -339,16 +340,16 @@ public class AddTransactionActivity extends AppCompatActivity
 
             TransactionModel transactionModel = new TransactionModel();
 
-            transactionModel.setTransaction_note(noteEdt.getText().toString());
-            transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
-            transactionModel.setTransaction_type(selectedType);
-            transactionModel.setTransaction_pattern(selectedPattern);
-            transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
-            transactionModel.setCategory_id(selectedCategory.getCategoryID());
-            transactionModel.setSub_category_id("");
-            transactionModel.setAccount_id(mAccountModel.getId());
-
             if (saveBtn.getText().toString().toLowerCase().equals("save")) {
+                transactionModel.setTransaction_note(noteEdt.getText().toString());
+                transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionModel.setTransaction_type(selectedType);
+                transactionModel.setTransaction_pattern(selectedPattern);
+                transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionModel.setCategory_id(selectedCategory.getCategoryID());
+                transactionModel.setSub_category_id("");
+                transactionModel.setAccount_id(mAccountModel.getId());
+
                 if (selectedType.equals("Expense") || selectedType.equals("Income")) {
                     DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
                 } else if (selectedType.equals("Transfer")) {
@@ -357,7 +358,21 @@ public class AddTransactionActivity extends AppCompatActivity
 
                 }
             } else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
-                Toast.makeText(this, "UPdate", Toast.LENGTH_SHORT).show();
+                transactionModel.setTransaction_note(noteEdt.getText().toString());
+                transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionModel.setTransaction_type(selectedType);
+                transactionModel.setTransaction_pattern(selectedPattern);
+                transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionModel.setCategory_id(selectedCategory.getCategoryID());
+                transactionModel.setSub_category_id("");
+                transactionModel.setAccount_id(mAccountModel.getId());
+
+                if (selectedType.equals("Expense") || selectedType.equals("Income")) {
+                    DatabaseUtils.updateTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
+                } else if (selectedType.equals("Transfer")) {
+                    transactionModel.setTo_account(0);
+                    // todo: transfer
+                }
             }
 
 
@@ -514,6 +529,11 @@ public class AddTransactionActivity extends AppCompatActivity
 
     @Override
     public void onAccountLoadFailed(String message) {
+
+    }
+
+    @Override
+    public void onTransactionUpdateSuccess(Boolean isInserted) {
 
     }
 }

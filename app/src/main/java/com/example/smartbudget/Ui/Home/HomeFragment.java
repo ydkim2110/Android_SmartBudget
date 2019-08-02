@@ -28,7 +28,7 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Interface.IBudgetContainerClickListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionPatternLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.TransactionModel;
@@ -61,7 +61,7 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment implements
-        IThisMonthTransactionLoadListener, IThisMonthTransactionPatternLoadListener, IThisWeekTransactionLoadListener {
+        IThisMonthTransactionLoadListener, IThisMonthTransactionByPatternLoadListener, IThisWeekTransactionLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -159,7 +159,7 @@ public class HomeFragment extends Fragment implements
         rv_transaction.setLayoutManager(new LinearLayoutManager(getContext()));
 
         DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
-        DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
+        DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
         DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
 
         return view;
@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment implements
     public void reloadData(AddTransactionEvent event) {
         if (event != null) {
             DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
-            DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
+            DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         }
     }
@@ -218,7 +218,7 @@ public class HomeFragment extends Fragment implements
         });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
-            DatabaseUtils.getThisMonthTransactionPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
+            DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         });
     }
@@ -331,7 +331,7 @@ public class HomeFragment extends Fragment implements
     }
 
     @Override
-    public void onThisMonthTransactionPatternLoadSuccess(List<SpendingPattern> spendingPatternList) {
+    public void onThisMonthTransactionByPatternLoadSuccess(List<SpendingPattern> spendingPatternList) {
         total = 0;
         normal_percentage = 0;
         waste_percentage = 0;
@@ -382,7 +382,7 @@ public class HomeFragment extends Fragment implements
     }
 
     @Override
-    public void onThisMonthTransactionPatternLoadFailed(String message) {
+    public void onThisMonthTransactionByPatternLoadFailed(String message) {
 
     }
 

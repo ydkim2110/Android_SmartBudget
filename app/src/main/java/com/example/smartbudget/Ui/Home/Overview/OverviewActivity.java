@@ -14,18 +14,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.R;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class OverviewActivity extends AppCompatActivity {
 
@@ -36,13 +47,20 @@ public class OverviewActivity extends AppCompatActivity {
     private SpendingAdapter adapter;
 
     private PieChart mPieChart;
-    private Float[] yData = {25.3f, 10.6f, 66.76f, 44.32f, 46.01f, 16.89f, 23.9f};;
-    private String[] xData = {"Mitch", "Jessica" , "Mohammad" , "Kelsey", "Sam", "Robert", "Ashley"};
+
+    private Float[] yData = {25.3f, 10.6f, 66.76f, 44.32f, 46.01f, 16.89f, 23.9f};
+    ;
+    private String[] xData = {"Mitch", "Jessica", "Mohammad", "Kelsey", "Sam", "Robert", "Ashley"};
+
+    private float thisMonthIncome;
+    private float thisMonthExpenses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
+
+        ButterKnife.bind(this);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,19 +105,19 @@ public class OverviewActivity extends AppCompatActivity {
 
         mPieChart.setCenterText("June");
 
-        addData();
-        
+        addPieData();
+
         mPieChart.animateY(1500, Easing.EaseInOutQuad);
-        
+
         Legend l = mPieChart.getLegend();
         l.setEnabled(false);
-        
+
         mPieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 if (e == null) {
                     return;
-                    
+
                 }
 
             }
@@ -111,18 +129,18 @@ public class OverviewActivity extends AppCompatActivity {
         });
     }
 
-    private void addData() {
-        Log.d(TAG, "addData: called!!");
+    private void addPieData() {
+        Log.d(TAG, "addPieData: called!!");
 
         ArrayList<PieEntry> yVals = new ArrayList<>();
 
-        for (int i=0; i<yData.length; i++) {
+        for (int i = 0; i < yData.length; i++) {
             yVals.add(new PieEntry(yData[i], i));
         }
 
         ArrayList<String> xVals = new ArrayList<>();
 
-        for (int i=0; i<xData.length; i++) {
+        for (int i = 0; i < xData.length; i++) {
             xVals.add(xData[i]);
         }
 
@@ -135,18 +153,18 @@ public class OverviewActivity extends AppCompatActivity {
         //add colors to dataset
         ArrayList<Integer> colors = new ArrayList<>();
 
-        for (int c: ColorTemplate.VORDIPLOM_COLORS)
+        for (int c : ColorTemplate.VORDIPLOM_COLORS)
             colors.add(c);
-        for (int c: ColorTemplate.JOYFUL_COLORS)
+        for (int c : ColorTemplate.JOYFUL_COLORS)
             colors.add(c);
-        for (int c: ColorTemplate.COLORFUL_COLORS)
+        for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
-        for (int c: ColorTemplate.LIBERTY_COLORS)
+        for (int c : ColorTemplate.LIBERTY_COLORS)
             colors.add(c);
         for (int c : ColorTemplate.PASTEL_COLORS)
             colors.add(c);
         colors.add(ColorTemplate.getHoloBlue());
-        
+
         dataSet.setColors(colors);
 
         //create pie data object

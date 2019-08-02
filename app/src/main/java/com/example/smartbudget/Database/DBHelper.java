@@ -210,7 +210,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    public boolean updateTransaction(TransactionModel transactionModel) {
+    public int updateTransaction(TransactionModel transactionModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -224,7 +224,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(Transaction.COL_ACCOUNT_ID, transactionModel.getAccount_id());
         cv.put(Transaction.COL_TO_ACCOUNT, "");
 
-        long result = db.update(Transaction.TABLE_NAME, cv, "_id = " + transactionModel.getId(), null);
+        int result = db.update(Transaction.TABLE_NAME, cv, "_id = " + transactionModel.getId(), null);
 
         String query = "";
         if (transactionModel.getTransaction_type().equals("Expense")) {
@@ -237,7 +237,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL(query);
 
-        return result != 0;
+        return result;
     }
 
     public int updateAccount(AccountModel accountModel) {
@@ -351,14 +351,30 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getThisMonthTransactionPattern(String date) {
-        Log.d(TAG, "getThisMonthTransactionPattern: " + date);
+    public Cursor getThisMonthTransactionByPattern(String date) {
+        Log.d(TAG, "getThisMonthTransactionByPattern: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT " + Transaction.COL_PATTERN + ", SUM(" + Transaction.COL_AMOUNT + ") AS pattern_sum, COUNT(" + Transaction.COL_AMOUNT + ") AS pattern_count"
                 + " FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
                 + " AND " + Transaction.COL_TYPE + " LIKE 'Expense'"
                 + " GROUP BY " + Transaction.COL_PATTERN;
+        String[] args = {date, date};
+        Cursor cursor = db.rawQuery(query, args);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getThisMonthTransactionByCategory(String date) {
+        Log.d(TAG, "getThisMonthTransactionByPattern: " + date);
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT " + Transaction.COL_CATEGORY_ID + ", SUM(" + Transaction.COL_AMOUNT + ") AS sum_by_category, COUNT(" + Transaction.COL_AMOUNT + ") AS count_by_category"
+                + " FROM " + Transaction.TABLE_NAME
+                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
+                + " AND " + Transaction.COL_TYPE + " LIKE 'Expense'"
+                + " GROUP BY " + Transaction.COL_CATEGORY_ID;
         String[] args = {date, date};
         Cursor cursor = db.rawQuery(query, args);
         if (cursor != null) {

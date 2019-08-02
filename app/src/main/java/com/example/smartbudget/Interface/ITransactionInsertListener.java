@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction.Add;
+package com.example.smartbudget.Interface;
 
 public interface ITransactionInsertListener {
     void onTransactionInsertSuccess(Boolean isInserted);

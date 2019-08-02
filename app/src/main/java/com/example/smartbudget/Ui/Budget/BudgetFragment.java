@@ -16,17 +16,22 @@ import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.DefaultCategories;
+import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
+import com.example.smartbudget.Utils.Common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-public class BudgetFragment extends Fragment {
+public class BudgetFragment extends Fragment implements IThisMonthTransactionByCategoryLoadListener {
 
     private static BudgetFragment instance;
 
@@ -43,6 +48,7 @@ public class BudgetFragment extends Fragment {
     }
 
     private RecyclerView rv_budget;
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     public void onAttach(Context context) {
@@ -58,6 +64,8 @@ public class BudgetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_budget, container, false);
+
+        DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
 
         rv_budget = view.findViewById(R.id.rv_budget);
         rv_budget.setHasFixedSize(true);
@@ -78,4 +86,13 @@ public class BudgetFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onThisMonthTransactionByCategoryLoadSuccess(List<TransactionModel> transactionModelList) {
+
+    }
+
+    @Override
+    public void onThisMonthTransactionByCategoryLoadFailed(String message) {
+
+    }
 }
