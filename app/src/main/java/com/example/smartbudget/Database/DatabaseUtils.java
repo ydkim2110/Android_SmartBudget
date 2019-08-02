@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
@@ -631,7 +632,7 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetThisMonthTransactionByCategoryAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+    private static class GetThisMonthTransactionByCategoryAsync extends AsyncTask<Void, Void, List<ExpenseByCategory>> {
 
         DBHelper db;
         IThisMonthTransactionByCategoryLoadListener mListener;
@@ -644,46 +645,39 @@ public class DatabaseUtils {
         }
 
         @Override
-        protected List<TransactionModel> doInBackground(Void... voids) {
+        protected List<ExpenseByCategory> doInBackground(Void... voids) {
             Cursor cursor = db.getThisMonthTransactionByCategory(date);
 
-            List<TransactionModel> transactionList = new ArrayList<>();
+            List<ExpenseByCategory> expenseByCategoryList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 try {
                     do {
-                        TransactionModel transaction = new TransactionModel();
-                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
-                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
-                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
-                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
-                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
-                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
-                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
-                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+                        ExpenseByCategory expenseByCategory = new ExpenseByCategory();
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract
+                        .Transaction.COL_CATEGORY_ID));
+                        int sumByCategory = cursor.getInt(cursor.getColumnIndexOrThrow("sum_by_category"));
+                        int countByCategory = cursor.getInt(cursor.getColumnIndexOrThrow("count_by_category"));
 
-                        transaction.setId((int) id);
-                        transaction.setTransaction_note(description);
-                        transaction.setTransaction_amount(Double.parseDouble(amount));
-                        transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(date);
-                        transaction.setCategory_id(categoryId);
-                        transaction.setAccount_id(Integer.parseInt(accountId));
-                        transactionList.add(transaction);
+                        expenseByCategory.setCategoryId(categoryId);
+                        expenseByCategory.setSumByCategory(sumByCategory);
+                        expenseByCategory.setCountByCategory(countByCategory);
+
+                        expenseByCategoryList.add(expenseByCategory);
                     }
                     while (cursor.moveToNext());
                 } finally {
                     cursor.close();
                 }
-                return transactionList;
+                return expenseByCategoryList;
             }
-            return transactionList;
+            return expenseByCategoryList;
         }
 
         @Override
-        protected void onPostExecute(List<TransactionModel> transactionList) {
-            super.onPostExecute(transactionList);
-            if (transactionList != null)
-                mListener.onThisMonthTransactionByCategoryLoadSuccess(transactionList);
+        protected void onPostExecute(List<ExpenseByCategory> expenseByCategoryList) {
+            super.onPostExecute(expenseByCategoryList);
+            if (expenseByCategoryList != null)
+                mListener.onThisMonthTransactionByCategoryLoadSuccess(expenseByCategoryList);
         }
     }
 

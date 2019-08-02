@@ -9,29 +9,26 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
-import com.example.smartbudget.Model.CategoryModel;
-import com.example.smartbudget.Model.DefaultCategories;
-import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.example.smartbudget.Utils.Common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class BudgetFragment extends Fragment implements IThisMonthTransactionByCategoryLoadListener {
+
+    private static final String TAG = BudgetFragment.class.getSimpleName();
 
     private static BudgetFragment instance;
 
@@ -79,15 +76,17 @@ public class BudgetFragment extends Fragment implements IThisMonthTransactionByC
             }
         });
 
-        BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), Arrays.asList(DefaultCategories.getDefaultExpenseCategories()));
-        rv_budget.setAdapter(budgetAdapter);
-        budgetAdapter.notifyDataSetChanged();
-
         return view;
     }
 
     @Override
-    public void onThisMonthTransactionByCategoryLoadSuccess(List<TransactionModel> transactionModelList) {
+    public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
+        Log.d(TAG, "onThisMonthTransactionByCategoryLoadSuccess: called!!"+expenseByCategoryList
+        .get(0).getCategoryId());
+        Log.d(TAG, "onThisMonthTransactionByCategoryLoadSuccess: called!!"+expenseByCategoryList
+        .get(0).getSumByCategory());
+        BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), expenseByCategoryList);
+        rv_budget.setAdapter(budgetAdapter);
 
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     private Context mContext;
     private List<TransactionModel> mTransactionModelList;
 
+    private int lastPosition = -1;
+
     public ListAdapter(Context context, List<TransactionModel> transactionModelList) {
         mContext = context;
         mTransactionModelList = transactionModelList;
@@ -49,8 +52,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        holder.itemView.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_transition_animation));
-
         TransactionModel transaction = mTransactionModelList.get(position);
 
         Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
@@ -62,13 +63,24 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
         holder.transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         holder.transaction_list_date.setText(transaction.getTransaction_date());
+
+
+        setAnimation(holder.itemView, position);
+
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left);
+            viewToAnimate.setAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
     public int getItemCount() {
         return mTransactionModelList != null ? mTransactionModelList.size() : 0;
     }
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 

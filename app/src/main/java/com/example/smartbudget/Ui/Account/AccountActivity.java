@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.smartbudget.R;
@@ -25,7 +26,6 @@ public class AccountActivity extends AppCompatActivity {
     private static final String TAG = AccountActivity.class.getSimpleName();
 
     public static BSAccountAddFragment mBSAccountAddFragment;
-    public static BSAccountMenuFragment mBSAccountMenuFragment;
 
     @BindView(R.id.app_bar)
     AppBarLayout app_bar;
@@ -40,6 +40,9 @@ public class AccountActivity extends AppCompatActivity {
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
+    int revenueColor;
+    int expenseColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,8 @@ public class AccountActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: started!!");
 
         ButterKnife.bind(this);
+        revenueColor = ContextCompat.getColor(this,R.color.colorRevenue);
+        expenseColor = ContextCompat.getColor(this,R.color.colorExpense);
 
         initView();
 
@@ -54,7 +59,6 @@ public class AccountActivity extends AppCompatActivity {
 
     private void initView() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_account));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
 
@@ -105,11 +109,11 @@ public class AccountActivity extends AppCompatActivity {
         Log.d(TAG, "changeColor: called!!");
         if (position == 0) {
             Log.d(TAG, "onTabSelected: 0");
-            app_bar.setBackgroundResource(R.color.colorRevenue);
+            app_bar.setBackgroundColor(revenueColor);
             tab_account.setSelectedTabIndicator(R.color.colorRevenue);
         } else if (position == 1) {
             Log.d(TAG, "onTabSelected: 1");
-            app_bar.setBackgroundResource(R.color.colorExpense);
+            app_bar.setBackgroundColor(expenseColor);
             tab_account.setSelectedTabIndicator(R.color.colorExpense);
         }
     }
