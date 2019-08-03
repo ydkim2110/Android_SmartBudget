@@ -28,6 +28,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     private Context mContext;
     private List<TransactionModel> mTransactionModelList;
+    private TransactionModel transaction;
 
     public TransactionListAdapter(Context context, List<TransactionModel> transactionModelList) {
         mContext = context;
@@ -46,7 +47,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        TransactionModel transaction = mTransactionModelList.get(position);
+        transaction = mTransactionModelList.get(position);
 
         if (transaction.getTransaction_type().equals("Expense")) {
             Category expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
@@ -70,6 +71,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorRevenue));
             holder.tv_transaction_date.setText(transaction.getTransaction_date());
         }
+
+        holder.itemView.startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left));
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Toast.makeText(mContext, "[SELECTED]" + transaction.getCategory_id(), Toast.LENGTH_SHORT).show();

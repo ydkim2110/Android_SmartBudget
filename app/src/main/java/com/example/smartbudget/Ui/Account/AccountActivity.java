@@ -42,6 +42,7 @@ public class AccountActivity extends AppCompatActivity {
 
     int revenueColor;
     int expenseColor;
+    int currentTabPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,10 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        currentTabPosition = 0;
+
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
 
@@ -77,7 +81,14 @@ public class AccountActivity extends AppCompatActivity {
         tab_account.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                changeColor(tab.getPosition());
+                if (tab.getPosition() == 0) {
+                    Log.d(TAG, "onTabSelected: 0");
+                    app_bar.setBackgroundColor(revenueColor);
+                }
+                else if (tab.getPosition() == 1) {
+                    Log.d(TAG, "onTabSelected: 1");
+                    app_bar.setBackgroundColor(expenseColor);
+                }
             }
 
             @Override
@@ -91,31 +102,17 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
-        app_bar.setBackgroundResource(R.color.colorBlack);
-
-
         app_bar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
                 Log.d(TAG, "onOffsetChanged: collapsed");
                 tab_account.setTabTextColors(ColorStateList.valueOf(Color.BLACK));
-            } else {
+            }
+            else {
                 Log.d(TAG, "onOffsetChanged: expanded");
-                tab_account.setTabTextColors(ColorStateList.valueOf(Color.WHITE));
+                tab_account.setTabTextColors(ColorStateList.valueOf(Color.WHITE
+                ));
             }
         });
-    }
-
-    private void changeColor(int position) {
-        Log.d(TAG, "changeColor: called!!");
-        if (position == 0) {
-            Log.d(TAG, "onTabSelected: 0");
-            app_bar.setBackgroundColor(revenueColor);
-            tab_account.setSelectedTabIndicator(R.color.colorRevenue);
-        } else if (position == 1) {
-            Log.d(TAG, "onTabSelected: 1");
-            app_bar.setBackgroundColor(expenseColor);
-            tab_account.setSelectedTabIndicator(R.color.colorExpense);
-        }
     }
 
     @Override

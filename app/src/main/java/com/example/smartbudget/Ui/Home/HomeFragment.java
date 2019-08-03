@@ -87,14 +87,14 @@ public class HomeFragment extends Fragment implements
     private TextView usedBudgetTv;
     private TextView totalBudgetTv;
     private TextView tv_weekday;
-    
+
     @BindView(R.id.tv_income_total)
     TextView tv_income_total;
     @BindView(R.id.tv_expense_total)
     TextView tv_expense_total;
     @BindView(R.id.tv_balance)
     TextView tv_balance;
-    
+
     @BindView(R.id.pb_circle_normal)
     ProgressBar pb_circle_normal;
     @BindView(R.id.pb_circle_waste)
@@ -115,7 +115,7 @@ public class HomeFragment extends Fragment implements
     TextView tv_invest_sum;
     @BindView(R.id.tv_total_spending)
     TextView tv_total_spending;
-    
+
     @BindView(R.id.nsv_container)
     NestedScrollView nsv_container;
     @BindView(R.id.ll_no_items)
@@ -158,7 +158,7 @@ public class HomeFragment extends Fragment implements
         rv_transaction.setHasFixedSize(true);
         rv_transaction.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
+        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
         DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
         DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
 
@@ -190,7 +190,7 @@ public class HomeFragment extends Fragment implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void reloadData(AddTransactionEvent event) {
         if (event != null) {
-            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
+            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         }
@@ -217,7 +217,7 @@ public class HomeFragment extends Fragment implements
             getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
         });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),this);
+            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
             DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
         });
@@ -246,12 +246,9 @@ public class HomeFragment extends Fragment implements
                 .append(dateFormat.format(DateHelper.getWeekEndDate()))
                 .append(")"));
 
-        nsv_container.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                mINSVScrollChangeListener.onNSVScrollChangeListener(scrollY > oldScrollY);
-            }
-        });
+        nsv_container.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                    mINSVScrollChangeListener.onNSVScrollChangeListener(scrollY > oldScrollY);
+                });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -291,7 +288,7 @@ public class HomeFragment extends Fragment implements
         }
         tv_income_total.setText(new StringBuilder(Common.changeNumberToComma(income)).append("원"));
         tv_expense_total.setText(new StringBuilder(Common.changeNumberToComma(expense)).append("원"));
-        tv_balance.setText(new StringBuilder(Common.changeNumberToComma(income-expense)).append("원"));
+        tv_balance.setText(new StringBuilder(Common.changeNumberToComma(income - expense)).append("원"));
     }
 
 
@@ -336,9 +333,11 @@ public class HomeFragment extends Fragment implements
         normal_percentage = 0;
         waste_percentage = 0;
         invest_percentage = 0;
-        for (SpendingPattern spendingPattern : spendingPatternList) {{
-            total += (int) spendingPattern.getSum();
-        }}
+        for (SpendingPattern spendingPattern : spendingPatternList) {
+            {
+                total += (int) spendingPattern.getSum();
+            }
+        }
         tv_total_spending.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
 
         for (SpendingPattern spendingPattern : spendingPatternList) {
@@ -346,14 +345,12 @@ public class HomeFragment extends Fragment implements
                 normal_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_normal.setText(new StringBuilder("Normal\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
                 tv_normal_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
-            }
-            else if (spendingPattern.getPattern().equals("Waste")) {
-                waste_percentage =  (int) (spendingPattern.getSum() / total * 100);
+            } else if (spendingPattern.getPattern().equals("Waste")) {
+                waste_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_waste.setText(new StringBuilder("Waste\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
                 tv_waste_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
-            }
-            else if (spendingPattern.getPattern().equals("Invest")) {
-                invest_percentage =  (int) (spendingPattern.getSum() / total * 100);
+            } else if (spendingPattern.getPattern().equals("Invest")) {
+                invest_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_invest.setText(new StringBuilder("Invest\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
                 tv_invest_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
             }
@@ -363,7 +360,7 @@ public class HomeFragment extends Fragment implements
     }
 
     private void setCircleProgressbar(int normal_percentage, int waste_percentage, int invest_percentage) {
-        Log.d(TAG, "setCircleProgressbar: called!!"+normal_percentage);
+        Log.d(TAG, "setCircleProgressbar: called!!" + normal_percentage);
 
         ObjectAnimator progressAnim2 = ObjectAnimator.ofInt(pb_circle_normal, "progress", 0, normal_percentage);
         progressAnim2.setDuration(500);

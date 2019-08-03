@@ -81,13 +81,10 @@ public class BudgetFragment extends Fragment implements IThisMonthTransactionByC
 
     @Override
     public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
-        Log.d(TAG, "onThisMonthTransactionByCategoryLoadSuccess: called!!"+expenseByCategoryList
-        .get(0).getCategoryId());
-        Log.d(TAG, "onThisMonthTransactionByCategoryLoadSuccess: called!!"+expenseByCategoryList
-        .get(0).getSumByCategory());
-        BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), expenseByCategoryList);
-        rv_budget.setAdapter(budgetAdapter);
-
+        if (expenseByCategoryList != null) {
+            BudgetAdapter budgetAdapter = new BudgetAdapter(getContext(), expenseByCategoryList);
+            rv_budget.setAdapter(budgetAdapter);
+        }
     }
 
     @Override
