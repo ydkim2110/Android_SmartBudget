@@ -79,7 +79,7 @@ public class TransactionListFragment extends Fragment implements IThisMonthTrans
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                mIRVScrollChangeListener.onRVScrollChangeListener(dy > 0);
+                //mIRVScrollChangeListener.onRVScrollChangeListener(dy > 0);
             }
         });
     }

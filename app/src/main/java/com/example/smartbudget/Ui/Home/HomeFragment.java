@@ -32,6 +32,7 @@ import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListe
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.TransactionModel;
+import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryActivity;
 import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.Spending.SpendingActivity;
@@ -80,13 +81,20 @@ public class HomeFragment extends Fragment implements
     Unbinder mUnbinder;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView rv_transaction;
     private WeekTransactionAdapter mAdapter;
-    private ProgressBar progressBar;
-    private TextView progressBarPercentage;
-    private TextView usedBudgetTv;
-    private TextView totalBudgetTv;
-    private TextView tv_weekday;
+
+    @BindView(R.id.rv_transaction)
+    RecyclerView rv_transaction;
+    @BindView(R.id.tv_weekday)
+    TextView tv_weekday;
+    @BindView(R.id.tv_used_expense)
+    TextView tv_used_expense;
+    @BindView(R.id.tv_total_expense)
+    TextView tv_total_expense;
+    @BindView(R.id.pb_expense_by_category)
+    ProgressBar pb_expense_by_category;
+    @BindView(R.id.tv_percentage)
+    TextView tv_percentage;
 
     @BindView(R.id.tv_income_total)
     TextView tv_income_total;
@@ -151,10 +159,8 @@ public class HomeFragment extends Fragment implements
         mUnbinder = ButterKnife.bind(this, view);
 
         initView(view);
-        setProgressBar();
         handleViewClick();
 
-        rv_transaction = view.findViewById(R.id.rv_transaction);
         rv_transaction.setHasFixedSize(true);
         rv_transaction.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -165,17 +171,16 @@ public class HomeFragment extends Fragment implements
         return view;
     }
 
-    private void setProgressBar() {
+    private void setProgressBar(int usedExpense) {
         Log.d(TAG, "setProgressBar: called!!");
-        int maxValue = 4000000;
-        int currentValue = 3200000;
+        int maxValue = 1400000;
 
-        usedBudgetTv.setText(new StringBuilder(Common.changeNumberToComma(currentValue)).append("원"));
-        totalBudgetTv.setText(new StringBuilder(Common.changeNumberToComma(maxValue)).append("원"));
-        progressBarPercentage.setText(new StringBuilder(Common.calcPercentageDownToTwo(currentValue, maxValue)).append("%"));
+        tv_used_expense.setText(new StringBuilder(Common.changeNumberToComma(usedExpense)).append("원"));
+        tv_total_expense.setText(new StringBuilder(Common.changeNumberToComma(maxValue)).append("원"));
+        tv_percentage.setText(new StringBuilder(Common.calcPercentageDownToTwo(usedExpense, maxValue)).append("%"));
 
-        progressBar.setMax(maxValue);
-        ObjectAnimator progressAnim = ObjectAnimator.ofInt(progressBar, "progress", 0, currentValue);
+        pb_expense_by_category.setMax(maxValue);
+        ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_expense_by_category, "progress", 0, usedExpense);
         progressAnim.setDuration(500);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
@@ -211,7 +216,8 @@ public class HomeFragment extends Fragment implements
             getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
         });
         homeBudgetContainer.setOnClickListener(v -> {
-            mIBudgetContainerClickListener.onBudgetContainerClicked();
+            //mIBudgetContainerClickListener.onBudgetContainerClicked();
+            getContext().startActivity(new Intent(getContext(), ExpenseByCategoryActivity.class));
         });
         home_spending_pattern_container.setOnClickListener(v -> {
             getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
@@ -229,14 +235,9 @@ public class HomeFragment extends Fragment implements
         homeOverviewContainer = view.findViewById(R.id.home_overview_container);
         homeBudgetContainer = view.findViewById(R.id.home_budget_container);
         mSwipeRefreshLayout = view.findViewById(R.id.refresh_home_fragment);
-        progressBar = view.findViewById(R.id.progressBar);
         pb_circle_normal = view.findViewById(R.id.pb_circle_normal);
         pb_circle_waste = view.findViewById(R.id.pb_circle_waste);
         pb_circle_invest = view.findViewById(R.id.pb_circle_invest);
-        progressBarPercentage = view.findViewById(R.id.progressbar_percentage);
-        usedBudgetTv = view.findViewById(R.id.used_budget_tv);
-        totalBudgetTv = view.findViewById(R.id.total_budget_tv);
-        tv_weekday = view.findViewById(R.id.tv_weekday);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd");
 
@@ -289,6 +290,8 @@ public class HomeFragment extends Fragment implements
         tv_income_total.setText(new StringBuilder(Common.changeNumberToComma(income)).append("원"));
         tv_expense_total.setText(new StringBuilder(Common.changeNumberToComma(expense)).append("원"));
         tv_balance.setText(new StringBuilder(Common.changeNumberToComma(income - expense)).append("원"));
+
+        setProgressBar(expense);
     }
 
 
@@ -355,7 +358,6 @@ public class HomeFragment extends Fragment implements
                 tv_invest_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
             }
         }
-        setProgressBar();
         setCircleProgressbar(normal_percentage, waste_percentage, invest_percentage);
     }
 

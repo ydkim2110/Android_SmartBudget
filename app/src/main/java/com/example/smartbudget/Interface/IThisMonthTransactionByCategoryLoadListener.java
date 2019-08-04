@@ -7,6 +7,6 @@ import com.example.smartbudget.Model.TransactionModel;
 import java.util.List;
 
 public interface IThisMonthTransactionByCategoryLoadListener {
-    void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> transactionModelList);
+    void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList);
     void onThisMonthTransactionByCategoryLoadFailed(String message);
 }

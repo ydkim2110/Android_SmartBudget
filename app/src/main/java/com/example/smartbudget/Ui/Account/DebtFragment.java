@@ -11,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.IAccountsLoadListener;
+import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Main.MainActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -23,7 +26,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DebtFragment extends Fragment {
+public class DebtFragment extends Fragment implements IAccountsLoadListener {
 
     private static DebtFragment instance;
 
@@ -46,20 +49,10 @@ public class DebtFragment extends Fragment {
         mUnbinder = ButterKnife.bind(this, view);
 
         rv_debt.setLayoutManager(new LinearLayoutManager(getActivity()));
-        CommonRecycleAdapter adapter = new CommonRecycleAdapter(createItemList());
-        rv_debt.setAdapter(adapter);
 
+        DatabaseUtils.getAccountsByType(MainActivity.mDBHelper, "debt", this);
         return view;
     }
-
-    private List<String> createItemList() {
-        List<String> itemList = new ArrayList<>();
-        for(int i=0;i<5;i++) {
-            itemList.add("Item "+i);
-        }
-        return itemList;
-    }
-
 
     @Override
     public void onDestroy() {
@@ -67,4 +60,16 @@ public class DebtFragment extends Fragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onAccountsLoadSuccess(List<AccountModel> accountList) {
+        if (accountList != null) {
+            AccountListAdapter adapter = new AccountListAdapter(getContext(), accountList);
+            rv_debt.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onAccountDeleteSuccess(boolean isSuccess) {
+
+    }
 }

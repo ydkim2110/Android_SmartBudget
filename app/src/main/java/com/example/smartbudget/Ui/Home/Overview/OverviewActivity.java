@@ -66,6 +66,7 @@ public class OverviewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Overview");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
 
         mPieChart = findViewById(R.id.overview_spending_pie_chart);
 

@@ -9,12 +9,13 @@ public class DBContract {
 
     public static class Account implements BaseColumns {
         public static final String TABLE_NAME = "account_table";
-        public static final String COL_NAME = "account_name";
-        public static final String COL_DESCRIPTION = "account_description";
-        public static final String COL_AMOUNT = "account_amount";
-        public static final String COL_TYPE = "account_type";
-        public static final String COL_CREATE_AT = "account_create_at";
-        public static final String COL_CURRENCY = "account_currency";
+        public static final String COL_NAME = "name";
+        public static final String COL_DESCRIPTION = "description";
+        public static final String COL_AMOUNT = "amount";
+        public static final String COL_HIGH_CATEGORY = "high_category";
+        public static final String COL_TYPE = "type";
+        public static final String COL_CREATE_AT = "create_at";
+        public static final String COL_CURRENCY = "currency";
     }
 
     public static class Category implements BaseColumns {

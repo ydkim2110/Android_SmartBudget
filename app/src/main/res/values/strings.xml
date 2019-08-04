@@ -59,5 +59,12 @@
     <string name="tab_title_asset">Asset</string>
     <string name="tab_title_debt">Debt</string>
     <string name="toolbar_account">Account</string>
+    <string name="tab_title_running">Running</string>
+    <string name="tab_title_expired">Expired</string>
+    <string name="toolbar_expense_by_category">Expense By Category</string>
+    <string name="toolbar_title_transaction">Transaction</string>
+    <string name="toolbar_title_calendar">Calendar</string>
+    <string name="zero_money">0원</string>
+    <string name="toolbar_title_calculator">Calculator</string>
 
 </resources>

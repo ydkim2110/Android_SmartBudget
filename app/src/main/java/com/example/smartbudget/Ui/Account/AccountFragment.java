@@ -48,7 +48,7 @@ public class AccountFragment extends Fragment implements IAccountsLoadListener, 
     public void onResume() {
         super.onResume();
         Common.SELECTED_ACCOUNT = null;
-        DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
+        DatabaseUtils.getAllAccounts(MainActivity.mDBHelper, this);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AccountFragment extends Fragment implements IAccountsLoadListener, 
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
-        DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
+        DatabaseUtils.getAllAccounts(MainActivity.mDBHelper, this);
 
         mRecyclerView = view.findViewById(R.id.rv_account);
         mRecyclerView.setHasFixedSize(true);
@@ -91,7 +91,7 @@ public class AccountFragment extends Fragment implements IAccountsLoadListener, 
     @Override
     public void onAccountDeleteSuccess(boolean isSuccess) {
         if (isSuccess) {
-            DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
+            DatabaseUtils.getAllAccounts(MainActivity.mDBHelper, this);
         }
     }
 

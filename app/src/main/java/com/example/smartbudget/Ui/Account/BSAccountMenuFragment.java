@@ -41,22 +41,16 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment {
         TextView editTv = view.findViewById(R.id.edit_tv);
         TextView deleteTv = view.findViewById(R.id.delete_tv);
 
-        editTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
-                getContext().startActivity(new Intent(getContext(), AddAccountActivity.class));
-                AccountAdapter.mBSAccountMenuFragment.dismiss();
-            }
+        editTv.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
+            getContext().startActivity(new Intent(getContext(), AddAccountActivity.class));
+            AccountListAdapter.mBSAccountMenuFragment.dismiss();
         });
 
-        deleteTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
-                DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, AccountAdapter.mListener, Common.SELECTED_ACCOUNT);
-                AccountAdapter.mBSAccountMenuFragment.dismiss();
-            }
+        deleteTv.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
+            DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, AccountAdapter.mListener, Common.SELECTED_ACCOUNT);
+            AccountListAdapter.mBSAccountMenuFragment.dismiss();
         });
 
         return view;

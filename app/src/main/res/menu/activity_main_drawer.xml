@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group>
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
@@ -28,10 +28,6 @@
             android:id="@+id/nav_calculator"
             android:icon="@drawable/ic_gradient_black_24dp"
             android:title="@string/menu_calculator" />
-        <item
-            android:id="@+id/nav_travel"
-            android:icon="@drawable/ic_local_airport_black_24dp"
-            android:title="@string/menu_travel" />
     </group>
 
 </menu>

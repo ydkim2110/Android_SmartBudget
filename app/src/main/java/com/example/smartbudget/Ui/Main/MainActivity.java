@@ -35,11 +35,14 @@ import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Account.AccountActivity;
 import com.example.smartbudget.Ui.Account.AccountFragment;
 import com.example.smartbudget.Ui.Account.AddAccountActivity;
+import com.example.smartbudget.Ui.Budget.BudgetActivity;
 import com.example.smartbudget.Ui.Budget.BudgetFragment;
+import com.example.smartbudget.Ui.Calculator.CalcActivity;
 import com.example.smartbudget.Ui.Calculator.CalculatorFragment;
 import com.example.smartbudget.Ui.Home.HomeFragment;
 import com.example.smartbudget.Ui.Report.ReportFragment;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
+import com.example.smartbudget.Ui.Transaction.TransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionFragment;
 import com.example.smartbudget.Ui.Transaction.TransactionListFragment;
 import com.example.smartbudget.Ui.Travel.AddTravelActivity;
@@ -188,23 +191,17 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, AccountActivity.class));
         } else if (id == R.id.nav_budget) {
             clickedNavItem = R.id.nav_budget;
-            drawer.closeDrawer(GravityCompat.START);
+            startActivity(new Intent(MainActivity.this, BudgetActivity.class));
         } else if (id == R.id.nav_transaction) {
             clickedNavItem = R.id.nav_transaction;
-            drawer.closeDrawer(GravityCompat.START);
+            startActivity(new Intent(MainActivity.this, TransactionActivity.class));
         } else if (id == R.id.nav_report) {
             clickedNavItem = R.id.nav_report;
             drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_calculator) {
             clickedNavItem = R.id.nav_calculator;
-            drawer.closeDrawer(GravityCompat.START);
-        } else if (id == R.id.nav_travel) {
-            clickedNavItem = R.id.nav_travel;
-            drawer.closeDrawer(GravityCompat.START);
+            startActivity(new Intent(MainActivity.this, CalcActivity.class));
         }
-
-        //drawer.closeDrawer(GravityCompat.START);
-
 
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -226,21 +223,18 @@ public class MainActivity extends AppCompatActivity
 //                    case R.id.nav_account:
 //                        gotoFragment(getResources().getString(R.string.menu_account), AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
 //                        break;
-                    case R.id.nav_budget:
-                        gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
-                        break;
-                    case R.id.nav_transaction:
-                        gotoFragment(getResources().getString(R.string.menu_transaction), TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
-                        break;
+//                    case R.id.nav_budget:
+//                        gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
+//                        break;
+//                    case R.id.nav_transaction:
+//                        gotoFragment(getResources().getString(R.string.menu_transaction), TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
+//                        break;
                     case R.id.nav_report:
                         gotoFragment(getResources().getString(R.string.menu_report), ReportFragment.getInstance(), REPORT_FRAGMENT);
                         break;
-                    case R.id.nav_calculator:
-                        gotoFragment(getResources().getString(R.string.menu_calculator), CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
-                        break;
-                    case R.id.nav_travel:
-                        gotoFragment(getResources().getString(R.string.menu_travel), TravelFragment.getInstance(), TRAVEL_FRAGMENT);
-                        break;
+//                    case R.id.nav_calculator:
+//                        gotoFragment(getResources().getString(R.string.menu_calculator), CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
+//                        break;
                 }
             }
 

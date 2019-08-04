@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,16 +13,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.ISumAccountsLoadListener;
+import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Utils.Common;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity implements ISumAccountsLoadListener {
 
     private static final String TAG = AccountActivity.class.getSimpleName();
 
@@ -39,10 +47,18 @@ public class AccountActivity extends AppCompatActivity {
     ViewPager vp_account;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.tv_balance_total)
+    TextView tv_balance_total;
+    @BindView(R.id.tv_asset)
+    TextView tv_asset;
+    @BindView(R.id.tv_debt)
+    TextView tv_debt;
 
     int revenueColor;
     int expenseColor;
     int currentTabPosition;
+    int assetTotal = 0;
+    int debtTotal = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +71,8 @@ public class AccountActivity extends AppCompatActivity {
         expenseColor = ContextCompat.getColor(this,R.color.colorExpense);
 
         initView();
+
+        DatabaseUtils.getSumAccountsByType(MainActivity.mDBHelper, this);
 
     }
 
@@ -74,7 +92,8 @@ public class AccountActivity extends AppCompatActivity {
 
         fab.setOnClickListener(v -> {
             mBSAccountAddFragment = BSAccountAddFragment.getInstance();
-            mBSAccountAddFragment.show(getSupportFragmentManager(), mBSAccountAddFragment.getTag());
+            mBSAccountAddFragment.show(getSupportFragmentManager(),
+                    mBSAccountAddFragment.getTag());
         });
 
         vp_account.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab_account));
@@ -82,11 +101,9 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    Log.d(TAG, "onTabSelected: 0");
                     app_bar.setBackgroundColor(revenueColor);
                 }
                 else if (tab.getPosition() == 1) {
-                    Log.d(TAG, "onTabSelected: 1");
                     app_bar.setBackgroundColor(expenseColor);
                 }
             }
@@ -104,13 +121,10 @@ public class AccountActivity extends AppCompatActivity {
 
         app_bar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
-                Log.d(TAG, "onOffsetChanged: collapsed");
                 tab_account.setTabTextColors(ColorStateList.valueOf(Color.BLACK));
             }
             else {
-                Log.d(TAG, "onOffsetChanged: expanded");
-                tab_account.setTabTextColors(ColorStateList.valueOf(Color.WHITE
-                ));
+                tab_account.setTabTextColors(ColorStateList.valueOf(Color.WHITE));
             }
         });
     }
@@ -122,5 +136,28 @@ public class AccountActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSumAccountsLoadSuccess(List<AccountModel> accountModelList) {
+        if (accountModelList != null) {
+            for (int i = 0; i < accountModelList.size(); i++) {
+                if (accountModelList.get(i).getAccount_type().equals("asset")) {
+                    assetTotal = (int) accountModelList.get(i).getAccount_amount();
+                }
+                else if (accountModelList.get(i).getAccount_type().equals("debt")) {
+                    debtTotal = (int) accountModelList.get(i).getAccount_amount();
+                }
+            }
+        }
+
+        tv_asset.setText(new StringBuilder(Common.changeNumberToComma(assetTotal)).append("원"));
+        tv_debt.setText(new StringBuilder(Common.changeNumberToComma(debtTotal)).append("원"));
+        tv_balance_total.setText(new StringBuilder(Common.changeNumberToComma(assetTotal - debtTotal)).append("원"));
+    }
+
+    @Override
+    public void onSumAccountsLoadFailed(String message) {
+
     }
 }

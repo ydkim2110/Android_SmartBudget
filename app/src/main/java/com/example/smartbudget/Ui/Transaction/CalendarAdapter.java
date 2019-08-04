@@ -56,7 +56,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                 .inflate(R.layout.item_calendar_day, parent, false);
 
         view.post(() -> {
-
             GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams) view.getLayoutParams();
             params.height = parent.getMeasuredHeight() / 5;
 
@@ -79,11 +78,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         int displayYear = dateCalendar.get(Calendar.YEAR);
         int displayMonth = dateCalendar.get(Calendar.MONTH) + 1;
         int displayDay = dateCalendar.get(Calendar.DAY_OF_MONTH);
-        Log.d(TAG, "onBindViewHolder: displayDate: " + displayYear + ", " + displayMonth + ", " + displayDay);
+
         int currentYear = mCalendar.get(Calendar.YEAR);
         int currentMonth = mCalendar.get(Calendar.MONTH) + 1;
         int currentDay = mCalendar.get(Calendar.DAY_OF_MONTH);
-        Log.d(TAG, "onBindViewHolder: currentDate: " + currentYear + ", " + currentMonth + ", " + currentDay);
+
         int todayYear = Calendar.getInstance().get(Calendar.YEAR);
         int todayMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
         int todayDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
@@ -110,7 +109,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         Calendar eventCalendar = Calendar.getInstance();
         ArrayList<Integer> expenseTotal = new ArrayList<>();
         ArrayList<Integer> incomeTotal = new ArrayList<>();
-
 
         for (int i = 0; i < mTransactionList.size(); i++) {
             eventCalendar.setTime(convertStringToDate(mTransactionList.get(i).getTransaction_date()));

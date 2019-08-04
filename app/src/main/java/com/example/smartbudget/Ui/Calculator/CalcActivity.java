@@ -1,52 +1,42 @@
-package com.example.smartbudget.Ui.Home.Spending;
+package com.example.smartbudget.Ui.Calculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.smartbudget.R;
-import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SpendingActivity extends AppCompatActivity {
+public class CalcActivity extends AppCompatActivity {
 
-    private static final String TAG = SpendingActivity.class.getSimpleName();
+    private static final String TAG = CalcActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.tab_spending_pattern)
-    TabLayout tab_spending_pattern;
-    @BindView(R.id.vp_spending_pattern)
-    ViewPager vp_spending_pattern;
-
-    PagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spending);
+        setContentView(R.layout.activity_calc);
         Log.d(TAG, "onCreate: started!!");
-
-        ButterKnife.bind(this);
-
+        
         initView();
     }
 
     private void initView() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_spending_pattern));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+        Log.d(TAG, "initView: called!!");
+        ButterKnife.bind(this);
 
-        adapter = new PagerAdapter(getSupportFragmentManager(), this);
-        vp_spending_pattern.setAdapter(adapter);
-        tab_spending_pattern.setupWithViewPager(vp_spending_pattern);
+        setSupportActionBar(toolbar);
+        setTitle(getResources().getString(R.string.toolbar_title_calculator));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
     }
 
     @Override

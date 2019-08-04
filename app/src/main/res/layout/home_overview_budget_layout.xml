@@ -17,7 +17,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:text="Budgets"
+        android:text="Expense By Category"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/pb_expense_by_category"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -55,46 +55,46 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
-        android:id="@+id/used_budget_tv"
+        android:id="@+id/tv_used_expense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="1,000,000원"
+        android:text="@string/zero_money"
         android:textStyle="bold"
         android:textColor="@color/colorExpense"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintTop_toBottomOf="@+id/pb_expense_by_category" />
 
     <TextView
-        android:id="@+id/total_budget_tv"
+        android:id="@+id/tv_total_expense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
-        android:text="4,000,000원"
+        android:text="@string/zero_money"
         android:textStyle="bold"
         android:textColor="@color/colorRevenue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintTop_toBottomOf="@+id/pb_expense_by_category" />
 
     <TextView
-        android:id="@+id/progressbar_percentage"
+        android:id="@+id/tv_percentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="50%"
+        android:text="0%"
         android:textStyle="bold"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBar"
-        app:layout_constraintEnd_toEndOf="@+id/progressBar"
-        app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/progressBar" />
+        app:layout_constraintBottom_toBottomOf="@+id/pb_expense_by_category"
+        app:layout_constraintEnd_toEndOf="@+id/pb_expense_by_category"
+        app:layout_constraintStart_toStartOf="@+id/pb_expense_by_category"
+        app:layout_constraintTop_toTopOf="@+id/pb_expense_by_category" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IAccountLoadListener;
+import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Ui.Account.IAccountInsertListener;
@@ -45,8 +46,18 @@ public class DatabaseUtils {
         task.execute();
     }
 
-    public static void getAllAccount(DBHelper db, IAccountsLoadListener listener) {
-        GetAllAccountAsync task = new GetAllAccountAsync(db, listener);
+    public static void getAllAccounts(DBHelper db, IAccountsLoadListener listener) {
+        GetAllAccountsAsync task = new GetAllAccountsAsync(db, listener);
+        task.execute();
+    }
+
+    public static void getAccountsByType(DBHelper db, String type, IAccountsLoadListener listener) {
+        GetAccountsByTypeAsync task = new GetAccountsByTypeAsync(db, type, listener);
+        task.execute();
+    }
+
+    public static void getSumAccountsByType(DBHelper db, ISumAccountsLoadListener listener) {
+        GetSumAccountsByTypeAsync task = new GetSumAccountsByTypeAsync(db, listener);
         task.execute();
     }
 
@@ -304,12 +315,12 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetAllAccountAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+    private static class GetAllAccountsAsync extends AsyncTask<Void, Void, List<AccountModel>> {
 
         DBHelper db;
         IAccountsLoadListener mListener;
 
-        public GetAllAccountAsync(DBHelper db, IAccountsLoadListener listener) {
+        public GetAllAccountsAsync(DBHelper db, IAccountsLoadListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -351,6 +362,99 @@ public class DatabaseUtils {
         protected void onPostExecute(List<AccountModel> accountList) {
             super.onPostExecute(accountList);
             mListener.onAccountsLoadSuccess(accountList);
+        }
+    }
+
+    private static class GetAccountsByTypeAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+
+        DBHelper db;
+        String type = "";
+        IAccountsLoadListener mListener;
+
+        public GetAccountsByTypeAsync(DBHelper db, String type, IAccountsLoadListener listener) {
+            this.db = db;
+            this.type = type;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<AccountModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getAccountsByType(type);
+            List<AccountModel> accountList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        AccountModel account = new AccountModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
+                        String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+                        String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
+                        String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
+
+                        account.setId((int) id);
+                        account.setAccount_name(name);
+                        account.setAccount_description(description);
+                        account.setAccount_amount(Double.parseDouble(amount));
+                        account.setAccount_type(type);
+                        account.setAccount_currency(currency);
+                        accountList.add(account);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return accountList;
+            }
+            return accountList;
+        }
+
+        @Override
+        protected void onPostExecute(List<AccountModel> accountList) {
+            super.onPostExecute(accountList);
+            mListener.onAccountsLoadSuccess(accountList);
+        }
+    }
+
+    private static class GetSumAccountsByTypeAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+
+        DBHelper db;
+        ISumAccountsLoadListener mListener;
+
+        public GetSumAccountsByTypeAsync(DBHelper db, ISumAccountsLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<AccountModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getSumAccountsByType();
+            List<AccountModel> accountList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        AccountModel account = new AccountModel();
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow("sumByType"));
+
+                        account.setAccount_amount(Double.parseDouble(amount));
+                        account.setAccount_type(type);
+                        accountList.add(account);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return accountList;
+            }
+            return accountList;
+        }
+
+        @Override
+        protected void onPostExecute(List<AccountModel> accountList) {
+            super.onPostExecute(accountList);
+            mListener.onSumAccountsLoadSuccess(accountList);
         }
     }
 

@@ -49,7 +49,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             view.setTag("ADD");
         } else {
             view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.account_item2_layout, viewGroup, false);
+                    .inflate(R.layout.item_account, viewGroup, false);
             view.setTag(null);
         }
         count += 1;
@@ -118,11 +118,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             if (itemView.getTag() == "ADD") {
                 itemView.setOnClickListener(this);
             } else {
-                accountName = itemView.findViewById(R.id.account_name);
-                accountDescription = itemView.findViewById(R.id.account_description);
-                accountAmount = itemView.findViewById(R.id.account_amount);
-                accountType = itemView.findViewById(R.id.account_type);
-                accountMoreIcon = itemView.findViewById(R.id.account_more_icon);
+                accountName = itemView.findViewById(R.id.tv_name);
+                accountDescription = itemView.findViewById(R.id.tv_description);
+                accountAmount = itemView.findViewById(R.id.tv_amount);
+                accountType = itemView.findViewById(R.id.tv_high_category);
+                accountMoreIcon = itemView.findViewById(R.id.tv_more_icon);
 
                 itemView.setOnClickListener(this);
             }

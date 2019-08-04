@@ -169,10 +169,10 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
     }
 
     private void initView() {
-        accountName = findViewById(R.id.account_name);
-        accountDescription = findViewById(R.id.account_description);
-        accountAmount = findViewById(R.id.account_amount);
-        accountType = findViewById(R.id.account_type);
+        accountName = findViewById(R.id.tv_name);
+        accountDescription = findViewById(R.id.tv_description);
+        accountAmount = findViewById(R.id.tv_amount);
+        accountType = findViewById(R.id.tv_high_category);
         saveBtn = findViewById(R.id.save_btn);
         saveBtn.setEnabled(false);
         cancelBtn = findViewById(R.id.cancel_btn);

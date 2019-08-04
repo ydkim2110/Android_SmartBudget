@@ -39,6 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     Account.COL_NAME + " TEXT, " +
                     Account.COL_DESCRIPTION + " TEXT, " +
                     Account.COL_AMOUNT + " INTEGER, " +
+                    Account.COL_HIGH_CATEGORY + " TEXT, " +
                     Account.COL_TYPE + " TEXT, " +
                     Account.COL_CREATE_AT + " DATE, " +
                     Account.COL_CURRENCY + " TEXT)";
@@ -106,14 +107,15 @@ public class DBHelper extends SQLiteOpenHelper {
         Calendar calendar19 = new GregorianCalendar(2019, 06, 01);
         Calendar calendar20 = new GregorianCalendar(2019, 06, 04);
 
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
-                new Object[]{"현금", "내돈", 150000, "cash", new Date(), "KRW"});
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
-                new Object[]{"한국투자증권", "주식", 12000000, "stock", new Date(), "KRW"});
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
-                new Object[]{"우리은행", "예금", 50000000, "saving_account", new Date(), "KRW"});
-        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(account_name, account_description, account_amount, account_type, account_create_at, account_currency) VALUES(?, ?, ?, ?, ?, ?)",
-                new Object[]{"하나은행", "수시입출금", 2200000, "checking_account", new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(name, description, amount, high_category, type, create_at, currency) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"현금", "내돈", 150000, "cash", "asset", new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(name, description, amount, high_category, type, create_at, currency) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"월급통장", "월급", 1250000, "checking_account", "asset", new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(name, description, amount, high_category, type, create_at, currency) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"국민은행", "비상금통장", 2150000, "checking_account", "asset", new Date(), "KRW"});
+        db.execSQL("INSERT INTO " + Account.TABLE_NAME + "(name, description, amount, high_category, type, create_at, currency) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{"대출통장", "전세자금대출", 2150000, "checking_account", "debt", new Date(), "KRW"});
+
 
         db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (transaction_note, transaction_amount, transaction_type, transaction_pattern, transaction_date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new Object[]{"저녁(술)", 50000, "Expense", "Normal", dateFormat.format(calendar1.getTime()), ":food&drink", null, 1, null});
@@ -279,6 +281,17 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getSumAccountsByType() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT "+Account.COL_TYPE+", SUM("+Account.COL_AMOUNT+") AS sumByType FROM " + Account.TABLE_NAME
+                +" GROUP BY "+Account.COL_TYPE;
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
     public Cursor getAllAccounts() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + Account.TABLE_NAME, null);
@@ -287,6 +300,19 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return cursor;
     }
+
+    public Cursor getAccountsByType(String type) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + Account.TABLE_NAME
+                +" WHERE "+Account.COL_TYPE+" = ?";
+        String[] args = {type};
+        Cursor cursor = db.rawQuery(query, args);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
 
     public Cursor getAllCategories() {
         SQLiteDatabase db = this.getWritableDatabase();

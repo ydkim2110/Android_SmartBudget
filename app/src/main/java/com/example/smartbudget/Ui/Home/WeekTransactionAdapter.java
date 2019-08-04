@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -72,6 +73,8 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
         holder.rv_transaction_list.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         WeekSubTransactionAdapter adapter = new WeekSubTransactionAdapter(mContext, value);
         holder.rv_transaction_list.setAdapter(adapter);
+
+        holder.itemView.startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left));
     }
 
     @Override

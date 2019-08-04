@@ -26,7 +26,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.item_account, viewGroup, false);
+                .inflate(R.layout.item_add_account, viewGroup, false);
         return new ViewHolder(view);
     }
 

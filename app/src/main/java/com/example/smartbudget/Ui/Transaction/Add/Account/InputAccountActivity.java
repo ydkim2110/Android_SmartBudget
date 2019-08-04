@@ -42,7 +42,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
         setContentView(R.layout.activity_input_account);
         Log.d(TAG, "onCreate: started!!");
 
-        DatabaseUtils.getAllAccount(MainActivity.mDBHelper, this);
+        DatabaseUtils.getAllAccounts(MainActivity.mDBHelper, this);
 
         // todo: 이전 선택된 아이템은 선택되어졌다고 표시하기
         if (getIntent() != null) {
