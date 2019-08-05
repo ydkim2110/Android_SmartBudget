@@ -38,6 +38,9 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         this.mTransactionModelList = mTransactionModelList;
     }
 
+    private Category expenseCategory;
+    private Category incomeCategory;
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,10 +64,10 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         int accountId = mTransactionModelList.get(position).getAccount_id();
 
         if (mTransactionModelList.get(position).getTransaction_type().equals("Expense")) {
-            Category expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
+            expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
 
             holder.iv_transaction_icon.setImageResource(expenseCategory.getIconResourceID());
-            holder.iv_transaction_icon.setColorFilter(expenseCategory.getIconColor());
+            holder.iv_transaction_icon.setBackgroundTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
             holder.tv_transaction_category.setText(expenseCategory.getCategoryVisibleName(mContext));
 
             holder.tv_transaction_note.setText(mTransactionModelList.get(position).getTransaction_note());
@@ -72,10 +75,10 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         }
         else if (mTransactionModelList.get(position).getTransaction_type().equals("Income")) {
-            Category incomeCategory = Common.getIncomeCategory(mTransactionModelList.get(position).getCategory_id());
+            incomeCategory = Common.getIncomeCategory(mTransactionModelList.get(position).getCategory_id());
 
             holder.iv_transaction_icon.setImageResource(incomeCategory.getIconResourceID());
-            holder.iv_transaction_icon.setColorFilter(incomeCategory.getIconColor());
+            holder.iv_transaction_icon.setBackgroundTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
             holder.tv_transaction_category.setText(incomeCategory.getCategoryVisibleName(mContext));
 
             holder.tv_transaction_note.setText(mTransactionModelList.get(position).getTransaction_note());
@@ -83,12 +86,9 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorRevenue));
         }
 
-
-
-
-        final TransactionModel transactionModel = new TransactionModel(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
-
         holder.setIRecyclerItemSelectedListener((view, i) -> {
+            TransactionModel transactionModel = new TransactionModel(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
+
             Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);
             editTransactionIntent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transactionModel);
             view.getContext().startActivity(editTransactionIntent);

@@ -1,6 +1,7 @@
 package com.example.smartbudget.Ui.Account;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,7 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
         }
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
-            Toast.makeText(mContext, "[selected]", Toast.LENGTH_SHORT).show();
+            mContext.startActivity(new Intent(mContext, AccountDetailActivity.class));
         });
 
     }

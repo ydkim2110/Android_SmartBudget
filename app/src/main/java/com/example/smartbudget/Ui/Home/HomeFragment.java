@@ -287,9 +287,9 @@ public class HomeFragment extends Fragment implements
                 }
             }
         }
-        tv_income_total.setText(new StringBuilder(Common.changeNumberToComma(income)).append("원"));
-        tv_expense_total.setText(new StringBuilder(Common.changeNumberToComma(expense)).append("원"));
-        tv_balance.setText(new StringBuilder(Common.changeNumberToComma(income - expense)).append("원"));
+        Common.animateTextView(0, income, tv_income_total);
+        Common.animateTextView(0, expense, tv_expense_total);
+        Common.animateTextView(0, (income - expense), tv_balance);
 
         setProgressBar(expense);
     }

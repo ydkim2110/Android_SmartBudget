@@ -1,6 +1,8 @@
 package com.example.smartbudget.Utils;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.widget.TextView;
 
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.Category;
@@ -190,5 +192,19 @@ public class Common {
             }
         }
         return null;
+    }
+
+    public static void animateTextView(int initialValue, int finalValue, final TextView textview) {
+
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(initialValue, finalValue);
+        valueAnimator.setDuration(500);
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                textview.setText(new StringBuilder(changeNumberToComma(Integer.parseInt(valueAnimator.getAnimatedValue().toString()))).append("원"));
+            }
+        });
+        valueAnimator.start();
     }
 }

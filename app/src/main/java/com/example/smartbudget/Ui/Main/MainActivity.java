@@ -40,6 +40,7 @@ import com.example.smartbudget.Ui.Budget.BudgetFragment;
 import com.example.smartbudget.Ui.Calculator.CalcActivity;
 import com.example.smartbudget.Ui.Calculator.CalculatorFragment;
 import com.example.smartbudget.Ui.Home.HomeFragment;
+import com.example.smartbudget.Ui.Report.ReportActivity;
 import com.example.smartbudget.Ui.Report.ReportFragment;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionActivity;
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, TransactionActivity.class));
         } else if (id == R.id.nav_report) {
             clickedNavItem = R.id.nav_report;
-            drawer.closeDrawer(GravityCompat.START);
+            startActivity(new Intent(MainActivity.this, ReportActivity.class));
         } else if (id == R.id.nav_calculator) {
             clickedNavItem = R.id.nav_calculator;
             startActivity(new Intent(MainActivity.this, CalcActivity.class));
@@ -229,9 +230,9 @@ public class MainActivity extends AppCompatActivity
 //                    case R.id.nav_transaction:
 //                        gotoFragment(getResources().getString(R.string.menu_transaction), TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
 //                        break;
-                    case R.id.nav_report:
-                        gotoFragment(getResources().getString(R.string.menu_report), ReportFragment.getInstance(), REPORT_FRAGMENT);
-                        break;
+//                    case R.id.nav_report:
+//                        gotoFragment(getResources().getString(R.string.menu_report), ReportFragment.getInstance(), REPORT_FRAGMENT);
+//                        break;
 //                    case R.id.nav_calculator:
 //                        gotoFragment(getResources().getString(R.string.menu_calculator), CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
 //                        break;

@@ -26,6 +26,7 @@ import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.WeekTransactionAdapter;
 import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -108,12 +109,12 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         compactcalendar_view.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-                setSubTitle(Common.dateFormat.format(dateClicked));
+                setSubTitle(Common.yearmonthDateFormate.format(dateClicked));
             }
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-                setSubTitle(Common.dateFormat.format(firstDayOfNewMonth));
+                setSubTitle(Common.yearmonthDateFormate.format(firstDayOfNewMonth));
                 loadData(firstDayOfNewMonth);
                 currentDate = Common.dateFormat.format(firstDayOfNewMonth);
             }
@@ -130,7 +131,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         });
 
         fab.setOnClickListener(v -> {
-            Toast.makeText(this, "[FAB BUDGET]", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(TransactionActivity.this, AddTransactionActivity.class));
         });
 
         rv_transaction.setHasFixedSize(true);
@@ -163,7 +164,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
     private void setCurrentDate(Date date) {
         Log.d(TAG, "setCurrentDate: called!!");
-        setSubTitle(Common.dateFormat.format(date));
+        setSubTitle(Common.yearmonthDateFormate.format(date));
         if (compactcalendar_view != null) {
             compactcalendar_view.setCurrentDate(date);
         }
@@ -212,8 +213,8 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
         Log.d(TAG, "onTransactionLoadSuccess: Total expense: "+totalExpense);
 
-        tv_total_income.setText(new StringBuilder(Common.changeNumberToComma(totalIncome)).append("원"));
-        tv_total_expense.setText(new StringBuilder(Common.changeNumberToComma(totalExpense)).append("원"));
+        Common.animateTextView(0, totalIncome, tv_total_income);
+        Common.animateTextView(0, totalExpense, tv_total_expense);
 
         groupedHashMap = groupDataIntoHashMap(transactionList);
 

@@ -66,5 +66,6 @@
     <string name="toolbar_title_calendar">Calendar</string>
     <string name="zero_money">0원</string>
     <string name="toolbar_title_calculator">Calculator</string>
+    <string name="toolbar_title_report">Report</string>
 
 </resources>
