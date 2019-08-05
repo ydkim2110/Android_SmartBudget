@@ -1,8 +1,11 @@
 package com.example.smartbudget.Ui.Account;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -21,6 +24,9 @@ import com.example.smartbudget.Utils.Common;
 import java.text.DecimalFormat;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AddAccountActivity extends AppCompatActivity implements IAccountInsertListener {
 
     private static final String TAG = AddAccountActivity.class.getSimpleName();
@@ -28,15 +34,20 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
     private BSAccountAddFragment mBSAccountAddFragment;
     private BSAccountMenuFragment mBSAccountMenuFragment;
 
-    private Toolbar mToolbar;
-
-    private EditText accountName;
-    private EditText accountDescription;
-    private EditText accountAmount;
-    private EditText accountType;
-
-    private Button saveBtn;
-    private Button cancelBtn;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tv_name)
+    EditText tv_name;
+    @BindView(R.id.tv_description)
+    EditText tv_description;
+    @BindView(R.id.tv_amount)
+    EditText tv_amount;
+    @BindView(R.id.tv_high_category)
+    EditText tv_high_category;
+    @BindView(R.id.save_btn)
+    Button save_btn;
+    @BindView(R.id.cancel_btn)
+    Button cancel_btn;
 
     private DecimalFormat df;
     private DecimalFormat dfnd;
@@ -50,6 +61,8 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
         setContentView(R.layout.activity_add_account);
         Log.d(TAG, "onCreate: started!!");
 
+        initView();
+
         df = new DecimalFormat("#,###.##");
         df.setDecimalSeparatorAlwaysShown(true);
         dfnd = new DecimalFormat("#,###");
@@ -59,14 +72,11 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             passedAccount = Common.SELECTED_ACCOUNT;
         }
 
-        initToolbar();
-        initView();
-
         if (Common.SELECTED_ACCOUNT == null) {
-            accountType.setText(getIntent().getStringExtra("type"));
+            tv_high_category.setText(getIntent().getStringExtra("high_category"));
         }
 
-        accountName.addTextChangedListener(new TextWatcher() {
+        tv_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -83,7 +93,7 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             }
         });
 
-        accountDescription.addTextChangedListener(new TextWatcher() {
+        tv_description.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -100,8 +110,7 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             }
         });
 
-        // todo: numberformat
-        accountAmount.addTextChangedListener(new TextWatcher() {
+        tv_amount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -116,35 +125,31 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             }
         });
 
-        //accountAmount.addTextChangedListener(new NumberTextWatcher(accountAmount));
+        cancel_btn.setOnClickListener(v -> finish());
 
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+        save_btn.setOnClickListener(v -> {
+            String name = tv_name.getText().toString();
+            String description = tv_description.getText().toString();
+            double amount = Double.parseDouble(tv_amount.getText().toString());
+            String highCategory = tv_high_category.getText().toString();
+            String type = "";
+            if (tv_high_category.getText().equals("대출") || tv_high_category.getText().equals("기타부채")) {
+                type = "debt";
+            } else {
+                type = "asset";
             }
-        });
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = accountName.getText().toString();
-                String description = accountDescription.getText().toString();
-                double amount = Double.parseDouble(accountAmount.getText().toString());
-                String type = accountType.getText().toString();
-                if (saveBtn.getText().toString().toUpperCase().equals("SAVE")) {
-                    Log.d(TAG, "onClick: save");
-                    AccountModel accountModel = new AccountModel(name, description,
-                            amount, type, new Date(), "KRW");
-                    DatabaseUtils.insertAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
-                }
-                else if (saveBtn.getText().toString().toUpperCase().equals("UPDATE")) {
-                    Log.d(TAG, "onClick: update");
-                    int id = passedAccount.getId();
-                    AccountModel accountModel = new AccountModel(id, name, description,
-                            amount, type, new Date(), "KRW");
-                    DatabaseUtils.updateAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
-                }
+            if (save_btn.getText().toString().toUpperCase().equals("SAVE")) {
+                Log.d(TAG, "onClick: save");
+                AccountModel accountModel = new AccountModel(name, description,
+                        amount, highCategory, type, new Date(), "KRW");
+                DatabaseUtils.insertAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
+            } else if (save_btn.getText().toString().toUpperCase().equals("UPDATE")) {
+                Log.d(TAG, "onClick: update");
+                int id = passedAccount.getId();
+                AccountModel accountModel = new AccountModel(id, name, description,
+                        amount, highCategory, type, new Date(), "KRW");
+                DatabaseUtils.updateAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
             }
         });
 
@@ -153,50 +158,43 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
     private void checkInputs() {
         Log.d(TAG, "checkInputs: called!!");
 
-        if (!TextUtils.isEmpty(accountName.getText())) {
-            if (!TextUtils.isEmpty(accountDescription.getText())) {
-                if (!TextUtils.isEmpty(accountAmount.getText())) {
-                    saveBtn.setEnabled(true);
+        if (!TextUtils.isEmpty(tv_name.getText())) {
+            if (!TextUtils.isEmpty(tv_description.getText())) {
+                if (!TextUtils.isEmpty(tv_amount.getText())) {
+                    save_btn.setEnabled(true);
                 } else {
-                    saveBtn.setEnabled(false);
+                    save_btn.setEnabled(false);
                 }
             } else {
-                saveBtn.setEnabled(false);
+                save_btn.setEnabled(false);
             }
         } else {
-            saveBtn.setEnabled(false);
+            save_btn.setEnabled(false);
         }
     }
 
     private void initView() {
-        accountName = findViewById(R.id.tv_name);
-        accountDescription = findViewById(R.id.tv_description);
-        accountAmount = findViewById(R.id.tv_amount);
-        accountType = findViewById(R.id.tv_high_category);
-        saveBtn = findViewById(R.id.save_btn);
-        saveBtn.setEnabled(false);
-        cancelBtn = findViewById(R.id.cancel_btn);
+        ButterKnife.bind(this);
 
-        if (Common.SELECTED_ACCOUNT != null) {
-            saveBtn.setText("Update");
-            accountName.setText(passedAccount.getAccount_name());
-            accountDescription.setText(passedAccount.getAccount_description());
-            accountAmount.setText(""+passedAccount.getAccount_amount());
-            accountType.setText(passedAccount.getAccount_type());
-        } else {
-            saveBtn.setText("Save");
-        }
-    }
-
-    private void initToolbar() {
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
         if (Common.SELECTED_ACCOUNT != null) {
             getSupportActionBar().setTitle("Edit Account");
         } else {
             getSupportActionBar().setTitle("Add Account");
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        save_btn.setEnabled(false);
+
+        if (Common.SELECTED_ACCOUNT != null) {
+            save_btn.setText("Update");
+            tv_name.setText(passedAccount.getName());
+            tv_description.setText(passedAccount.getDescription());
+            tv_amount.setText("" + passedAccount.getAmount());
+            tv_high_category.setText(passedAccount.getType());
+        } else {
+            save_btn.setText("Save");
+        }
     }
 
     @Override

@@ -65,7 +65,7 @@ public class WasteFragment extends Fragment implements IThisMonthTransactionLoad
 
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        ListAdapter adapter = new ListAdapter(getContext(), transactionList);
+        SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionList);
         rv_waste.setAdapter(adapter);
     }
 

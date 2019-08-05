@@ -95,7 +95,6 @@ public class AddTransactionActivity extends AppCompatActivity
         finish();
     }
 
-
     int _year;
     int _month;
     int _day;
@@ -387,7 +386,7 @@ public class AddTransactionActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     mAccountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
-                    accountEdt.setText(mAccountModel.getAccount_name());
+                    accountEdt.setText(mAccountModel.getName());
                 }
             }
         } else if (requestCode == INPUT_NOTE_REQUEST) {
@@ -514,7 +513,7 @@ public class AddTransactionActivity extends AppCompatActivity
                 categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
             }
         }
-        String passedAccount = mAccountModel.getAccount_name();
+        String passedAccount = mAccountModel.getName();
         String passedNote = mTransactionModel.getTransaction_note();
         String passedDate = mTransactionModel.getTransaction_date();
         String passedPattern = mTransactionModel.getTransaction_pattern();

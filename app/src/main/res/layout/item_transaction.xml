@@ -18,7 +18,7 @@
         android:layout_marginBottom="8dp"
         android:padding="8dp"
         android:background="@drawable/shape_icon_bg_circle"
-        android:tint="#FFFFFF"
+        android:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

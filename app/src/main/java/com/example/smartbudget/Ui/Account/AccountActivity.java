@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -142,18 +141,17 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
     public void onSumAccountsLoadSuccess(List<AccountModel> accountModelList) {
         if (accountModelList != null) {
             for (int i = 0; i < accountModelList.size(); i++) {
-                if (accountModelList.get(i).getAccount_type().equals("asset")) {
-                    assetTotal = (int) accountModelList.get(i).getAccount_amount();
+                if (accountModelList.get(i).getType().equals("asset")) {
+                    assetTotal = (int) accountModelList.get(i).getAmount();
                 }
-                else if (accountModelList.get(i).getAccount_type().equals("debt")) {
-                    debtTotal = (int) accountModelList.get(i).getAccount_amount();
+                else if (accountModelList.get(i).getType().equals("debt")) {
+                    debtTotal = (int) accountModelList.get(i).getAmount();
                 }
             }
         }
-
-        tv_asset.setText(new StringBuilder(Common.changeNumberToComma(assetTotal)).append("원"));
-        tv_debt.setText(new StringBuilder(Common.changeNumberToComma(debtTotal)).append("원"));
-        tv_balance_total.setText(new StringBuilder(Common.changeNumberToComma(assetTotal - debtTotal)).append("원"));
+        Common.animateTextView(0, assetTotal, tv_asset);
+        Common.animateTextView(0, debtTotal, tv_debt);
+        Common.animateTextView(0, (assetTotal - debtTotal), tv_balance_total);
     }
 
     @Override

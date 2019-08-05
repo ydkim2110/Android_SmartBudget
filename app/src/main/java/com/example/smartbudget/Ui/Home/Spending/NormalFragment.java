@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +65,7 @@ public class NormalFragment extends Fragment implements IThisMonthTransactionLoa
 
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        ListAdapter adapter = new ListAdapter(getContext(), transactionList);
+        SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionList);
         rv_normal.setAdapter(adapter);
     }
 

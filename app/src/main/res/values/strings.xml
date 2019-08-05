@@ -67,5 +67,9 @@
     <string name="zero_money">0원</string>
     <string name="toolbar_title_calculator">Calculator</string>
     <string name="toolbar_title_report">Report</string>
+    <string name="toolbar_title_budget">Budget</string>
+    <string name="toolbar_title_add_budget">Add Budget</string>
+    <string name="toolbar_account_detail">Account Detail</string>
+    <string name="toolbar_title_home">Home</string>
 
 </resources>

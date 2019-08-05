@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Account Name..."
+                android:hint="Name..."
                 android:inputType="textPersonName"
                 android:padding="16dp" />
 
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:layout_marginTop="20dp"
-                android:hint="Account Description..."
+                android:hint="Description..."
                 android:inputType="textPersonName"
                 android:padding="16dp" />
 
@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:ems="10"
-                android:hint="Account Balance"
+                android:hint="Balance"
                 android:inputType="number"
                 android:padding="16dp" />
 
@@ -76,7 +76,7 @@
                 android:layout_marginTop="20dp"
                 android:ems="10"
                 android:focusable="false"
-                android:hint="Account Type"
+                android:hint="Type"
                 android:inputType="number"
                 android:padding="16dp" />
 

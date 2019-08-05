@@ -5,23 +5,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e9e9e9"
-    tools:context=".Ui.Transaction.Add.AddTransactionActivity">
+    tools:context=".Ui.Budget.AddBudgetActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -32,7 +31,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+        app:layout_constraintTop_toBottomOf="@+id/app_bar">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,29 +39,6 @@
             android:background="@android:color/white"
             android:orientation="vertical"
             android:padding="16dp">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Category"
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
-                    android:layout_height="wrap_content" />
-
-                <EditText
-                    android:id="@+id/add_transaction_category"
-                    android:layout_width="0dp"
-                    android:layout_weight="8"
-                    android:layout_height="wrap_content"
-                    android:hint="Category"
-                    android:drawableRight="@drawable/ic_list_black_24dp"
-                    android:focusable="false"
-                    android:padding="16dp" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -117,18 +93,18 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Note"
+                    android:text="Name"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:layout_height="wrap_content" />
 
 
                 <EditText
-                    android:id="@+id/add_transaction_description"
+                    android:id="@+id/edt_name"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
-                    android:hint="Note"
+                    android:hint="Name"
                     android:drawableRight="@drawable/ic_note_add_black_24dp"
                     android:focusable="false"
                     android:padding="16dp" />
@@ -141,89 +117,45 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Date"
+                    android:text="Start Date"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/add_transaction_date"
+                    android:id="@+id/edt_start_date"
                     android:focusable="false"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
-                    android:hint="Date"
+                    android:hint="Start Date"
                     android:drawableRight="@drawable/ic_date_range_black_24dp"
                     android:padding="16dp" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_pattern_container"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Pattern"
-                    android:layout_gravity="center_vertical"
+                    android:text="End Date"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                <EditText
+                    android:id="@+id/edt_end_date"
+                    android:focusable="false"
                     android:layout_width="0dp"
                     android:layout_weight="8"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/tv_normal"
-                        android:text="Normal"
-                        android:padding="4dp"
-                        android:layout_margin="4dp"
-                        android:gravity="center"
-                        android:background="@drawable/shape_tv_normal"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tv_waste"
-                        android:text="Waste"
-                        android:padding="4dp"
-                        android:layout_margin="4dp"
-                        android:gravity="center"
-                        android:background="@drawable/shape_tv_waste"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tv_invest"
-                        android:text="Invest"
-                        android:padding="4dp"
-                        android:layout_margin="4dp"
-                        android:gravity="center"
-                        android:background="@drawable/shape_tv_invest"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:hint="End Date"
+                    android:drawableRight="@drawable/ic_date_range_black_24dp"
+                    android:padding="16dp" />
 
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/iv_delete"
-                android:visibility="gone"
-                android:src="@drawable/ic_delete_black_24dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
 
         </LinearLayout>
 
@@ -239,7 +171,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/cancel_btn"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_weight="1"
@@ -248,7 +180,7 @@
             android:text="Cancel" />
 
         <Button
-            android:id="@+id/save_btn"
+            android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_weight="1"

@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Interface.IBudgetContainerClickListener;
+import com.example.smartbudget.Interface.IDateChangeListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
@@ -61,7 +62,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements
+public class HomeFragment extends Fragment implements IDateChangeListener,
         IThisMonthTransactionLoadListener, IThisMonthTransactionByPatternLoadListener, IThisWeekTransactionLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
@@ -75,13 +76,7 @@ public class HomeFragment extends Fragment implements
     public HomeFragment() {
     }
 
-    private IBudgetContainerClickListener mIBudgetContainerClickListener;
     private INSVScrollChangeListener mINSVScrollChangeListener;
-
-    Unbinder mUnbinder;
-
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private WeekTransactionAdapter mAdapter;
 
     @BindView(R.id.rv_transaction)
     RecyclerView rv_transaction;
@@ -129,10 +124,18 @@ public class HomeFragment extends Fragment implements
     @BindView(R.id.ll_no_items)
     LinearLayout ll_no_items;
 
-    private ConstraintLayout homeOverviewContainer;
-    private ConstraintLayout homeBudgetContainer;
+    @BindView(R.id.home_overview_container)
+    ConstraintLayout home_overview_container;
+    @BindView(R.id.home_expense_by_category_container)
+    ConstraintLayout home_expense_by_category_container;
+    @BindView(R.id.refresh_home_fragment)
+    SwipeRefreshLayout refresh_home_fragment;
     @BindView(R.id.home_spending_pattern_container)
     ConstraintLayout home_spending_pattern_container;
+
+    Unbinder mUnbinder;
+
+    private WeekTransactionAdapter mAdapter;
 
     private HashMap<String, List<TransactionModel>> groupedHashMap;
 
@@ -140,11 +143,11 @@ public class HomeFragment extends Fragment implements
     private int normal_percentage = 0;
     private int waste_percentage = 0;
     private int invest_percentage = 0;
+    private String currentDate = "";
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mIBudgetContainerClickListener = (IBudgetContainerClickListener) context;
         mINSVScrollChangeListener = (INSVScrollChangeListener) context;
     }
 
@@ -159,14 +162,12 @@ public class HomeFragment extends Fragment implements
         mUnbinder = ButterKnife.bind(this, view);
 
         initView(view);
-        handleViewClick();
 
         rv_transaction.setHasFixedSize(true);
         rv_transaction.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
-        DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
-        DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
+        currentDate = Common.dateFormat.format(new Date());
+        loadFromDatabase(currentDate);
 
         return view;
     }
@@ -195,49 +196,23 @@ public class HomeFragment extends Fragment implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void reloadData(AddTransactionEvent event) {
         if (event != null) {
-            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
-            DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
-            DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
+            loadFromDatabase(currentDate);
         }
     }
 
     private void loadData() {
         Log.d(TAG, "loadData: called!!");
-        if (mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (refresh_home_fragment.isRefreshing()) {
+            refresh_home_fragment.setRefreshing(false);
         }
 
         mAdapter = new WeekTransactionAdapter(getContext(), groupedHashMap);
         rv_transaction.setAdapter(mAdapter);
     }
 
-    private void handleViewClick() {
-        homeOverviewContainer.setOnClickListener(v -> {
-            getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
-        });
-        homeBudgetContainer.setOnClickListener(v -> {
-            //mIBudgetContainerClickListener.onBudgetContainerClicked();
-            getContext().startActivity(new Intent(getContext(), ExpenseByCategoryActivity.class));
-        });
-        home_spending_pattern_container.setOnClickListener(v -> {
-            getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
-        });
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
-            DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), this);
-            DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
-        });
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void initView(View view) {
         Log.d(TAG, "initView: called!!");
-        homeOverviewContainer = view.findViewById(R.id.home_overview_container);
-        homeBudgetContainer = view.findViewById(R.id.home_budget_container);
-        mSwipeRefreshLayout = view.findViewById(R.id.refresh_home_fragment);
-        pb_circle_normal = view.findViewById(R.id.pb_circle_normal);
-        pb_circle_waste = view.findViewById(R.id.pb_circle_waste);
-        pb_circle_invest = view.findViewById(R.id.pb_circle_invest);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd");
 
@@ -248,8 +223,21 @@ public class HomeFragment extends Fragment implements
                 .append(")"));
 
         nsv_container.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                    mINSVScrollChangeListener.onNSVScrollChangeListener(scrollY > oldScrollY);
-                });
+            mINSVScrollChangeListener.onNSVScrollChangeListener(scrollY > oldScrollY);
+        });
+
+        home_overview_container.setOnClickListener(v -> {
+            getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
+        });
+        home_expense_by_category_container.setOnClickListener(v -> {
+            getContext().startActivity(new Intent(getContext(), ExpenseByCategoryActivity.class));
+        });
+        home_spending_pattern_container.setOnClickListener(v -> {
+            getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
+        });
+        refresh_home_fragment.setOnRefreshListener(() -> {
+            loadFromDatabase(currentDate);
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -385,4 +373,17 @@ public class HomeFragment extends Fragment implements
 
     }
 
+    @Override
+    public void onDateChanged(String date) {
+        Log.d(TAG, "onDateChanged: "+date);
+        currentDate = date;
+        loadFromDatabase(currentDate);
+    }
+
+    private void loadFromDatabase(String date) {
+        Log.d(TAG, "loadFromDatabase: called!!");
+        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, date, this);
+        DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, date, this);
+        DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
+    }
 }

@@ -51,9 +51,9 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
 
         }
         else {
-            viewHolder.accountName.setText(mAccountModelList.get(i).getAccount_name());
-            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) mAccountModelList.get(i).getAccount_amount()) + "원");
-            viewHolder.accountType.setText(mAccountModelList.get(i).getAccount_type());
+            viewHolder.accountName.setText(mAccountModelList.get(i).getName());
+            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) mAccountModelList.get(i).getAmount()) + "원");
+            viewHolder.accountType.setText(mAccountModelList.get(i).getType());
 
             if (!mCardViewList.contains(viewHolder.container)) {
                 mCardViewList.add(viewHolder.container);

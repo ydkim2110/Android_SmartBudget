@@ -11,10 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Utils.Common;
 
 public class BSAccountMenuFragment extends BottomSheetDialogFragment {
 
@@ -44,13 +41,13 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment {
         editTv.setOnClickListener(v -> {
             Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
             getContext().startActivity(new Intent(getContext(), AddAccountActivity.class));
-            AccountListAdapter.mBSAccountMenuFragment.dismiss();
+            AccountAdapter.mBSAccountMenuFragment.dismiss();
         });
 
         deleteTv.setOnClickListener(v -> {
             Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
-            DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, AccountAdapter.mListener, Common.SELECTED_ACCOUNT);
-            AccountListAdapter.mBSAccountMenuFragment.dismiss();
+//            DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, AccountAdapter.mListener, Common.SELECTED_ACCOUNT);
+//            AccountAdapter.mBSAccountMenuFragment.dismiss();
         });
 
         return view;

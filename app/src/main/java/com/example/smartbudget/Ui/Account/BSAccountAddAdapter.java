@@ -22,6 +22,8 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
         this.title = title;
     }
 
+    private String type;
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -34,14 +36,11 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.addTv.setText(title[i]);
 
-        viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
-            @Override
-            public void onItemSelected(View view, int position) {
-                Intent intent = new Intent(mContext, AddAccountActivity.class);
-                intent.putExtra("type", title[position]);
-                mContext.startActivity(intent);
-                AccountActivity.mBSAccountAddFragment.dismiss();
-            }
+        viewHolder.setIRecyclerItemSelectedListener((view, position) -> {
+            Intent intent = new Intent(mContext, AddAccountActivity.class);
+            intent.putExtra("high_category", title[position]);
+            mContext.startActivity(intent);
+            AccountActivity.mBSAccountAddFragment.dismiss();
         });
     }
 

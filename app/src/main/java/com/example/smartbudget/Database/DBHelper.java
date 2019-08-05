@@ -12,7 +12,6 @@ import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.TransactionModel;
-import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 
 import java.text.SimpleDateFormat;
@@ -170,12 +169,12 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Account.COL_NAME, accountModel.getAccount_name());
-        contentValues.put(Account.COL_DESCRIPTION, accountModel.getAccount_description());
-        contentValues.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
-        contentValues.put(Account.COL_TYPE, accountModel.getAccount_type());
-        contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getAccount_create_at()));
-        contentValues.put(Account.COL_CURRENCY, accountModel.getAccount_currency());
+        contentValues.put(Account.COL_NAME, accountModel.getName());
+        contentValues.put(Account.COL_DESCRIPTION, accountModel.getDescription());
+        contentValues.put(Account.COL_AMOUNT, accountModel.getAmount());
+        contentValues.put(Account.COL_TYPE, accountModel.getType());
+        contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getCreateAt()));
+        contentValues.put(Account.COL_CURRENCY, accountModel.getCurrency());
 
         long result = db.insert(Account.TABLE_NAME, null, contentValues);
 
@@ -246,15 +245,15 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Log.d(TAG, "updateAccount:getId " + accountModel.getId());
-        Log.d(TAG, "updateAccount:getAccount_name " + accountModel.getAccount_name());
+        Log.d(TAG, "updateAccount:getName " + accountModel.getName());
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Account.COL_NAME, accountModel.getAccount_name());
-        contentValues.put(Account.COL_DESCRIPTION, accountModel.getAccount_description());
-        contentValues.put(Account.COL_AMOUNT, accountModel.getAccount_amount());
-        contentValues.put(Account.COL_TYPE, accountModel.getAccount_type());
-        contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getAccount_create_at()));
-        contentValues.put(Account.COL_CURRENCY, accountModel.getAccount_currency());
+        contentValues.put(Account.COL_NAME, accountModel.getName());
+        contentValues.put(Account.COL_DESCRIPTION, accountModel.getDescription());
+        contentValues.put(Account.COL_AMOUNT, accountModel.getAmount());
+        contentValues.put(Account.COL_TYPE, accountModel.getType());
+        contentValues.put(Account.COL_CREATE_AT, String.valueOf(accountModel.getCreateAt()));
+        contentValues.put(Account.COL_CURRENCY, accountModel.getCurrency());
 
         int result = db.update(Account.TABLE_NAME, contentValues, "_id = " + accountModel.getId(), null);
 
@@ -271,6 +270,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "deleteTransaction: getId(): " + transactionModel.getId());
         return db.delete(Transaction.TABLE_NAME, "_id = " + transactionModel.getId(), null);
     }
+
 
     public Cursor getAccount(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -346,13 +346,27 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getThisMonthTransactions(String date) {
-        Log.d(TAG, "getThisMonthTransactions: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
                 + " ORDER BY " + Transaction.COL_DATE + " DESC";
         ;
         String[] args = {date, date};
+        Cursor cursor = db.rawQuery(query, args);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getThisMonthTransactionsByAccount(String date, int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM "+Transaction.TABLE_NAME
+                + " WHERE "+Transaction.COL_DATE+" BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
+                + " AND "+Transaction.COL_ACCOUNT_ID+" = ?"
+                + " ORDER BY " + Transaction.COL_DATE + " DESC";
+        ;
+        String[] args = {date, date, String.valueOf(id)};
         Cursor cursor = db.rawQuery(query, args);
         if (cursor != null) {
             cursor.moveToFirst();
@@ -377,8 +391,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getThisMonthTransactionByPattern(String date) {
-        Log.d(TAG, "getThisMonthTransactionByPattern: " + date);
+    public Cursor getThisMonthTransactionsByPattern(String date) {
+        Log.d(TAG, "getThisMonthTransactionsByPattern: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT " + Transaction.COL_PATTERN + ", SUM(" + Transaction.COL_AMOUNT + ") AS pattern_sum, COUNT(" + Transaction.COL_AMOUNT + ") AS pattern_count"
                 + " FROM " + Transaction.TABLE_NAME
@@ -393,8 +407,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getThisMonthTransactionByCategory(String date) {
-        Log.d(TAG, "getThisMonthTransactionByPattern: " + date);
+    public Cursor getThisMonthTransactionsByCategory(String date) {
+        Log.d(TAG, "getThisMonthTransactionsByPattern: " + date);
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT " + Transaction.COL_CATEGORY_ID + ", SUM(" + Transaction.COL_AMOUNT + ") AS sum_by_category, COUNT(" + Transaction.COL_AMOUNT + ") AS count_by_category"
                 + " FROM " + Transaction.TABLE_NAME

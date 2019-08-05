@@ -61,7 +61,7 @@ public class InvestFragment extends Fragment implements IThisMonthTransactionLoa
 
     @Override
     public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        ListAdapter adapter = new ListAdapter(getContext(), transactionList);
+        SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionList);
         rv_invest.setAdapter(adapter);
     }
 

@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,16 +38,6 @@ public class BudgetActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.compactcalendar_view)
-    CompactCalendarView compactcalendar_view;
-    @BindView(R.id.title)
-    TextView title;
-    @BindView(R.id.date_picker_text_view)
-    TextView date_picker_text_view;
-    @BindView(R.id.date_picker_arrow)
-    ImageView date_picker_arrow;
-    @BindView(R.id.date_picker_button)
-    RelativeLayout date_picker_button;
     @BindView(R.id.tab_budget)
     TabLayout tab_budget;
     @BindView(R.id.vp_budget)
@@ -71,37 +62,14 @@ public class BudgetActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        setTitle("Budget");
+        setTitle(getResources().getString(R.string.toolbar_title_budget));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
 
-        compactcalendar_view.setLocale(TimeZone.getDefault(), Locale.KOREA);
-        compactcalendar_view.setShouldDrawDaysHeader(true);
-        compactcalendar_view.setListener(new CompactCalendarView.CompactCalendarViewListener() {
-            @Override
-            public void onDayClick(Date dateClicked) {
-                setSubTitle(Common.dateFormat.format(dateClicked));
-            }
 
-            @Override
-            public void onMonthScroll(Date firstDayOfNewMonth) {
-                setSubTitle(Common.dateFormat.format(firstDayOfNewMonth));
-            }
-        });
-
-        setCurrentDate(new Date());
-
-        date_picker_button.setOnClickListener(v -> {
-            float rotation = isExpanded ? 0 : 180;
-            ViewCompat.animate(date_picker_arrow).rotation(rotation).start();
-
-            isExpanded = !isExpanded;
-            app_bar.setExpanded(isExpanded, true);
-        });
-        
         fab.setOnClickListener(v -> {
-            Toast.makeText(this, "[FAB BUDGET]", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(BudgetActivity.this, AddBudgetActivity.class));
         });
 
         adapter = new BudgetPagerAdapter(getSupportFragmentManager(), this);
@@ -119,25 +87,4 @@ public class BudgetActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setCurrentDate(Date date) {
-        Log.d(TAG, "setCurrentDate: called!!");
-        setSubTitle(Common.dateFormat.format(date));
-        if (compactcalendar_view != null) {
-            compactcalendar_view.setCurrentDate(date);
-        }
-    }
-
-    @Override
-    public void setTitle(CharSequence passedTitle) {
-        if (title != null) {
-            title.setText(passedTitle);
-        }
-    }
-
-    private void setSubTitle(String subtitle) {
-        Log.d(TAG, "setSubTitle: called!!");
-        if (date_picker_text_view != null) {
-            date_picker_text_view.setText(subtitle);
-        }
-    }
 }

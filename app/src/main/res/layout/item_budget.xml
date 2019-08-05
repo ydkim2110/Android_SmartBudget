@@ -41,34 +41,76 @@
             app:layout_constraintTop_toTopOf="@+id/pb_circle" />
 
         <TextView
-            android:id="@+id/textView17"
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="TextView"
+            android:text="여행계획"
+            android:textColor="@android:color/black"
             app:layout_constraintStart_toEndOf="@+id/pb_circle"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/tv_current"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text="Current: "
             app:layout_constraintStart_toEndOf="@+id/pb_circle"
-            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
         <TextView
-            android:id="@+id/textView19"
+            android:id="@+id/tv_target"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Target: "
+            app:layout_constraintStart_toEndOf="@+id/pb_circle"
+            app:layout_constraintTop_toBottomOf="@+id/tv_current" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/zero_money"
+            android:textColor="@color/colorRevenue"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_current"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintTop_toTopOf="@+id/tv_current" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_begin="395dp" />
+
+        <TextView
+            android:id="@+id/tv_target_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/zero_money"
+            android:textColor="@color/colorExpense"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_target"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintTop_toTopOf="@+id/tv_target" />
+
+        <TextView
+            android:id="@+id/tv_date_period"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text="2019.07.01 ~ 2019.07.31"
             app:layout_constraintStart_toEndOf="@+id/pb_circle"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_target" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

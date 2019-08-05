@@ -1,93 +1,100 @@
 package com.example.smartbudget.Ui.Main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GravityCompat;
-import androidx.core.widget.NestedScrollView;
+import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartbudget.Database.DBHelper;
-import com.example.smartbudget.Interface.IBudgetContainerClickListener;
-import com.example.smartbudget.Interface.IFABClickListener;
+import com.example.smartbudget.Interface.IDateChangeListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
-import com.example.smartbudget.Model.EventBus.CalendarToggleEvent;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Account.AccountActivity;
-import com.example.smartbudget.Ui.Account.AccountFragment;
-import com.example.smartbudget.Ui.Account.AddAccountActivity;
 import com.example.smartbudget.Ui.Budget.BudgetActivity;
-import com.example.smartbudget.Ui.Budget.BudgetFragment;
 import com.example.smartbudget.Ui.Calculator.CalcActivity;
-import com.example.smartbudget.Ui.Calculator.CalculatorFragment;
 import com.example.smartbudget.Ui.Home.HomeFragment;
 import com.example.smartbudget.Ui.Report.ReportActivity;
-import com.example.smartbudget.Ui.Report.ReportFragment;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionActivity;
-import com.example.smartbudget.Ui.Transaction.TransactionFragment;
-import com.example.smartbudget.Ui.Transaction.TransactionListFragment;
-import com.example.smartbudget.Ui.Travel.AddTravelActivity;
-import com.example.smartbudget.Ui.Travel.TravelFragment;
 import com.example.smartbudget.Utils.Common;
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IBudgetContainerClickListener, INSVScrollChangeListener, IRVScrollChangeListener {
+        implements NavigationView.OnNavigationItemSelectedListener, INSVScrollChangeListener, IRVScrollChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private IFABClickListener mIFABClickListener;
-
-    public void setmIFABClickListener(IFABClickListener mIFABClickListener) {
-        this.mIFABClickListener = mIFABClickListener;
-    }
+    private IDateChangeListener mIDateChangeListener;
 
     private static final int HOME_FRAGMENT = 0;
-    private static final int ACCOUNT_FRAGMENT = 1;
-    private static final int BUDGET_FRAGMENT = 2;
-    private static final int TRANSACTION_FRAGMENT = 3;
-    private static final int REPORT_FRAGMENT = 4;
-    private static final int CALCULATOR_FRAGMENT = 5;
-    private static final int TRAVEL_FRAGMENT = 6;
 
-    private NavigationView navigationView;
-    private Toolbar mToolbar;
-    private FloatingActionButton fab;
-    private DrawerLayout drawer;
-    private CoordinatorLayout content;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer_layout;
+    @BindView(R.id.nav_view)
+    NavigationView nav_view;
+    @BindView(R.id.content)
+    CoordinatorLayout content;
+    @BindView(R.id.app_bar)
+    AppBarLayout app_bar;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.compactcalendar_view)
+    CompactCalendarView compactcalendar_view;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.date_picker_text_view)
+    TextView date_picker_text_view;
+    @BindView(R.id.date_picker_arrow)
+    ImageView date_picker_arrow;
+    @BindView(R.id.date_picker_button)
+    RelativeLayout date_picker_button;
+
+    private boolean isExpanded = false;
+    private String currentDate;
 
     public static DBHelper mDBHelper;
 
     private int currentFragment = -1;
     private long backKeyPressedTime = 0;
-
     private int clickedNavItem = 0;
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof IDateChangeListener) {
+            mIDateChangeListener = (IDateChangeListener) fragment;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,18 +106,17 @@ public class MainActivity extends AppCompatActivity
 
         mDBHelper = new DBHelper(this);
 
-        initToolbar();
         initView();
         initDrawAndNavigationView();
 
         gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
-        navigationView.getMenu().getItem(currentFragment).setChecked(true);
+        nav_view.getMenu().getItem(currentFragment).setChecked(true);
     }
 
     private void initDrawAndNavigationView() {
         Log.d(TAG, "initDrawAndNavigationView: called!!");
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
@@ -118,30 +124,75 @@ public class MainActivity extends AppCompatActivity
                 content.setTranslationX(slideX);
             }
         };
-        drawer.addDrawerListener(toggle);
+        drawer_layout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
+        nav_view.setNavigationItemSelectedListener(this);
     }
 
     private void initView() {
         Log.d(TAG, "initView: called!!");
-        fab = findViewById(R.id.fab);
-        drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-        content = findViewById(R.id.content);
+        setSupportActionBar(toolbar);
+        setTitle(getResources().getString(R.string.toolbar_title_home));
+
+        compactcalendar_view.setLocale(TimeZone.getDefault(), Locale.KOREA);
+        compactcalendar_view.setShouldDrawDaysHeader(true);
+        compactcalendar_view.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                setSubTitle(Common.yearmonthDateFormate.format(dateClicked));
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+                setSubTitle(Common.yearmonthDateFormate.format(firstDayOfNewMonth));
+                currentDate = Common.dateFormat.format(firstDayOfNewMonth);
+                mIDateChangeListener.onDateChanged(currentDate);
+            }
+        });
+
+        setCurrentDate(new Date());
+
+        date_picker_button.setOnClickListener(v -> {
+            float rotation = isExpanded ? 0 : 180;
+            ViewCompat.animate(date_picker_arrow).rotation(rotation).start();
+
+            isExpanded = !isExpanded;
+            app_bar.setExpanded(isExpanded, true);
+        });
+
+        fab.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
+        });
     }
 
-    private void initToolbar() {
-        Log.d(TAG, "initToolbar: called!!");
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+    private void setCurrentDate(Date date) {
+        Log.d(TAG, "setCurrentDate: called!!");
+        setSubTitle(Common.yearmonthDateFormate.format(date));
+        if (compactcalendar_view != null) {
+            compactcalendar_view.setCurrentDate(date);
+        }
+        //loadData(date);
+    }
+
+    @Override
+    public void setTitle(CharSequence passedTitle) {
+        if (title != null) {
+            title.setText(passedTitle);
+        }
+    }
+
+    private void setSubTitle(String subtitle) {
+        Log.d(TAG, "setSubTitle: called!!");
+        if (date_picker_text_view != null) {
+            date_picker_text_view.setText(subtitle);
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START);
         } else {
             if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
                 backKeyPressedTime = System.currentTimeMillis();
@@ -155,56 +206,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (currentFragment == HOME_FRAGMENT) {
-            getMenuInflater().inflate(R.menu.nav_home_menu, menu);
-        } else if (currentFragment == TRANSACTION_FRAGMENT) {
-            getMenuInflater().inflate(R.menu.nav_transaction_menu, menu);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.nav_transaction_list) {
-            EventBus.getDefault().post(new CalendarToggleEvent(Common.LIST_TYPE));
-        } else if (id == R.id.nav_transaction_calendar) {
-            EventBus.getDefault().post(new CalendarToggleEvent(Common.CALENDAR_TYPE));
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
             clickedNavItem = R.id.nav_home;
-            drawer.closeDrawer(GravityCompat.START);
+            setCurrentDate(new Date());
+            drawer_layout.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_account) {
-            clickedNavItem = R.id.nav_account;
             startActivity(new Intent(MainActivity.this, AccountActivity.class));
         } else if (id == R.id.nav_budget) {
-            clickedNavItem = R.id.nav_budget;
             startActivity(new Intent(MainActivity.this, BudgetActivity.class));
         } else if (id == R.id.nav_transaction) {
-            clickedNavItem = R.id.nav_transaction;
             startActivity(new Intent(MainActivity.this, TransactionActivity.class));
         } else if (id == R.id.nav_report) {
-            clickedNavItem = R.id.nav_report;
             startActivity(new Intent(MainActivity.this, ReportActivity.class));
         } else if (id == R.id.nav_calculator) {
-            clickedNavItem = R.id.nav_calculator;
             startActivity(new Intent(MainActivity.this, CalcActivity.class));
         }
 
-        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+        drawer_layout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
@@ -221,21 +243,6 @@ public class MainActivity extends AppCompatActivity
                     case R.id.nav_home:
                         gotoFragment(getResources().getString(R.string.menu_home), HomeFragment.getInstance(), HOME_FRAGMENT);
                         break;
-//                    case R.id.nav_account:
-//                        gotoFragment(getResources().getString(R.string.menu_account), AccountFragment.getInstance(), ACCOUNT_FRAGMENT);
-//                        break;
-//                    case R.id.nav_budget:
-//                        gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
-//                        break;
-//                    case R.id.nav_transaction:
-//                        gotoFragment(getResources().getString(R.string.menu_transaction), TransactionFragment.getInstance(), TRANSACTION_FRAGMENT);
-//                        break;
-//                    case R.id.nav_report:
-//                        gotoFragment(getResources().getString(R.string.menu_report), ReportFragment.getInstance(), REPORT_FRAGMENT);
-//                        break;
-//                    case R.id.nav_calculator:
-//                        gotoFragment(getResources().getString(R.string.menu_calculator), CalculatorFragment.getInstance(), CALCULATOR_FRAGMENT);
-//                        break;
                 }
             }
 
@@ -248,53 +255,17 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
-    private void gotoFragment(String title, Fragment fragment, final int currentFragmentNUM) {
+    private void gotoFragment(String title, Fragment fragment, int currentFragmentNUM) {
         Log.d(TAG, "gotoFragment: called!!");
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(title);
         invalidateOptionsMenu();
 
-        setFragment(fragment, currentFragmentNUM);
-    }
-
-    @SuppressLint("RestrictedApi")
-    private void setFragment(Fragment fragment, final int currentFragmentNUM) {
-        Log.d(TAG, "setFragment: called");
-
-        if (currentFragmentNUM == REPORT_FRAGMENT || currentFragmentNUM == CALCULATOR_FRAGMENT) {
-            fab.setVisibility(View.INVISIBLE);
-        }
-        else {
-            fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(view -> {
-                if (currentFragmentNUM == HOME_FRAGMENT || currentFragmentNUM == TRANSACTION_FRAGMENT) {
-                    startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
-                }
-                else if (currentFragmentNUM == ACCOUNT_FRAGMENT) {
-                    mIFABClickListener.onFABClicked();
-                }
-                else if (currentFragmentNUM == BUDGET_FRAGMENT) {
-                    Toast.makeText(MainActivity.this, "Budget FAB Click!", Toast.LENGTH_SHORT).show();
-                }
-                else if (currentFragmentNUM == TRAVEL_FRAGMENT) {
-                    startActivity(new Intent(MainActivity.this, AddTravelActivity.class));
-                }
-            });
-        }
         currentFragment = currentFragmentNUM;
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        //ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.container, fragment);
         ft.commit();
-    }
-
-    @Override
-    public void onBudgetContainerClicked() {
-        Toast.makeText(this, "Budget Click!!", Toast.LENGTH_SHORT).show();
-        gotoFragment(getResources().getString(R.string.menu_budget), BudgetFragment.getInstance(), BUDGET_FRAGMENT);
-        navigationView.getMenu().getItem(currentFragment).setChecked(true);
     }
 
     @Override
@@ -312,8 +283,7 @@ public class MainActivity extends AppCompatActivity
             if (fab.isShown()) {
                 fab.hide();
             }
-        }
-        else {
+        } else {
             if (!fab.isShown()) {
                 fab.show();
             }

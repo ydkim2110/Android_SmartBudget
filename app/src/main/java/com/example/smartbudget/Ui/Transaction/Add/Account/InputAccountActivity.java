@@ -61,7 +61,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
         mCancelBtn.setOnClickListener(v -> finish());
 
         mSaveBtn.setOnClickListener(v -> {
-            Toast.makeText(InputAccountActivity.this, "selectedAccount: " + selectedAccount.getAccount_name(),
+            Toast.makeText(InputAccountActivity.this, "selectedAccount: " + selectedAccount.getName(),
                     Toast.LENGTH_SHORT).show();
             Intent intent = new Intent();
             intent.putExtra(Common.EXTRA_INPUT_ACCOUNT, selectedAccount);

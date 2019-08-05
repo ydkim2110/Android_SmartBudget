@@ -72,7 +72,7 @@ public class AssetFragment extends Fragment implements IAccountsLoadListener {
     @Override
     public void onAccountsLoadSuccess(List<AccountModel> accountList) {
         if (accountList != null) {
-            AccountListAdapter adapter = new AccountListAdapter(getContext(), accountList);
+            AccountAdapter adapter = new AccountAdapter(getContext(), accountList);
             rv_asset.setAdapter(adapter);
         }
     }

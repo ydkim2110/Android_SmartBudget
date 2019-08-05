@@ -1,6 +1,7 @@
 package com.example.smartbudget.Ui.Home.Spending;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +24,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
+public class SpendingListAdapter extends RecyclerView.Adapter<SpendingListAdapter.MyViewHolder> {
 
     private Context mContext;
     private List<TransactionModel> mTransactionModelList;
 
     private int lastPosition = -1;
 
-    public ListAdapter(Context context, List<TransactionModel> transactionModelList) {
+    public SpendingListAdapter(Context context, List<TransactionModel> transactionModelList) {
         mContext = context;
         mTransactionModelList = transactionModelList;
 //        Collections.sort(mTransactionModelList, new Comparator<TransactionModel>() {
@@ -57,13 +58,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
 
         holder.iv_category_icon.setImageResource(category.getIconResourceID());
-        holder.iv_category_icon.setColorFilter(category.getIconColor());
+        holder.iv_category_icon.setBackgroundTintList(ColorStateList.valueOf(category.getIconColor()));
         holder.transaction_category.setText(category.getCategoryVisibleName(mContext));
         holder.transaction_note.setText(transaction.getTransaction_note());
         holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
         holder.transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         holder.transaction_list_date.setText(transaction.getTransaction_date());
-
 
         setAnimation(holder.itemView, position);
 

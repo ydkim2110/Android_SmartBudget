@@ -23,8 +23,11 @@ import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
+import com.example.smartbudget.Utils.Common;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseUtils {
@@ -78,6 +81,11 @@ public class DatabaseUtils {
 
     public static void getThisMonthTransaction(DBHelper db, String date, IThisMonthTransactionLoadListener listener) {
         GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
+        task.execute();
+    }
+
+    public static void getThisMonthTransactionsByAccount(DBHelper db, String date, int id, IThisMonthTransactionLoadListener listener) {
+        GetThisMonthTransactionsByAccountAsync task = new GetThisMonthTransactionsByAccountAsync(db, date, id, listener);
         task.execute();
     }
 
@@ -282,7 +290,7 @@ public class DatabaseUtils {
         @Override
         protected AccountModel doInBackground(Void... voids) {
             Cursor cursor = db.getAccount(accountId);
-            AccountModel accountModel = new AccountModel();
+            AccountModel account = new AccountModel();
             Log.d(TAG, "doInBackground: cursor.getCount(): "+cursor.getCount());
             if (cursor != null && cursor.getCount() > 0) {
                 try {
@@ -290,22 +298,32 @@ public class DatabaseUtils {
                     String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
                     String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
                     String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+                    String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
                     String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
                     String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
                     String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
 
-                    accountModel.setId((int) id);
-                    accountModel.setAccount_name(name);
-                    accountModel.setAccount_description(description);
-                    accountModel.setAccount_amount(Double.parseDouble(amount));
-                    accountModel.setAccount_type(type);
-                    accountModel.setAccount_currency(currency);
+                    account.setId((int) id);
+                    account.setName(name);
+                    account.setDescription(description);
+                    account.setHighCategory(highCategory);
+                    account.setAmount(Double.parseDouble(amount));
+                    account.setType(type);
+                    Date dt = null;
+                    try {
+                        dt = Common.dateFormat.parse(createAt);
+                        account.setCreateAt(dt);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    account.setCurrency(currency);
+
                 } finally {
                     cursor.close();
                 }
-                return accountModel;
+                return account;
             }
-            return accountModel;
+            return account;
         }
 
         @Override
@@ -337,16 +355,26 @@ public class DatabaseUtils {
                         String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
                         String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+                        String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
                         String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
                         String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
 
                         account.setId((int) id);
-                        account.setAccount_name(name);
-                        account.setAccount_description(description);
-                        account.setAccount_amount(Double.parseDouble(amount));
-                        account.setAccount_type(type);
-                        account.setAccount_currency(currency);
+                        account.setName(name);
+                        account.setDescription(description);
+                        account.setAmount(Double.parseDouble(amount));
+                        account.setHighCategory(highCategory);
+                        account.setType(type);
+
+                        Date dt = null;
+                        try {
+                            dt = Common.dateFormat.parse(createAt);
+                            account.setCreateAt(dt);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        account.setCurrency(currency);
                         accountList.add(account);
                     }
                     while (cursor.moveToNext());
@@ -389,16 +417,25 @@ public class DatabaseUtils {
                         String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
                         String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+                        String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
                         String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
                         String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
 
                         account.setId((int) id);
-                        account.setAccount_name(name);
-                        account.setAccount_description(description);
-                        account.setAccount_amount(Double.parseDouble(amount));
-                        account.setAccount_type(type);
-                        account.setAccount_currency(currency);
+                        account.setName(name);
+                        account.setDescription(description);
+                        account.setAmount(Double.parseDouble(amount));
+                        account.setHighCategory(highCategory);
+                        account.setType(type);
+                        Date dt = null;
+                        try {
+                            dt = Common.dateFormat.parse(createAt);
+                            account.setCreateAt(dt);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        account.setCurrency(currency);
                         accountList.add(account);
                     }
                     while (cursor.moveToNext());
@@ -438,8 +475,8 @@ public class DatabaseUtils {
                         String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
                         String amount = cursor.getString(cursor.getColumnIndexOrThrow("sumByType"));
 
-                        account.setAccount_amount(Double.parseDouble(amount));
-                        account.setAccount_type(type);
+                        account.setAmount(Double.parseDouble(amount));
+                        account.setType(type);
                         accountList.add(account);
                     }
                     while (cursor.moveToNext());
@@ -631,6 +668,68 @@ public class DatabaseUtils {
         }
     }
 
+    private static class GetThisMonthTransactionsByAccountAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        IThisMonthTransactionLoadListener mListener;
+        String date;
+        int id;
+
+        public GetThisMonthTransactionsByAccountAsync(DBHelper db, String date, int id, IThisMonthTransactionLoadListener listener) {
+            this.db = db;
+            this.date = date;
+            this.id = id;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getThisMonthTransactionsByAccount(date, id);
+            Log.d(TAG, "cursor.getCount(): " + cursor.getCount());
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String subCategoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_SUB_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setTransaction_note(description);
+                        transaction.setTransaction_amount(Double.parseDouble(amount));
+                        transaction.setTransaction_type(type);
+                        transaction.setTransaction_date(date);
+                        transaction.setTransaction_pattern(pattern);
+                        transaction.setCategory_id(categoryId);
+                        transaction.setSub_category_id(subCategoryId);
+                        transaction.setAccount_id(accountId != null ? Integer.parseInt(accountId) : 0);
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return transactionList;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            if (transactionList != null)
+                mListener.onTransactionLoadSuccess(transactionList);
+        }
+    }
+
     private static class getThisMonthTransactionListPattern extends AsyncTask<Void, Void, List<TransactionModel>> {
 
         DBHelper db;
@@ -703,7 +802,7 @@ public class DatabaseUtils {
 
         @Override
         protected List<SpendingPattern> doInBackground(Void... voids) {
-            Cursor cursor = db.getThisMonthTransactionByPattern(date);
+            Cursor cursor = db.getThisMonthTransactionsByPattern(date);
 
             List<SpendingPattern> spendingPatternList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
@@ -750,7 +849,7 @@ public class DatabaseUtils {
 
         @Override
         protected List<ExpenseByCategory> doInBackground(Void... voids) {
-            Cursor cursor = db.getThisMonthTransactionByCategory(date);
+            Cursor cursor = db.getThisMonthTransactionsByCategory(date);
 
             List<ExpenseByCategory> expenseByCategoryList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
