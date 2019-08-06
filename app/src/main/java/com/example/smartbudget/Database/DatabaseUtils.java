@@ -140,7 +140,7 @@ public class DatabaseUtils {
 
         @Override
         protected Boolean doInBackground(TransactionModel... transactionModels) {
-            return db.insertToTransaction(transactionModels[0]);
+            return db.insertTransaction(transactionModels[0]);
         }
 
         @Override
@@ -162,7 +162,7 @@ public class DatabaseUtils {
 
         @Override
         protected Boolean doInBackground(AccountModel... accountModels) {
-            return db.insertToAccount(accountModels[0]);
+            return db.insertAccount(accountModels[0]);
         }
 
         @Override

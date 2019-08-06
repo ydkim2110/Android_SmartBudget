@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.SpendingPattern;
-import com.example.smartbudget.Interface.IBudgetContainerClickListener;
 import com.example.smartbudget.Interface.IDateChangeListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
@@ -233,7 +232,9 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
             getContext().startActivity(new Intent(getContext(), ExpenseByCategoryActivity.class));
         });
         home_spending_pattern_container.setOnClickListener(v -> {
-            getContext().startActivity(new Intent(getContext(), SpendingActivity.class));
+            Intent intent = new Intent(getContext(), SpendingActivity.class);
+            intent.putExtra("passed_date", currentDate);
+            getContext().startActivity(intent);
         });
         refresh_home_fragment.setOnRefreshListener(() -> {
             loadFromDatabase(currentDate);

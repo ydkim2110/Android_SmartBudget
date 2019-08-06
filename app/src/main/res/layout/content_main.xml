@@ -6,9 +6,9 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Ui.Main.MainActivity"
     tools:layout_editor_absoluteY="50dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -71,5 +71,8 @@
     <string name="toolbar_title_add_budget">Add Budget</string>
     <string name="toolbar_account_detail">Account Detail</string>
     <string name="toolbar_title_home">Home</string>
+    <string name="normal">Normal</string>
+    <string name="waste">Waste</string>
+    <string name="invest">Invest</string>
 
 </resources>

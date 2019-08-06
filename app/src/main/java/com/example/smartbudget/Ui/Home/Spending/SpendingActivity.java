@@ -26,12 +26,17 @@ public class SpendingActivity extends AppCompatActivity {
     ViewPager vp_spending_pattern;
 
     PagerAdapter adapter;
+    private String currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spending);
         Log.d(TAG, "onCreate: started!!");
+
+        if (getIntent() != null) {
+            currentDate = getIntent().getStringExtra("passed_date");
+        }
 
         ButterKnife.bind(this);
 
@@ -44,7 +49,7 @@ public class SpendingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
 
-        adapter = new PagerAdapter(getSupportFragmentManager(), this);
+        adapter = new PagerAdapter(getSupportFragmentManager(), this, currentDate);
         vp_spending_pattern.setAdapter(adapter);
         tab_spending_pattern.setupWithViewPager(vp_spending_pattern);
     }

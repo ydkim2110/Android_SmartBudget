@@ -3,6 +3,7 @@ package com.example.smartbudget.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
@@ -165,7 +166,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertToAccount(AccountModel accountModel) {
+    public boolean insertAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -181,7 +182,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    public boolean insertToTransaction(TransactionModel transactionModel) {
+    public boolean insertTransaction(TransactionModel transactionModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -195,8 +196,6 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Transaction.COL_ACCOUNT_ID, transactionModel.getAccount_id());
         contentValues.put(Transaction.COL_TO_ACCOUNT, "");
 
-        long result = db.insert(Transaction.TABLE_NAME, null, contentValues);
-
         String query = "";
         if (transactionModel.getTransaction_type().equals("Expense")) {
             query = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " - "
@@ -206,7 +205,18 @@ public class DBHelper extends SQLiteOpenHelper {
                     + transactionModel.getTransaction_amount() + " WHERE _id = " + transactionModel.getAccount_id();
         }
 
-        db.execSQL(query);
+        long result = -1;
+        try {
+            db.beginTransaction();
+            result = db.insert(Transaction.TABLE_NAME, null, contentValues);
+            db.execSQL(query);
+            db.setTransactionSuccessful(); // This commits the transaction if there were no exceptions
+        } catch (SQLException e) {
+
+        } finally {
+            db.endTransaction();
+        }
+
 
         return result != -1;
     }

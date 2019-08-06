@@ -1,6 +1,5 @@
 package com.example.smartbudget.Ui.Home.Category;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
@@ -17,7 +15,6 @@ import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Budget.BudgetAdapter;
-import com.example.smartbudget.Ui.Home.Spending.PagerAdapter;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

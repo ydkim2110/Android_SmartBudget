@@ -35,9 +35,18 @@ public class NormalFragment extends Fragment implements IThisMonthTransactionLoa
 
     private static NormalFragment instance;
 
-    public static NormalFragment getInstance() {
-        return instance == null ? new NormalFragment() : instance;
+    public static NormalFragment getInstance(String date) {
+        if (instance == null){
+            instance = new NormalFragment();
+        }
+        Bundle args = new Bundle();
+        args.putString("passed_date", date);
+        instance.setArguments(args);
+
+        return instance;
     }
+
+    private String passed_date;
 
     public NormalFragment() {
         // Required empty public constructor
@@ -58,7 +67,11 @@ public class NormalFragment extends Fragment implements IThisMonthTransactionLoa
         rv_normal.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_normal.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
-        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),"Normal", this);
+        if (getArguments() != null) {
+            passed_date = getArguments().getString("passed_date");
+        }
+
+        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, passed_date,"Normal", this);
 
         return view;
     }
