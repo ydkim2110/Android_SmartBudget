@@ -35,9 +35,18 @@ public class WasteFragment extends Fragment implements IThisMonthTransactionLoad
 
     private static WasteFragment instance;
 
-    public static WasteFragment getInstance() {
-        return instance == null ? new WasteFragment() : instance;
+    public static WasteFragment getInstance(String date) {
+        if (instance == null){
+            instance = new WasteFragment();
+        }
+        Bundle args = new Bundle();
+        args.putString("passed_date", date);
+        instance.setArguments(args);
+
+        return instance;
     }
+
+    private String passed_date;
 
     public WasteFragment() {
         // Required empty public constructor
@@ -58,7 +67,11 @@ public class WasteFragment extends Fragment implements IThisMonthTransactionLoad
         rv_waste.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_waste.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
-        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),"Waste", this);
+        if (getArguments() != null) {
+            passed_date = getArguments().getString("passed_date");
+        }
+
+        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, passed_date,"Waste", this);
 
         return view;
     }

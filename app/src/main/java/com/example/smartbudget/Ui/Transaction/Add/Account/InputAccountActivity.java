@@ -23,15 +23,23 @@ import com.example.smartbudget.Utils.Common;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class InputAccountActivity extends AppCompatActivity implements IAccountsLoadListener, InputAccountAdapter.SaveButtonListener {
 
     private static final String TAG = InputAccountActivity.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
-
-    private TextView mNoAccountMessage;
-    private Button mSaveBtn;
-    private Button mCancelBtn;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.rv_input_account)
+    RecyclerView rv_input_account;
+    @BindView(R.id.btn_cancel)
+    Button btn_cancel;
+    @BindView(R.id.btn_save)
+    Button btn_save;
+    @BindView(R.id.tv_no_account_message)
+    TextView tv_no_account_message;
 
     private AccountModel selectedAccount = null;
     private String passedAccountName = "";
@@ -49,48 +57,30 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
             passedAccountName = getIntent().getStringExtra("accountName");
         }
 
-        initToolbar();
         initView();
-        handleClickEvent();
 
     }
 
-    private void handleClickEvent() {
-        Log.d(TAG, "handleClickEvent: called!!");
+    private void initView() {
+        Log.d(TAG, "initView: called!!");
+        ButterKnife.bind(this);
 
-        mCancelBtn.setOnClickListener(v -> finish());
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Add Account");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mSaveBtn.setOnClickListener(v -> {
-            Toast.makeText(InputAccountActivity.this, "selectedAccount: " + selectedAccount.getName(),
-                    Toast.LENGTH_SHORT).show();
+        rv_input_account.setHasFixedSize(true);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        rv_input_account.setLayoutManager(layoutManager);
+
+        btn_cancel.setOnClickListener(v -> finish());
+
+        btn_save.setOnClickListener(v -> {
             Intent intent = new Intent();
             intent.putExtra(Common.EXTRA_INPUT_ACCOUNT, selectedAccount);
             setResult(RESULT_OK, intent);
             finish();
         });
-    }
-
-    private void initView() {
-        Log.d(TAG, "initView: called!!");
-
-        mNoAccountMessage = findViewById(R.id.no_account_message);
-        mSaveBtn = findViewById(R.id.input_save_btn);
-        mSaveBtn.setEnabled(false);
-        mCancelBtn = findViewById(R.id.input_cancel_btn);
-
-        mRecyclerView = findViewById(R.id.input_account_recyclerview);
-        mRecyclerView.setHasFixedSize(true);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(layoutManager);
-    }
-
-    private void initToolbar() {
-        Log.d(TAG, "initToolbar: called!!");
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Add Account");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -105,16 +95,15 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
     @Override
     public void onAccountsLoadSuccess(List<AccountModel> accountList) {
         if (accountList == null) {
-            mNoAccountMessage.setVisibility(View.VISIBLE);
+            tv_no_account_message.setVisibility(View.VISIBLE);
             accountList = new ArrayList<>();
             InputAccountAdapter adapter = new InputAccountAdapter(accountList, this);
-            mRecyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        } else {
-            mNoAccountMessage.setVisibility(View.GONE);
+            rv_input_account.setAdapter(adapter);
+        }
+        else {
+            tv_no_account_message.setVisibility(View.GONE);
             InputAccountAdapter adapter = new InputAccountAdapter(accountList, this);
-            mRecyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            rv_input_account.setAdapter(adapter);
         }
     }
 
@@ -126,7 +115,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
     @Override
     public void onUpdate(boolean status, AccountModel accountModel) {
         if (status) {
-            mSaveBtn.setEnabled(true);
+            rv_input_account.setEnabled(true);
             selectedAccount = accountModel;
         }
     }

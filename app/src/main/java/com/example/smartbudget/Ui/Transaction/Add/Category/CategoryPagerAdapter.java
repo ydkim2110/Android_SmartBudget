@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-public class PagerAdapter extends FragmentPagerAdapter {
+import com.example.smartbudget.R;
+
+public class CategoryPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
 
-    public PagerAdapter(FragmentManager fm, Context mContext) {
+    public CategoryPagerAdapter(FragmentManager fm, Context mContext) {
         super(fm);
         this.mContext = mContext;
     }
@@ -22,16 +24,14 @@ public class PagerAdapter extends FragmentPagerAdapter {
             return ExpenseFragment.getInstance();
         } else if (position == 1) {
             return IncomeFragment.getInstance();
-        } else if (position == 2) {
-            return TransferFragment.getInstance();
-        } else {
+        }else {
             return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Nullable
@@ -39,11 +39,9 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Expense";
+                return mContext.getResources().getString(R.string.expense);
             case 1:
-                return "Income";
-            case 2:
-                return "Transfer";
+                return mContext.getResources().getString(R.string.income);
             default:
                 return null;
         }

@@ -182,6 +182,31 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public boolean updateAccountsByTransfer(double amount, int fromId, int toId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String fromQuery = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " - "
+                + amount + " WHERE _id = " + fromId;
+
+        String toQuery = "UPDATE " + Account.TABLE_NAME + " SET " + Account.COL_AMOUNT + " = " + Account.COL_AMOUNT + " + "
+                + amount + " WHERE _id = " + toId;
+
+        boolean result = false;
+
+        try {
+            db.beginTransaction();
+            db.execSQL(fromQuery);
+            db.execSQL(toQuery);
+            db.setTransactionSuccessful();
+            result = true;
+        } catch (SQLException e) {
+
+        } finally {
+            db.endTransaction();
+        }
+        return result;
+    }
+
     public boolean insertTransaction(TransactionModel transactionModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -293,8 +318,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getSumAccountsByType() {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT "+Account.COL_TYPE+", SUM("+Account.COL_AMOUNT+") AS sumByType FROM " + Account.TABLE_NAME
-                +" GROUP BY "+Account.COL_TYPE;
+        String query = "SELECT " + Account.COL_TYPE + ", SUM(" + Account.COL_AMOUNT + ") AS sumByType FROM " + Account.TABLE_NAME
+                + " GROUP BY " + Account.COL_TYPE;
         Cursor cursor = db.rawQuery(query, null);
         if (cursor != null) {
             cursor.moveToFirst();
@@ -314,7 +339,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getAccountsByType(String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + Account.TABLE_NAME
-                +" WHERE "+Account.COL_TYPE+" = ?";
+                + " WHERE " + Account.COL_TYPE + " = ?";
         String[] args = {type};
         Cursor cursor = db.rawQuery(query, args);
         if (cursor != null) {
@@ -371,11 +396,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getThisMonthTransactionsByAccount(String date, int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM "+Transaction.TABLE_NAME
-                + " WHERE "+Transaction.COL_DATE+" BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
-                + " AND "+Transaction.COL_ACCOUNT_ID+" = ?"
+        String query = "SELECT * FROM " + Transaction.TABLE_NAME
+                + " WHERE " + Transaction.COL_DATE + " BETWEEN DATE(?, 'start of month') AND DATE(?, 'start of month', '+1 months', '-1 day')"
+                + " AND " + Transaction.COL_ACCOUNT_ID + " = ?"
                 + " ORDER BY " + Transaction.COL_DATE + " DESC";
-        ;
         String[] args = {date, date, String.valueOf(id)};
         Cursor cursor = db.rawQuery(query, args);
         if (cursor != null) {

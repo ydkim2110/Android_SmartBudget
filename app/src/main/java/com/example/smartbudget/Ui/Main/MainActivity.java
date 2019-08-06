@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,7 @@ import com.example.smartbudget.Ui.Home.HomeFragment;
 import com.example.smartbudget.Ui.Report.ReportActivity;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionActivity;
+import com.example.smartbudget.Ui.Transaction.Transfer.TransferActivity;
 import com.example.smartbudget.Utils.Common;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.google.android.material.appbar.AppBarLayout;
@@ -68,6 +72,19 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.fab_sub1)
+    FloatingActionButton fab_sub1;
+    @BindView(R.id.fab_sub2)
+    FloatingActionButton fab_sub2;
+    @BindView(R.id.ll_sub1)
+    LinearLayout ll_sub1;
+    @BindView(R.id.ll_sub2)
+    LinearLayout ll_sub2;
+    @BindView(R.id.tv_fab_sub1)
+    TextView tv_fab_sub1;
+    @BindView(R.id.tv_fab_sub2)
+    TextView tv_fab_sub2;
+
     @BindView(R.id.compactcalendar_view)
     CompactCalendarView compactcalendar_view;
     @BindView(R.id.title)
@@ -88,6 +105,10 @@ public class MainActivity extends AppCompatActivity
     private long backKeyPressedTime = 0;
     private int clickedNavItem = 0;
 
+    private Animation fabOpen;
+    private Animation fabClose;
+    private boolean isFabOpen = false;
+
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
@@ -103,6 +124,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        fabOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open);
+        fabClose = AnimationUtils.loadAnimation(this, R.anim.fab_close);
 
         mDBHelper = new DBHelper(this);
 
@@ -162,8 +186,37 @@ public class MainActivity extends AppCompatActivity
         });
 
         fab.setOnClickListener(v -> {
+            toggleFab();
+        });
+
+        fab_sub1.setOnClickListener(v -> {
+            toggleFab();
             startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
         });
+
+        fab_sub2.setOnClickListener(v -> {
+            toggleFab();
+            startActivity(new Intent(MainActivity.this, TransferActivity.class));
+        });
+    }
+
+    private void toggleFab() {
+        Log.d(TAG, "toggleFab: called!!");
+        if (isFabOpen) {
+            fab.setImageResource(R.drawable.ic_add_white_24dp);
+            fab_sub1.startAnimation(fabClose);
+            fab_sub2.startAnimation(fabClose);
+            ll_sub1.setVisibility(View.INVISIBLE);
+            ll_sub2.setVisibility(View.INVISIBLE);
+            isFabOpen = false;
+        } else {
+            fab.setImageResource(R.drawable.ic_close_white_24dp);
+            fab_sub1.startAnimation(fabOpen);
+            fab_sub2.startAnimation(fabOpen);
+            ll_sub1.setVisibility(View.VISIBLE);
+            ll_sub2.setVisibility(View.VISIBLE);
+            isFabOpen = true;
+        }
     }
 
     private void setCurrentDate(Date date) {

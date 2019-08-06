@@ -25,10 +25,10 @@
             android:text="Spending"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/overview_spending_pie_chart"
+            android:id="@+id/pie_chart_overview"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
              android:layout_marginStart="20dp"

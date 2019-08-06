@@ -74,5 +74,10 @@
     <string name="normal">Normal</string>
     <string name="waste">Waste</string>
     <string name="invest">Invest</string>
+    <string name="expense">Expense</string>
+    <string name="income">Income</string>
+    <string name="toolbar_title_add_category">Add Category</string>
+    <string name="toolbar_title_transfer">Transfer</string>
+    <string name="toolbar_title_overview">Overview</string>
 
 </resources>

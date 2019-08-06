@@ -12,6 +12,7 @@ import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
+import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Ui.Account.IAccountInsertListener;
 import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
@@ -64,6 +65,10 @@ public class DatabaseUtils {
         task.execute();
     }
 
+    public static void updateAccountsByTransfer(DBHelper db, double amount, int fromId, int toId, IUpdateAccountListener listener) {
+        UpdateAccountsByTransferAsync task = new UpdateAccountsByTransferAsync(db, amount, fromId, toId, listener);
+        task.execute();
+    }
     public static void getAllCategory(DBHelper db, ICategoryLoadListener listener) {
         GetAllCategoryAsync task = new GetAllCategoryAsync(db, listener);
         task.execute();
@@ -492,6 +497,34 @@ public class DatabaseUtils {
         protected void onPostExecute(List<AccountModel> accountList) {
             super.onPostExecute(accountList);
             mListener.onSumAccountsLoadSuccess(accountList);
+        }
+    }
+
+    private static class UpdateAccountsByTransferAsync extends AsyncTask<Void, Void, Boolean> {
+
+        DBHelper db;
+        IUpdateAccountListener mListener;
+        double amount;
+        int fromId;
+        int toId;
+
+        public UpdateAccountsByTransferAsync(DBHelper db, double amount, int fromId, int toId, IUpdateAccountListener listener) {
+            this.db = db;
+            this.amount = amount;
+            this.fromId = fromId;
+            this.toId = toId;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return db.updateAccountsByTransfer(amount, fromId, toId);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onUpdateAccountSuccess(aBoolean);
         }
     }
 

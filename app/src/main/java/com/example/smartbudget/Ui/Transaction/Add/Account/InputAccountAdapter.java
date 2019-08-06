@@ -52,24 +52,21 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
         }
         else {
             viewHolder.accountName.setText(mAccountModelList.get(i).getName());
-            viewHolder.accountAmount.setText(Common.changeNumberToComma((int) mAccountModelList.get(i).getAmount()) + "원");
+            viewHolder.accountAmount.setText(new StringBuilder(Common.changeNumberToComma((int) mAccountModelList.get(i).getAmount())).append("원"));
             viewHolder.accountType.setText(mAccountModelList.get(i).getType());
 
             if (!mCardViewList.contains(viewHolder.container)) {
                 mCardViewList.add(viewHolder.container);
             }
 
-            viewHolder.setIRecyclerItemSelectedListener(new IRecyclerItemSelectedListener() {
-                @Override
-                public void onItemSelected(View view, int position) {
-                    Toast.makeText(view.getContext(), "Name: " + mAccountModelList.get(position).getId(), Toast.LENGTH_SHORT).show();
-                    for (CardView cardView : mCardViewList) {
-                        cardView.setBackgroundColor(Color.WHITE);
-                    }
-                    viewHolder.container.setBackgroundColor(view.getContext().getResources().getColor(R.color.colorRevenue));
-
-                    mSaveButtonListener.onUpdate(true, mAccountModelList.get(i));
+            viewHolder.setIRecyclerItemSelectedListener((view, position) -> {
+                Toast.makeText(view.getContext(), "Name: " + mAccountModelList.get(position).getId(), Toast.LENGTH_SHORT).show();
+                for (CardView cardView : mCardViewList) {
+                    cardView.setBackgroundColor(Color.WHITE);
                 }
+                viewHolder.container.setBackgroundColor(view.getContext().getResources().getColor(R.color.colorRevenue));
+
+                mSaveButtonListener.onUpdate(true, mAccountModelList.get(i));
             });
         }
     }

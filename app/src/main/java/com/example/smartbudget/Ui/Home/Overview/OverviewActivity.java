@@ -11,8 +11,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Model.ExpenseByCategory;
+import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Budget.BudgetAdapter;
+import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryActivity;
+import com.example.smartbudget.Ui.Main.MainActivity;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -26,85 +32,95 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OverviewActivity extends AppCompatActivity {
+public class OverviewActivity extends AppCompatActivity implements IThisMonthTransactionByCategoryLoadListener {
 
     private static final String TAG = OverviewActivity.class.getSimpleName();
 
-    private Toolbar toolbar;
-    private RecyclerView recyclerView;
-    private SpendingAdapter adapter;
-
-    private PieChart mPieChart;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.rv_spending)
+    RecyclerView rv_spending;
+    @BindView(R.id.pie_chart_overview)
+    PieChart pie_chart_overview;
 
     private Float[] yData = {25.3f, 10.6f, 66.76f, 44.32f, 46.01f, 16.89f, 23.9f};
-    ;
+
     private String[] xData = {"Mitch", "Jessica", "Mohammad", "Kelsey", "Sam", "Robert", "Ashley"};
 
     private float thisMonthIncome;
     private float thisMonthExpenses;
 
+    private String passed_date;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
+        Log.d(TAG, "onCreate: stareted!!");
 
-        ButterKnife.bind(this);
+        if (getIntent() != null) {
+            passed_date = getIntent().getStringExtra("passed_date");
+        }
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Overview");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
-
-        mPieChart = findViewById(R.id.overview_spending_pie_chart);
+        initView();
 
         setUpPieGraph();
 
-        recyclerView = findViewById(R.id.spending_recyclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper, passed_date, this);
+    }
+
+    private void initView() {
+        Log.d(TAG, "initView: called!!");
+        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_overview));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+
+
+        rv_spending.setHasFixedSize(true);
+        rv_spending.setLayoutManager(new LinearLayoutManager(this));
 
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(getApplicationContext(), new LinearLayoutManager(this).getOrientation());
 
-        recyclerView.addItemDecoration(dividerItemDecoration);
-
-        adapter = new SpendingAdapter(OverviewActivity.this, Arrays.asList(DefaultCategories.getDefaultExpenseCategories()));
-        recyclerView.setAdapter(adapter);
-
+        rv_spending.addItemDecoration(dividerItemDecoration);
     }
 
     private void setUpPieGraph() {
         Log.d(TAG, "setUpPieGraph: called!!");
 
-        mPieChart.setUsePercentValues(true);
+        pie_chart_overview.setUsePercentValues(true);
         //mPieChart.setDescription("");
-        mPieChart.setDrawHoleEnabled(true);
+        pie_chart_overview.setDrawHoleEnabled(true);
 
-        mPieChart.setTransparentCircleColor(Color.WHITE);
-        mPieChart.setTransparentCircleAlpha(110);
+        pie_chart_overview.setTransparentCircleColor(Color.WHITE);
+        pie_chart_overview.setTransparentCircleAlpha(110);
 
-        mPieChart.setHoleRadius(58f);
-        mPieChart.setTransparentCircleRadius(61f);
+        pie_chart_overview.setHoleRadius(58f);
+        pie_chart_overview.setTransparentCircleRadius(61f);
 
-        mPieChart.setDrawCenterText(true);
+        pie_chart_overview.setDrawCenterText(true);
 
-        mPieChart.setRotationAngle(0);
-        mPieChart.setRotationEnabled(true);
+        pie_chart_overview.setRotationAngle(0);
+        pie_chart_overview.setRotationEnabled(true);
 
-        mPieChart.setCenterText("June");
+        pie_chart_overview.setCenterText("June");
 
         addPieData();
 
-        mPieChart.animateY(1500, Easing.EaseInOutQuad);
+        pie_chart_overview.animateY(1500, Easing.EaseInOutQuad);
 
-        Legend l = mPieChart.getLegend();
+        Legend l = pie_chart_overview.getLegend();
         l.setEnabled(false);
 
-        mPieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+        pie_chart_overview.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 if (e == null) {
@@ -161,8 +177,8 @@ public class OverviewActivity extends AppCompatActivity {
 
         //create pie data object
         PieData pieData = new PieData(dataSet);
-        mPieChart.setData(pieData);
-        mPieChart.invalidate();
+        pie_chart_overview.setData(pieData);
+        pie_chart_overview.invalidate();
     }
 
     @Override
@@ -175,4 +191,16 @@ public class OverviewActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
+        if (expenseByCategoryList != null) {
+            SpendingAdapter adapter = new SpendingAdapter(OverviewActivity.this, expenseByCategoryList);
+            rv_spending.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onThisMonthTransactionByCategoryLoadFailed(String message) {
+
+    }
 }

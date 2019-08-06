@@ -31,9 +31,18 @@ public class InvestFragment extends Fragment implements IThisMonthTransactionLoa
 
     private static InvestFragment instance;
 
-    public static InvestFragment getInstance() {
-        return instance == null ? new InvestFragment() : instance;
+    public static InvestFragment getInstance(String date) {
+        if (instance == null){
+            instance = new InvestFragment();
+        }
+        Bundle args = new Bundle();
+        args.putString("passed_date", date);
+        instance.setArguments(args);
+
+        return instance;
     }
+
+    private String passed_date;
 
     public InvestFragment() {
         // Required empty public constructor
@@ -54,7 +63,11 @@ public class InvestFragment extends Fragment implements IThisMonthTransactionLoa
         rv_invest.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_invest.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
-        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, Common.dateFormat.format(new Date()),"Invest", this);
+        if (getArguments() != null) {
+            passed_date = getArguments().getString("passed_date");
+        }
+
+        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, passed_date,"Invest", this);
 
         return view;
     }

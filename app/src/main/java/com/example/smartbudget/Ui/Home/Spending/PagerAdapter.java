@@ -25,9 +25,9 @@ public class PagerAdapter extends FragmentPagerAdapter {
         if (position == 0) {
             return NormalFragment.getInstance(currentDate);
         } else if (position == 1) {
-            return WasteFragment.getInstance();
+            return WasteFragment.getInstance(currentDate);
         } else if (position == 2) {
-            return InvestFragment.getInstance();
+            return InvestFragment.getInstance(currentDate);
         } else {
             return null;
         }

@@ -14,9 +14,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
@@ -25,6 +29,7 @@ import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.WeekTransactionAdapter;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
+import com.example.smartbudget.Ui.Transaction.Transfer.TransferActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
@@ -51,6 +56,19 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.fab_sub1)
+    FloatingActionButton fab_sub1;
+    @BindView(R.id.fab_sub2)
+    FloatingActionButton fab_sub2;
+    @BindView(R.id.ll_sub1)
+    LinearLayout ll_sub1;
+    @BindView(R.id.ll_sub2)
+    LinearLayout ll_sub2;
+    @BindView(R.id.tv_fab_sub1)
+    TextView tv_fab_sub1;
+    @BindView(R.id.tv_fab_sub2)
+    TextView tv_fab_sub2;
+
     @BindView(R.id.compactcalendar_view)
     CompactCalendarView compactcalendar_view;
     @BindView(R.id.title)
@@ -75,6 +93,10 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
     private HashMap<String, List<TransactionModel>> groupedHashMap;
 
+    private Animation fabOpen;
+    private Animation fabClose;
+    private boolean isFabOpen = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +112,9 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     private void initView() {
         Log.d(TAG, "initView: called!!");
         ButterKnife.bind(this);
+
+        fabOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open);
+        fabClose = AnimationUtils.loadAnimation(this, R.anim.fab_close);
 
         setSupportActionBar(toolbar);
         setTitle(getResources().getString(R.string.toolbar_title_transaction));
@@ -124,11 +149,40 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         });
 
         fab.setOnClickListener(v -> {
+            toggleFab();
+        });
+
+        fab_sub1.setOnClickListener(v -> {
+            toggleFab();
             startActivity(new Intent(TransactionActivity.this, AddTransactionActivity.class));
+        });
+
+        fab_sub2.setOnClickListener(v -> {
+            toggleFab();
+            startActivity(new Intent(TransactionActivity.this, TransferActivity.class));
         });
 
         rv_transaction.setHasFixedSize(true);
         rv_transaction.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void toggleFab() {
+        Log.d(TAG, "toggleFab: called!!");
+        if (isFabOpen) {
+            fab.setImageResource(R.drawable.ic_add_white_24dp);
+            fab_sub1.startAnimation(fabClose);
+            fab_sub2.startAnimation(fabClose);
+            ll_sub1.setVisibility(View.INVISIBLE);
+            ll_sub2.setVisibility(View.INVISIBLE);
+            isFabOpen = false;
+        } else {
+            fab.setImageResource(R.drawable.ic_close_white_24dp);
+            fab_sub1.startAnimation(fabOpen);
+            fab_sub2.startAnimation(fabOpen);
+            ll_sub1.setVisibility(View.VISIBLE);
+            ll_sub2.setVisibility(View.VISIBLE);
+            isFabOpen = true;
+        }
     }
 
     private void loadData(Date date) {
@@ -146,8 +200,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();
-        }
-        else if (id == R.id.toolbar_transaction_calendar) {
+        } else if (id == R.id.toolbar_transaction_calendar) {
             Intent intent = new Intent(this, CalendarActivity.class);
             intent.putExtra("date", currentDate);
             startActivity(intent);
@@ -189,22 +242,22 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
             tv_no_item.setVisibility(View.INVISIBLE);
         }
 
-        int totalIncome=0;
-        int totalExpense=0;
+        int totalIncome = 0;
+        int totalExpense = 0;
 
         if (transactionList != null) {
             for (TransactionModel model : transactionList) {
                 if (model.getTransaction_type().equals("Income")) {
-                    totalIncome = (int) (totalIncome+model.getTransaction_amount());
-                    Log.d(TAG, "onTransactionLoadSuccess: income: "+totalIncome);
+                    totalIncome = (int) (totalIncome + model.getTransaction_amount());
+                    Log.d(TAG, "onTransactionLoadSuccess: income: " + totalIncome);
                 } else if (model.getTransaction_type().equals("Expense")) {
-                    totalExpense = (int) (totalExpense+model.getTransaction_amount());
-                    Log.d(TAG, "onTransactionLoadSuccess: expense: "+totalExpense);
+                    totalExpense = (int) (totalExpense + model.getTransaction_amount());
+                    Log.d(TAG, "onTransactionLoadSuccess: expense: " + totalExpense);
                 }
             }
         }
 
-        Log.d(TAG, "onTransactionLoadSuccess: Total expense: "+totalExpense);
+        Log.d(TAG, "onTransactionLoadSuccess: Total expense: " + totalExpense);
 
         Common.animateTextView(0, totalIncome, tv_total_income);
         Common.animateTextView(0, totalExpense, tv_total_expense);

@@ -25,9 +25,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/input_account_recyclerview"
+        android:id="@+id/rv_input_account"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
@@ -45,7 +44,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/input_cancel_btn"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_weight="1"
@@ -54,7 +53,7 @@
             android:text="Cancel" />
 
         <Button
-            android:id="@+id/input_save_btn"
+            android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_weight="1"
@@ -64,7 +63,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/no_account_message"
+        android:id="@+id/tv_no_account_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No item"

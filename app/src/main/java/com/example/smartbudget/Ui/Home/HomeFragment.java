@@ -226,10 +226,15 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         });
 
         home_overview_container.setOnClickListener(v -> {
-            getContext().startActivity(new Intent(getContext(), OverviewActivity.class));
+            Intent intent = new Intent(getContext(), OverviewActivity.class);
+            intent.putExtra("passed_date", currentDate);
+            getContext().startActivity(intent);
         });
         home_expense_by_category_container.setOnClickListener(v -> {
-            getContext().startActivity(new Intent(getContext(), ExpenseByCategoryActivity.class));
+            Intent intent = new Intent(getContext(), ExpenseByCategoryActivity.class);
+            intent.putExtra("passed_date", currentDate);
+
+            getContext().startActivity(intent);
         });
         home_spending_pattern_container.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SpendingActivity.class);

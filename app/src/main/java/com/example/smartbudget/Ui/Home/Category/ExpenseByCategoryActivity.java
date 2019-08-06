@@ -36,12 +36,17 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
     @BindView(R.id.rv_expense_by_category)
     RecyclerView rv_expense_by_category;
 
+    private String passed_date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_by_category);
         Log.d(TAG, "onCreate: started!!");
+
+        if (getIntent() != null) {
+            passed_date = getIntent().getStringExtra("passed_date");
+        }
 
         initView();
     }
@@ -60,8 +65,7 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
         });
 
 
-        DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper,
-                Common.dateFormat.format(new Date()), this);
+        DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper, passed_date, this);
 
         rv_expense_by_category.setHasFixedSize(true);
         rv_expense_by_category.setLayoutManager(new LinearLayoutManager(this));

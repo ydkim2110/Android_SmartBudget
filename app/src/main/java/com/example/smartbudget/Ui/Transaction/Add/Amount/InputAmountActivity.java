@@ -35,25 +35,17 @@ public class InputAmountActivity extends AppCompatActivity {
     }
 
     private void handleClickEvent() {
-        mCancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mCancelBtn.setOnClickListener(v -> finish());
 
-        mSaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(mInputAmount.getText())) {
-                    Toast.makeText(InputAmountActivity.this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Intent goBackIntent = new Intent();
-                goBackIntent.putExtra(Common.EXTRA_INPUT_AMOUNT, mInputAmount.getText().toString());
-                setResult(RESULT_OK, goBackIntent);
-                finish();
+        mSaveBtn.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(mInputAmount.getText())) {
+                Toast.makeText(InputAmountActivity.this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
+                return;
             }
+            Intent goBackIntent = new Intent();
+            goBackIntent.putExtra(Common.EXTRA_INPUT_AMOUNT, mInputAmount.getText().toString());
+            setResult(RESULT_OK, goBackIntent);
+            finish();
         });
     }
 

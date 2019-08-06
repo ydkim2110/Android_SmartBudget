@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Ui.Budget.AddBudgetActivity"></activity>
+        <activity android:name=".Ui.Transaction.Transfer.TransferActivity"></activity>
+        <activity android:name=".Ui.Budget.AddBudgetActivity" />
         <activity android:name=".Ui.Report.ReportActivity" />
         <activity android:name=".Ui.Calculator.CalcActivity" />
         <activity android:name=".Ui.Transaction.CalendarActivity" />

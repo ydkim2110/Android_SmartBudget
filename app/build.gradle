@@ -56,5 +56,8 @@ dependencies {
     // Paper
     implementation 'io.paperdb:paperdb:2.6'
 
+    // Compact Calendar
     implementation 'com.github.sundeepk:compact-calendar-view:2.0.2.2'
+
+    implementation 'com.google.android.material:material:1.0.0-beta01'
 }

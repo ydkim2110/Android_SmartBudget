@@ -35,7 +35,7 @@ public class InputCategoryActivity extends AppCompatActivity {
 
         initView();
 
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), this);
+        CategoryPagerAdapter adapter = new CategoryPagerAdapter(getSupportFragmentManager(), this);
         vp_input_category.setAdapter(adapter);
         tab_input_category.setupWithViewPager(vp_input_category);
 
@@ -46,7 +46,7 @@ public class InputCategoryActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Add Category");
+        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_add_category));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
