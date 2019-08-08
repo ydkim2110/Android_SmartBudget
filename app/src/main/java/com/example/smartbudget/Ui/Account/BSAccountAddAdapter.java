@@ -38,6 +38,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
 
         viewHolder.setIRecyclerItemSelectedListener((view, position) -> {
             Intent intent = new Intent(mContext, AddAccountActivity.class);
+            intent.putExtra(AddAccountActivity.EXTRA_TAG, "add");
             intent.putExtra("high_category", title[position]);
             mContext.startActivity(intent);
             AccountActivity.mBSAccountAddFragment.dismiss();

@@ -70,13 +70,25 @@ public class DBHelper extends SQLiteOpenHelper {
                     Transaction.COL_SUB_CATEGORY_ID + " TEXT," +
                     Transaction.COL_ACCOUNT_ID + " TEXT ," +
                     Transaction.COL_TO_ACCOUNT + " INT REFERENCES " + Account.TABLE_NAME + "(_id)," +
-                    "FOREIGN KEY (" + Transaction.COL_CATEGORY_ID + ") REFERENCES " + Category.TABLE_NAME + "(_id), " +
-                    "FOREIGN KEY (" + Transaction.COL_ACCOUNT_ID + ") REFERENCES " + Account.TABLE_NAME + "(_id))";
+                    "FOREIGN KEY (" + Transaction.COL_ACCOUNT_ID + ") REFERENCES " + Account.TABLE_NAME + "(_id) ON DELETE CASCADE)";
 
     private static final String SQL_DELETE_ACCOUNT_TABLE =
             "DROP TABLE IF EXISTS " + Account.TABLE_NAME;
     private static final String SQL_DELETE_TRANSACTION_TABLE =
             "DROP TABLE IF EXISTS " + Transaction.TABLE_NAME;
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        db.setForeignKeyConstraintsEnabled(true);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+
+        }
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -271,7 +283,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + Transaction.COL_DATE + " = " + transactionModel.getDate() + ", "
                 + Transaction.COL_CATEGORY_ID + " = " + transactionModel.getCategoryId() + ", "
                 + Transaction.COL_SUB_CATEGORY_ID + " = " + transactionModel.getSubCategoryId() + ", "
-                + Transaction.COL_ACCOUNT_ID + " = " + transactionModel.getAccountIDed() + ", "
+                + Transaction.COL_ACCOUNT_ID + " = " + transactionModel.getAccountId() + ", "
                 + Transaction.COL_TO_ACCOUNT + " = " + transactionModel.getToAccount()
                 + " WHERE _id = " + transactionModel.getId();
 
@@ -308,6 +320,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public int deleteAccount(AccountModel accountModel) {
+        Log.d(TAG, "deleteAccount: id: "+accountModel.getId());
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(Account.TABLE_NAME, "_id = " + accountModel.getId(), null);
     }

@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
         pb_expense_by_category.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_expense_by_category, "progress", 0, usedExpense);
-        progressAnim.setDuration(500);
+        progressAnim.setDuration(1000);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
     }
@@ -224,13 +224,12 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
         home_overview_container.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), OverviewActivity.class);
-            intent.putExtra("passed_date", currentDate);
+            intent.putExtra(OverviewActivity.EXTRA_PASS_DATE, currentDate);
             getContext().startActivity(intent);
         });
         home_expense_by_category_container.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ExpenseByCategoryActivity.class);
             intent.putExtra("passed_date", currentDate);
-
             getContext().startActivity(intent);
         });
         home_spending_pattern_container.setOnClickListener(v -> {
@@ -270,6 +269,8 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         int expense = 0;
         int income = 0;
         if (transactionList != null) {
+            Common.TRANSACTION_LIST = transactionList;
+
             for (TransactionModel model : transactionList) {
                 if (model.getType().equals("Income")) {
                     income += model.getAmount();
@@ -278,9 +279,9 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
                 }
             }
         }
-        Common.animateTextView(0, income, tv_income_total);
-        Common.animateTextView(0, expense, tv_expense_total);
-        Common.animateTextView(0, (income - expense), tv_balance);
+        Common.animateTextView(1000, 0, income, tv_income_total);
+        Common.animateTextView(1000, 0, expense, tv_expense_total);
+        Common.animateTextView(1000, 0, (income - expense), tv_balance);
 
         setProgressBar(expense);
     }
@@ -363,17 +364,17 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         Log.d(TAG, "setCircleProgressbar: called!!" + normal_percentage);
 
         ObjectAnimator progressAnim2 = ObjectAnimator.ofInt(pb_circle_normal, "progress", 0, normal_percentage);
-        progressAnim2.setDuration(500);
+        progressAnim2.setDuration(1000);
         progressAnim2.setInterpolator(new LinearInterpolator());
         progressAnim2.start();
 
         ObjectAnimator progressAnim3 = ObjectAnimator.ofInt(pb_circle_waste, "progress", 0, waste_percentage);
-        progressAnim3.setDuration(500);
+        progressAnim3.setDuration(1000);
         progressAnim3.setInterpolator(new LinearInterpolator());
         progressAnim3.start();
 
         ObjectAnimator progressAnim4 = ObjectAnimator.ofInt(pb_circle_invest, "progress", 0, invest_percentage);
-        progressAnim4.setDuration(500);
+        progressAnim4.setDuration(1000);
         progressAnim4.setInterpolator(new LinearInterpolator());
         progressAnim4.start();
     }

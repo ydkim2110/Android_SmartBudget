@@ -3,6 +3,8 @@ package com.example.smartbudget.Ui.Account;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.smartbudget.Utils.Common;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,5 +51,11 @@ public class BSAccountAddFragment extends BottomSheetDialogFragment {
         rv_add_account.setAdapter(adapter);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        Common.SELECTED_ACCOUNT = null;
+        super.onDestroyView();
     }
 }

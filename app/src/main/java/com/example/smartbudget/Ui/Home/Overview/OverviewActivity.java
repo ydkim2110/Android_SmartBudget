@@ -1,12 +1,17 @@
 package com.example.smartbudget.Ui.Home.Overview;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.animation.LinearInterpolator;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,11 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
-import com.example.smartbudget.Model.DefaultCategories;
+import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Ui.Budget.BudgetAdapter;
-import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Utils.Common;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -31,7 +35,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,6 +44,9 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
 
     private static final String TAG = OverviewActivity.class.getSimpleName();
 
+    public static final String EXTRA_PASS_DATE = "pass_date";
+    public static final String EXTRA_TRANSACTION_LIST = "transaction_list";
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_spending)
@@ -48,35 +54,85 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
     @BindView(R.id.pie_chart_overview)
     PieChart pie_chart_overview;
 
-    private Float[] yData = {25.3f, 10.6f, 66.76f, 44.32f, 46.01f, 16.89f, 23.9f};
+    @BindView(R.id.tv_income)
+    TextView tv_income;
+    @BindView(R.id.tv_expense)
+    TextView tv_expense;
+    @BindView(R.id.tv_balance)
+    TextView tv_balance;
+    @BindView(R.id.pb_income)
+    ProgressBar pb_income;
+    @BindView(R.id.pb_expense)
+    ProgressBar pb_expense;
 
-    private String[] xData = {"Mitch", "Jessica", "Mohammad", "Kelsey", "Sam", "Robert", "Ashley"};
+    private Float[] yData;
+    private String[] xData;
 
     private float thisMonthIncome;
     private float thisMonthExpenses;
 
     private String passed_date;
+    private List<TransactionModel> mTransactionModelList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
-        Log.d(TAG, "onCreate: stareted!!");
+        Log.d(TAG, "onCreate: started!!");
+        ButterKnife.bind(this);
 
         if (getIntent() != null) {
-            passed_date = getIntent().getStringExtra("passed_date");
+            passed_date = getIntent().getStringExtra(EXTRA_PASS_DATE);
+            int expense = 0;
+            int income = 0;
+
+            for (TransactionModel model : Common.TRANSACTION_LIST) {
+                if (model.getType().equals("Income")) {
+                    income += model.getAmount();
+                } else if (model.getType().equals("Expense")) {
+                    expense += model.getAmount();
+                }
+            }
+
+            Common.animateTextView(1500, 0, income, tv_income);
+            Common.animateTextView(1500, 0, expense, tv_expense);
+            Common.animateTextView(1500, 0, (income - expense), tv_balance);
+
+            setProgressBar(income, expense);
         }
 
         initView();
 
-        setUpPieGraph();
+        //setUpPieGraph();
+
 
         DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper, passed_date, this);
     }
 
+    private void setProgressBar(int income, int expense) {
+        Log.d(TAG, "setProgressBar: called!!");
+
+        if (income >= expense) {
+            pb_income.setMax(income);
+            pb_expense.setMax(income);
+        } else {
+            pb_income.setMax(expense);
+            pb_expense.setMax(expense);
+        }
+
+        ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_income, "progress", 0, income);
+        progressAnim.setDuration(1500);
+        progressAnim.setInterpolator(new LinearInterpolator());
+        progressAnim.start();
+
+        ObjectAnimator progressAnim2 = ObjectAnimator.ofInt(pb_expense, "progress", 0, expense);
+        progressAnim2.setDuration(1500);
+        progressAnim2.setInterpolator(new LinearInterpolator());
+        progressAnim2.start();
+    }
+
     private void initView() {
         Log.d(TAG, "initView: called!!");
-        ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_overview));
@@ -97,7 +153,6 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
         Log.d(TAG, "setUpPieGraph: called!!");
 
         pie_chart_overview.setUsePercentValues(true);
-        //mPieChart.setDescription("");
         pie_chart_overview.setDrawHoleEnabled(true);
 
         pie_chart_overview.setTransparentCircleColor(Color.WHITE);
@@ -173,7 +228,7 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             colors.add(c);
         colors.add(ColorTemplate.getHoloBlue());
 
-        dataSet.setColors(colors);
+        //dataSet.setColors(colors);
 
         //create pie data object
         PieData pieData = new PieData(dataSet);
@@ -194,6 +249,71 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
     @Override
     public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
         if (expenseByCategoryList != null) {
+
+            ArrayList<Integer> pieColors = new ArrayList<>();
+
+            ArrayList<Float> expenseByCategory = new ArrayList<>();
+
+            for (ExpenseByCategory data : expenseByCategoryList) {
+                expenseByCategory.add((float) data.getSumByCategory());
+            }
+
+            yData = expenseByCategory.toArray(new Float[expenseByCategory.size()]);
+
+            ArrayList<PieEntry> yVals = new ArrayList<>();
+
+            for (int i = 0; i < yData.length; i++) {
+                yVals.add(new PieEntry(yData[i], i));
+            }
+
+            PieDataSet dataSet = new PieDataSet(yVals, "Expense");
+            dataSet.setSliceSpace(3);
+            dataSet.setSelectionShift(5);
+            dataSet.setValueTextSize(12);
+
+            //add colors to dataset
+            ArrayList<Integer> colors = new ArrayList<>();
+
+            for (int c : ColorTemplate.VORDIPLOM_COLORS)
+                colors.add(c);
+            for (int c : ColorTemplate.JOYFUL_COLORS)
+                colors.add(c);
+            for (int c : ColorTemplate.COLORFUL_COLORS)
+                colors.add(c);
+            for (int c : ColorTemplate.LIBERTY_COLORS)
+                colors.add(c);
+            for (int c : ColorTemplate.PASTEL_COLORS)
+                colors.add(c);
+            colors.add(ColorTemplate.getHoloBlue());
+
+            dataSet.setColors(colors);
+
+            //create pie data object
+            PieData pieData = new PieData(dataSet);
+            pie_chart_overview.setData(pieData);
+            pie_chart_overview.invalidate();
+
+//            pieDataSet.setDrawValues(false);
+//            pieDataSet.setColors(pieColors);
+//            pieDataSet.setSliceSpace(2f);
+//
+//            PieData data = new PieData(pieDataSet);
+//            pie_chart_overview.setData(data);
+//            pie_chart_overview.setTouchEnabled(false);
+//            pie_chart_overview.getLegend().setEnabled(false);
+//            pie_chart_overview.getDescription().setEnabled(false);
+//
+//            pie_chart_overview.setDrawHoleEnabled(true);
+//            //  pie_chart_overview.setHoleColor(ContextCompat.getColor(this, R.color.khaki));
+//            pie_chart_overview.setHoleRadius(55f);
+//            pie_chart_overview.setTransparentCircleRadius(55f);
+//            pie_chart_overview.setDrawCenterText(true);
+//            pie_chart_overview.setRotationAngle(270);
+//            pie_chart_overview.setRotationEnabled(false);
+//            pie_chart_overview.setHighlightPerTapEnabled(true);
+//
+//            pie_chart_overview.invalidate();
+
             SpendingAdapter adapter = new SpendingAdapter(OverviewActivity.this, expenseByCategoryList);
             rv_spending.setAdapter(adapter);
         }

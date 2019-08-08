@@ -31,6 +31,8 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
 
     private static final String TAG = AddAccountActivity.class.getSimpleName();
 
+    public static final String EXTRA_TAG = "tag";
+
     private BSAccountAddFragment mBSAccountAddFragment;
     private BSAccountMenuFragment mBSAccountMenuFragment;
 
@@ -60,6 +62,13 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_account);
         Log.d(TAG, "onCreate: started!!");
+        ButterKnife.bind(this);
+
+        if (getIntent() != null) {
+            if (Common.SELECTED_ACCOUNT != null) {
+                passedAccount = Common.SELECTED_ACCOUNT;
+            }
+        }
 
         initView();
 
@@ -68,14 +77,46 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
         dfnd = new DecimalFormat("#,###");
         hasFractionalPart = false;
 
-        if (Common.SELECTED_ACCOUNT != null) {
-            passedAccount = Common.SELECTED_ACCOUNT;
-        }
+
 
         if (Common.SELECTED_ACCOUNT == null) {
             tv_high_category.setText(getIntent().getStringExtra("high_category"));
         }
 
+        watchTextChange();
+
+        cancel_btn.setOnClickListener(v -> finish());
+
+        save_btn.setOnClickListener(v -> {
+            String name = tv_name.getText().toString();
+            String description = tv_description.getText().toString();
+            double amount = Double.parseDouble(tv_amount.getText().toString());
+            String highCategory = tv_high_category.getText().toString();
+            String type = "";
+            if (tv_high_category.getText().equals("대출") || tv_high_category.getText().equals("기타부채")) {
+                type = "debt";
+            } else {
+                type = "asset";
+            }
+
+            if (save_btn.getText().toString().toUpperCase().equals("SAVE")) {
+                Log.d(TAG, "onClick: save");
+                AccountModel accountModel = new AccountModel(name, description,
+                        amount, highCategory, type, new Date(), "KRW");
+                DatabaseUtils.insertAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
+            } else if (save_btn.getText().toString().toUpperCase().equals("UPDATE")) {
+                Log.d(TAG, "onClick: update");
+                int id = passedAccount.getId();
+                AccountModel accountModel = new AccountModel(id, name, description,
+                        amount, highCategory, type, new Date(), "KRW");
+                DatabaseUtils.updateAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
+            }
+        });
+
+    }
+
+    private void watchTextChange() {
+        Log.d(TAG, "watchTextChange: called!!");
         tv_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -124,35 +165,12 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             public void afterTextChanged(Editable s) {
             }
         });
+    }
 
-        cancel_btn.setOnClickListener(v -> finish());
-
-        save_btn.setOnClickListener(v -> {
-            String name = tv_name.getText().toString();
-            String description = tv_description.getText().toString();
-            double amount = Double.parseDouble(tv_amount.getText().toString());
-            String highCategory = tv_high_category.getText().toString();
-            String type = "";
-            if (tv_high_category.getText().equals("대출") || tv_high_category.getText().equals("기타부채")) {
-                type = "debt";
-            } else {
-                type = "asset";
-            }
-
-            if (save_btn.getText().toString().toUpperCase().equals("SAVE")) {
-                Log.d(TAG, "onClick: save");
-                AccountModel accountModel = new AccountModel(name, description,
-                        amount, highCategory, type, new Date(), "KRW");
-                DatabaseUtils.insertAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
-            } else if (save_btn.getText().toString().toUpperCase().equals("UPDATE")) {
-                Log.d(TAG, "onClick: update");
-                int id = passedAccount.getId();
-                AccountModel accountModel = new AccountModel(id, name, description,
-                        amount, highCategory, type, new Date(), "KRW");
-                DatabaseUtils.updateAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
-            }
-        });
-
+    @Override
+    protected void onDestroy() {
+        Common.SELECTED_ACCOUNT = null;
+        super.onDestroy();
     }
 
     private void checkInputs() {
@@ -174,12 +192,14 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
     }
 
     private void initView() {
-        ButterKnife.bind(this);
+        Log.d(TAG, "initView: called");
 
         setSupportActionBar(toolbar);
+
         if (Common.SELECTED_ACCOUNT != null) {
             getSupportActionBar().setTitle("Edit Account");
-        } else {
+        }
+        else {
             getSupportActionBar().setTitle("Add Account");
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -190,9 +210,10 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
             save_btn.setText("Update");
             tv_name.setText(passedAccount.getName());
             tv_description.setText(passedAccount.getDescription());
-            tv_amount.setText("" + passedAccount.getAmount());
-            tv_high_category.setText(passedAccount.getType());
-        } else {
+            tv_amount.setText(new StringBuilder(String.valueOf((int) passedAccount.getAmount())));
+            tv_high_category.setText(passedAccount.getHighCategory());
+        }
+        else {
             save_btn.setText("Save");
         }
     }

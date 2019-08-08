@@ -29,6 +29,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     private Context mContext;
     private List<AccountModel> mAccountModelList;
     public static BSAccountMenuFragment mBSAccountMenuFragment;
+
     private int colorRevenue;
     private int colorExpense;
     private int balance = 0;
@@ -39,8 +40,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         colorRevenue = ContextCompat.getColor(mContext, R.color.colorRevenue);
         colorExpense = ContextCompat.getColor(mContext, R.color.colorExpense);
     }
-
-
 
     @NonNull
     @Override
@@ -55,10 +54,13 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         balance = (int) mAccountModelList.get(position).getAmount();
 
+        holder.tv_high_category.setText(mAccountModelList.get(position).getHighCategory());
         holder.tv_name.setText(mAccountModelList.get(position).getName());
         holder.tv_description.setText(mAccountModelList.get(position).getDescription());
         holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma(balance)).append("원"));
+
         holder.tv_more_icon.setOnClickListener(v -> {
+            Common.SELECTED_ACCOUNT = mAccountModelList.get(position);
             mBSAccountMenuFragment = BSAccountMenuFragment.getInstance();
             mBSAccountMenuFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(),
                     mBSAccountMenuFragment.getTag());
@@ -81,6 +83,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        @BindView(R.id.tv_high_category)
+        TextView tv_high_category;
         @BindView(R.id.tv_name)
         TextView tv_name;
         @BindView(R.id.tv_description)

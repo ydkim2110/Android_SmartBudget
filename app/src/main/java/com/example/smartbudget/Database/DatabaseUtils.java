@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
+import com.example.smartbudget.Interface.IAccountDeleteListener;
 import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
@@ -35,7 +36,7 @@ public class DatabaseUtils {
 
     private static final String TAG = DatabaseUtils.class.getSimpleName();
 
-    public static void deleteAccountAsync(DBHelper db, IAccountsLoadListener listener, AccountModel... accountModels) {
+    public static void deleteAccountAsync(DBHelper db, IAccountDeleteListener listener, AccountModel... accountModels) {
         DeleteAccountAsync task = new DeleteAccountAsync(db, listener);
         task.execute(accountModels);
     }
@@ -241,9 +242,9 @@ public class DatabaseUtils {
     private static class DeleteAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
-        IAccountsLoadListener mListener;
+        IAccountDeleteListener mListener;
 
-        public DeleteAccountAsync(DBHelper db, IAccountsLoadListener listener) {
+        public DeleteAccountAsync(DBHelper db, IAccountDeleteListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -256,7 +257,7 @@ public class DatabaseUtils {
             } catch (Exception e) {
                 Log.d(TAG, "doInBackground: Error-" + e.getMessage());
             }
-            return null;
+            return true;
         }
 
         @Override

@@ -1,9 +1,17 @@
 package com.example.smartbudget.Ui.Account;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.IAccountDeleteListener;
+import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Utils.Common;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +21,7 @@ import android.widget.Toast;
 
 import com.example.smartbudget.R;
 
-public class BSAccountMenuFragment extends BottomSheetDialogFragment {
+public class BSAccountMenuFragment extends BottomSheetDialogFragment implements IAccountDeleteListener {
 
     private static final String TAG = BSAccountMenuFragment.class.getSimpleName();
 
@@ -40,17 +48,43 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment {
 
         editTv.setOnClickListener(v -> {
             Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
-            getContext().startActivity(new Intent(getContext(), AddAccountActivity.class));
+            Intent intent = new Intent(getContext(), AddAccountActivity.class);
+            intent.putExtra(AddAccountActivity.EXTRA_TAG, "edit");
+            getContext().startActivity(intent);
             AccountAdapter.mBSAccountMenuFragment.dismiss();
         });
 
         deleteTv.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
-//            DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, AccountAdapter.mListener, Common.SELECTED_ACCOUNT);
-//            AccountAdapter.mBSAccountMenuFragment.dismiss();
+
+            AlertDialog.Builder mDialog = new AlertDialog.Builder(getActivity());
+            mDialog.setTitle(getContext().getResources().getString(R.string.alert_delete_title))
+                    .setMessage(getContext().getResources().getString(R.string.alert_delete_message))
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        dialog.dismiss();
+                        DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, this, Common.SELECTED_ACCOUNT);
+                    })
+                    .setNegativeButton("Cancel", ((dialog, which) -> {
+                        dialog.dismiss();
+                    }));
+
+            AlertDialog build = mDialog.create();
+            build.show();
+
+            AccountAdapter.mBSAccountMenuFragment.dismiss();
         });
 
         return view;
     }
 
+    @Override
+    public void onAccountDeleteSuccess(boolean isDeleted) {
+        Log.d(TAG, "onAccountDeleteSuccess: success!!");
+        Common.SELECTED_ACCOUNT = null;
+    }
+
+    @Override
+    public void onAccountDeleteFailed(String message) {
+        Log.d(TAG, "onAccountDeleteFailed: failed!!");
+        Common.SELECTED_ACCOUNT = null;
+    }
 }

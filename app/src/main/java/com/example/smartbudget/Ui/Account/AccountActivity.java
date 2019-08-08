@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Interface.IAccountDeleteListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
@@ -71,8 +72,13 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
 
         initView();
 
-        DatabaseUtils.getSumAccountsByType(MainActivity.mDBHelper, this);
+        loadData();
 
+    }
+
+    private void loadData() {
+        Log.d(TAG, "loadData: called!!");
+        DatabaseUtils.getSumAccountsByType(MainActivity.mDBHelper, this);
     }
 
     private void initView() {
@@ -91,8 +97,7 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
 
         fab.setOnClickListener(v -> {
             mBSAccountAddFragment = BSAccountAddFragment.getInstance();
-            mBSAccountAddFragment.show(getSupportFragmentManager(),
-                    mBSAccountAddFragment.getTag());
+            mBSAccountAddFragment.show(getSupportFragmentManager(), mBSAccountAddFragment.getTag());
         });
 
         vp_account.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab_account));
@@ -149,9 +154,9 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
                 }
             }
         }
-        Common.animateTextView(0, assetTotal, tv_asset);
-        Common.animateTextView(0, debtTotal, tv_debt);
-        Common.animateTextView(0, (assetTotal - debtTotal), tv_balance_total);
+        Common.animateTextView(1000, 0, assetTotal, tv_asset);
+        Common.animateTextView(1000, 0, debtTotal, tv_debt);
+        Common.animateTextView(1000, 0, (assetTotal - debtTotal), tv_balance_total);
     }
 
     @Override

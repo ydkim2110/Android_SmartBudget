@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.DefaultCategories;
+import com.example.smartbudget.Model.TransactionModel;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,6 +34,7 @@ public class Common {
     public static final String LOGGED_KEY = "";
 
     public static AccountModel SELECTED_ACCOUNT = null;
+    public static List<TransactionModel> TRANSACTION_LIST = null;
 
     // Intent
     public static final String EXTRA_INPUT_ACCOUNT = "INPUT_ACCOUNT";
@@ -204,16 +206,13 @@ public class Common {
         return null;
     }
 
-    public static void animateTextView(int initialValue, int finalValue, final TextView textview) {
+    public static void animateTextView(int duration, int initialValue, int finalValue, final TextView textview) {
 
         ValueAnimator valueAnimator = ValueAnimator.ofInt(initialValue, finalValue);
-        valueAnimator.setDuration(500);
+        valueAnimator.setDuration(duration);
 
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                textview.setText(new StringBuilder(changeNumberToComma(Integer.parseInt(valueAnimator.getAnimatedValue().toString()))).append("원"));
-            }
+        valueAnimator.addUpdateListener(valueAnimator1 -> {
+                textview.setText(new StringBuilder(changeNumberToComma(Integer.parseInt(valueAnimator1.getAnimatedValue().toString()))).append("원"));
         });
         valueAnimator.start();
     }
