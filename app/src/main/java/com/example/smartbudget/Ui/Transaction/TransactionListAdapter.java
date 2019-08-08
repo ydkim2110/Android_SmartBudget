@@ -49,33 +49,33 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         transaction = mTransactionModelList.get(position);
 
-        if (transaction.getTransaction_type().equals("Expense")) {
-            Category expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
+        if (transaction.getType().equals("Expense")) {
+            Category expenseCategory = Common.getExpenseCategory(mTransactionModelList.get(position).getCategoryId());
             holder.iv_category_icon.setImageResource(expenseCategory.getIconResourceID());
             holder.iv_category_icon.setColorFilter(expenseCategory.getIconColor());
             holder.tv_transaction_category.setText(expenseCategory.getCategoryVisibleName(mContext));
 
-            holder.tv_transaction_note.setText(transaction.getTransaction_note());
-            holder.tv_transaction_amount.setText(new StringBuilder("-").append(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
+            holder.tv_transaction_note.setText(transaction.getNote());
+            holder.tv_transaction_amount.setText(new StringBuilder("-").append(Common.changeNumberToComma((int) transaction.getAmount())).append("원"));
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
-            holder.tv_transaction_date.setText(transaction.getTransaction_date());
+            holder.tv_transaction_date.setText(transaction.getDate());
         }
-        else if (transaction.getTransaction_type().equals("Income")) {
-            Category IncomeCategory = Common.getIncomeCategory(mTransactionModelList.get(position).getCategory_id());
+        else if (transaction.getType().equals("Income")) {
+            Category IncomeCategory = Common.getIncomeCategory(mTransactionModelList.get(position).getCategoryId());
             holder.iv_category_icon.setImageResource(IncomeCategory.getIconResourceID());
             holder.iv_category_icon.setColorFilter(IncomeCategory.getIconColor());
             holder.tv_transaction_category.setText(IncomeCategory.getCategoryVisibleName(mContext));
 
-            holder.tv_transaction_note.setText(transaction.getTransaction_note());
-            holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
+            holder.tv_transaction_note.setText(transaction.getNote());
+            holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getAmount())).append("원"));
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorRevenue));
-            holder.tv_transaction_date.setText(transaction.getTransaction_date());
+            holder.tv_transaction_date.setText(transaction.getDate());
         }
 
         holder.itemView.startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left));
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
-            Toast.makeText(mContext, "[SELECTED]" + transaction.getCategory_id(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "[SELECTED]" + transaction.getCategoryId(), Toast.LENGTH_SHORT).show();
         });
     }
 

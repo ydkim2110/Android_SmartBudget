@@ -84,6 +84,11 @@ public class DatabaseUtils {
         task.execute();
     }
 
+    public static void getLastFewDaysTransactions(DBHelper db, String startDate, String endDate, IThisWeekTransactionLoadListener listener) {
+        GetLastFewDaysTransactionsAsync task = new GetLastFewDaysTransactionsAsync(db, startDate, endDate, listener);
+        task.execute();
+    }
+
     public static void getThisMonthTransaction(DBHelper db, String date, IThisMonthTransactionLoadListener listener) {
         GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
         task.execute();
@@ -558,13 +563,13 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_note(description);
-                        transaction.setTransaction_amount(Double.parseDouble(amount));
-                        transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(date);
-                        transaction.setTransaction_pattern(pattern);
-                        transaction.setCategory_id(categoryId);
-                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transaction.setNote(description);
+                        transaction.setAmount(Double.parseDouble(amount));
+                        transaction.setType(type);
+                        transaction.setDate(date);
+                        transaction.setPattern(pattern);
+                        transaction.setCategoryId(categoryId);
+                        transaction.setAccountId(Integer.parseInt(accountId));
                         transactionList.add(transaction);
                     }
                     while (cursor.moveToNext());
@@ -616,13 +621,13 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_note(description);
-                        transaction.setTransaction_amount(Double.parseDouble(amount));
-                        transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(date);
-                        transaction.setTransaction_pattern(pattern);
-                        transaction.setCategory_id(categoryId);
-                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transaction.setNote(description);
+                        transaction.setAmount(Double.parseDouble(amount));
+                        transaction.setType(type);
+                        transaction.setDate(date);
+                        transaction.setPattern(pattern);
+                        transaction.setCategoryId(categoryId);
+                        transaction.setAccountId(Integer.parseInt(accountId));
                         transactionList.add(transaction);
                     }
                     while (cursor.moveToNext());
@@ -632,6 +637,65 @@ public class DatabaseUtils {
                 return transactionList;
             }
             return transactionList;
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionModel> transactionList) {
+            super.onPostExecute(transactionList);
+            mListener.onThisWeekTransactionLoadSuccess(transactionList);
+        }
+    }
+
+    private static class GetLastFewDaysTransactionsAsync extends AsyncTask<Void, Void, List<TransactionModel>> {
+
+        DBHelper db;
+        String startDate = "";
+        String endDate = "";
+        IThisWeekTransactionLoadListener mListener;
+
+        public GetLastFewDaysTransactionsAsync(DBHelper db, String startDate, String endDate, IThisWeekTransactionLoadListener listener) {
+            this.db = db;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            mListener = listener;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected List<TransactionModel> doInBackground(Void... voids) {
+            Cursor cursor = db.getLastFewDaysTransactions(startDate, endDate);
+            List<TransactionModel> transactionList = new ArrayList<>();
+            if (cursor != null && cursor.getCount() > 0) {
+                try {
+                    do {
+                        TransactionModel transaction = new TransactionModel();
+                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Transaction._ID));
+                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_NOTE));
+                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_AMOUNT));
+                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TYPE));
+                        String date = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_DATE));
+                        String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
+                        String categoryId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_CATEGORY_ID));
+                        String accountId = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_ACCOUNT_ID));
+                        String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
+
+                        transaction.setId((int) id);
+                        transaction.setNote(description);
+                        transaction.setAmount(Double.parseDouble(amount));
+                        transaction.setType(type);
+                        transaction.setDate(date);
+                        transaction.setPattern(pattern);
+                        transaction.setCategoryId(categoryId);
+                        transaction.setAccountId(Integer.parseInt(accountId));
+                        transactionList.add(transaction);
+                    }
+                    while (cursor.moveToNext());
+                } finally {
+                    cursor.close();
+                }
+                return transactionList;
+            }
+            return null;
         }
 
         @Override
@@ -674,14 +738,14 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_note(description);
-                        transaction.setTransaction_amount(Double.parseDouble(amount));
-                        transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(date);
-                        transaction.setTransaction_pattern(pattern);
-                        transaction.setCategory_id(categoryId);
-                        transaction.setSub_category_id(subCategoryId);
-                        transaction.setAccount_id(accountId != null ? Integer.parseInt(accountId) : 0);
+                        transaction.setNote(description);
+                        transaction.setAmount(Double.parseDouble(amount));
+                        transaction.setType(type);
+                        transaction.setDate(date);
+                        transaction.setPattern(pattern);
+                        transaction.setCategoryId(categoryId);
+                        transaction.setSubCategoryId(subCategoryId);
+                        transaction.setAccountId(accountId != null ? Integer.parseInt(accountId) : 0);
                         transactionList.add(transaction);
                     }
                     while (cursor.moveToNext());
@@ -736,14 +800,14 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_note(description);
-                        transaction.setTransaction_amount(Double.parseDouble(amount));
-                        transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(date);
-                        transaction.setTransaction_pattern(pattern);
-                        transaction.setCategory_id(categoryId);
-                        transaction.setSub_category_id(subCategoryId);
-                        transaction.setAccount_id(accountId != null ? Integer.parseInt(accountId) : 0);
+                        transaction.setNote(description);
+                        transaction.setAmount(Double.parseDouble(amount));
+                        transaction.setType(type);
+                        transaction.setDate(date);
+                        transaction.setPattern(pattern);
+                        transaction.setCategoryId(categoryId);
+                        transaction.setSubCategoryId(subCategoryId);
+                        transaction.setAccountId(accountId != null ? Integer.parseInt(accountId) : 0);
                         transactionList.add(transaction);
                     }
                     while (cursor.moveToNext());
@@ -796,12 +860,12 @@ public class DatabaseUtils {
                         String toAccount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_TO_ACCOUNT));
 
                         transaction.setId((int) id);
-                        transaction.setTransaction_note(description);
-                        transaction.setTransaction_amount(Double.parseDouble(amount));
-                        transaction.setTransaction_type(type);
-                        transaction.setTransaction_date(date);
-                        transaction.setCategory_id(categoryId);
-                        transaction.setAccount_id(Integer.parseInt(accountId));
+                        transaction.setNote(description);
+                        transaction.setAmount(Double.parseDouble(amount));
+                        transaction.setType(type);
+                        transaction.setDate(date);
+                        transaction.setCategoryId(categoryId);
+                        transaction.setAccountId(Integer.parseInt(accountId));
                         transactionList.add(transaction);
                     }
                     while (cursor.moveToNext());

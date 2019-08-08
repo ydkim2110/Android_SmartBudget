@@ -59,11 +59,11 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
         List<TransactionModel> value = mHashMap.get(mKeys.get(position));
 
         for (TransactionModel model : value) {
-            if(model.getTransaction_type().equals("Expense")) {
-                total -= model.getTransaction_amount();
+            if(model.getType().equals("Expense")) {
+                total -= model.getAmount();
             }
-            else if (model.getTransaction_type().equals("Income")) {
-                total += model.getTransaction_amount();
+            else if (model.getType().equals("Income")) {
+                total += model.getAmount();
             }
         }
 

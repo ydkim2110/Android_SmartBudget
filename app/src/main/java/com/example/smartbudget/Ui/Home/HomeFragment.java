@@ -45,8 +45,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -143,6 +143,9 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     private int waste_percentage = 0;
     private int invest_percentage = 0;
     private String currentDate = "";
+    private Date startDate;
+    private Date endDate;
+    private String zeroMoney;
 
     @Override
     public void onAttach(Context context) {
@@ -155,6 +158,8 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
+
+        zeroMoney = getActivity().getResources().getString(R.string.zero_money);
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -213,14 +218,6 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     private void initView(View view) {
         Log.d(TAG, "initView: called!!");
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd");
-
-        tv_weekday.setText(new StringBuilder("(")
-                .append(dateFormat.format(DateHelper.getWeekStartDate()))
-                .append(" ~ ")
-                .append(dateFormat.format(DateHelper.getWeekEndDate()))
-                .append(")"));
-
         nsv_container.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             mINSVScrollChangeListener.onNSVScrollChangeListener(scrollY > oldScrollY);
         });
@@ -253,7 +250,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
         if (listOfTransaction != null) {
             for (TransactionModel dataModel : listOfTransaction) {
-                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getTransaction_date()));
+                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getDate()));
 
                 if (groupedHashMap.containsKey(hashMapkey)) {
                     groupedHashMap.get(hashMapkey).add(dataModel);
@@ -274,10 +271,10 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         int income = 0;
         if (transactionList != null) {
             for (TransactionModel model : transactionList) {
-                if (model.getTransaction_type().equals("Income")) {
-                    income += model.getTransaction_amount();
-                } else if (model.getTransaction_type().equals("Expense")) {
-                    expense += model.getTransaction_amount();
+                if (model.getType().equals("Income")) {
+                    income += model.getAmount();
+                } else if (model.getType().equals("Expense")) {
+                    expense += model.getAmount();
                 }
             }
         }
@@ -297,7 +294,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onThisWeekTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        if (transactionList.size() == 0) {
+        if (transactionList == null) {
             rv_transaction.setVisibility(View.GONE);
             ll_no_items.setVisibility(View.VISIBLE);
         } else {
@@ -330,6 +327,13 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         normal_percentage = 0;
         waste_percentage = 0;
         invest_percentage = 0;
+        tv_normal.setText(new StringBuilder("Normal\n").append("0.0%"));
+        tv_normal_sum.setText(zeroMoney);
+        tv_waste.setText(new StringBuilder("Waste\n").append("0.0%"));
+        tv_waste_sum.setText(zeroMoney);
+        tv_invest.setText(new StringBuilder("Invest\n").append("0.0%"));
+        tv_invest_sum.setText(zeroMoney);
+
         for (SpendingPattern spendingPattern : spendingPatternList) {
             {
                 total += (int) spendingPattern.getSum();
@@ -390,6 +394,33 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         Log.d(TAG, "loadFromDatabase: called!!");
         DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, date, this);
         DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, date, this);
-        DatabaseUtils.getThisWeekTransaction(MainActivity.mDBHelper, this);
+
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(Common.stringToDate(date));
+
+        int todayYear = cal1.get(Calendar.YEAR);
+        int todayMonth = cal1.get(Calendar.MONTH)+1;
+        int currentYear = cal2.get(Calendar.YEAR);
+        int currentMonth = cal2.get(Calendar.MONTH)+1;
+
+        if (currentYear == todayYear && currentMonth == todayMonth) {
+            endDate = cal1.getTime();
+            cal1.add(Calendar.DAY_OF_MONTH, -6);
+            startDate = cal1.getTime();
+        }
+        else {
+            endDate = Common.getMaximumDate(cal2.getTime());
+            cal2.add(Calendar.DAY_OF_MONTH, -7);
+            startDate = cal2.getTime();
+        }
+
+        tv_weekday.setText(new StringBuilder("(")
+                .append(Common.monthdayFormat.format(startDate))
+                .append(" ~ ")
+                .append(Common.monthdayFormat.format(endDate))
+                .append(")"));
+
+        DatabaseUtils.getLastFewDaysTransactions(MainActivity.mDBHelper, Common.dateFormat.format(startDate), Common.dateFormat.format(endDate), this);
     }
 }

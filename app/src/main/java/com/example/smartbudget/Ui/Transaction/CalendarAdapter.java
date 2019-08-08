@@ -2,7 +2,6 @@ package com.example.smartbudget.Ui.Transaction;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,11 +110,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         ArrayList<Integer> incomeTotal = new ArrayList<>();
 
         for (int i = 0; i < mTransactionList.size(); i++) {
-            eventCalendar.setTime(convertStringToDate(mTransactionList.get(i).getTransaction_date()));
+            eventCalendar.setTime(convertStringToDate(mTransactionList.get(i).getDate()));
             if (dayNo == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
                     && displayYear == eventCalendar.get(Calendar.YEAR)) {
-                if (mTransactionList.get(i).getTransaction_type().equals("Expense")) {
-                    expenseTotal.add((int) mTransactionList.get(i).getTransaction_amount());
+                if (mTransactionList.get(i).getType().equals("Expense")) {
+                    expenseTotal.add((int) mTransactionList.get(i).getAmount());
                     if (expenseTotal.stream().mapToInt(n -> n).sum() > 1000000) {
                         holder.tv_expense.setTextSize(10);
                     } else if (expenseTotal.stream().mapToInt(n -> n).sum() > 10000000) {
@@ -123,8 +122,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     }
                     holder.tv_expense.setText(Common.changeNumberToComma(expenseTotal.stream().mapToInt(n -> n).sum()) + "원");
                 }
-                else if (mTransactionList.get(i).getTransaction_type().equals("Income")) {
-                    incomeTotal.add((int) mTransactionList.get(i).getTransaction_amount());
+                else if (mTransactionList.get(i).getType().equals("Income")) {
+                    incomeTotal.add((int) mTransactionList.get(i).getAmount());
                     if (incomeTotal.stream().mapToInt(n -> n).sum() > 1000000) {
                         holder.tv_income.setTextSize(10);
                     } else if (incomeTotal.stream().mapToInt(n -> n).sum() > 10000000) {

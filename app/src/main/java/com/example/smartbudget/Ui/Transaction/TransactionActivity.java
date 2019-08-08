@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
@@ -247,11 +246,11 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
         if (transactionList != null) {
             for (TransactionModel model : transactionList) {
-                if (model.getTransaction_type().equals("Income")) {
-                    totalIncome = (int) (totalIncome + model.getTransaction_amount());
+                if (model.getType().equals("Income")) {
+                    totalIncome = (int) (totalIncome + model.getAmount());
                     Log.d(TAG, "onTransactionLoadSuccess: income: " + totalIncome);
-                } else if (model.getTransaction_type().equals("Expense")) {
-                    totalExpense = (int) (totalExpense + model.getTransaction_amount());
+                } else if (model.getType().equals("Expense")) {
+                    totalExpense = (int) (totalExpense + model.getAmount());
                     Log.d(TAG, "onTransactionLoadSuccess: expense: " + totalExpense);
                 }
             }
@@ -275,7 +274,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
         if (listOfTransaction != null) {
             for (TransactionModel dataModel : listOfTransaction) {
-                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getTransaction_date()));
+                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getDate()));
 
                 if (groupedHashMap.containsKey(hashMapkey)) {
                     groupedHashMap.get(hashMapkey).add(dataModel);

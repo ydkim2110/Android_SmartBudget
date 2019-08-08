@@ -55,8 +55,8 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         transaction = mTransactionModelList.get(position);
 
-        if (transaction.getTransaction_type().equals("Expense")) {
-            expenseCategory = Common.getExpenseCategory(transaction.getCategory_id());
+        if (transaction.getType().equals("Expense")) {
+            expenseCategory = Common.getExpenseCategory(transaction.getCategoryId());
 
             holder.iv_category_icon.setImageResource(expenseCategory.getIconResourceID());
             holder.iv_category_icon.setBackgroundTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
@@ -64,8 +64,8 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
 
             holder.tv_transaction_amount.setTextColor(expenseColor);
         }
-        else if (transaction.getTransaction_type().equals("Income")) {
-            incomeCategory = Common.getIncomeCategory(transaction.getCategory_id());
+        else if (transaction.getType().equals("Income")) {
+            incomeCategory = Common.getIncomeCategory(transaction.getCategoryId());
 
             holder.iv_category_icon.setImageResource(incomeCategory.getIconResourceID());
             holder.iv_category_icon.setBackgroundTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
@@ -74,9 +74,9 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
             holder.tv_transaction_amount.setTextColor(revenueColor);
         }
 
-        holder.tv_transaction_note.setText(transaction.getTransaction_note());
-        holder.tv_transaction_date.setText(transaction.getTransaction_date());
-        holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
+        holder.tv_transaction_note.setText(transaction.getNote());
+        holder.tv_transaction_date.setText(transaction.getDate());
+        holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getAmount())).append("원"));
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Toast.makeText(mContext, "[TR]", Toast.LENGTH_SHORT).show();

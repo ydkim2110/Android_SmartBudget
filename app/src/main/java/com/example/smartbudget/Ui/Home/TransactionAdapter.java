@@ -67,14 +67,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 TransactionItem transactionItem = (TransactionItem) consolidatedList.get(i);
                 TransactionViewHolder transactionViewHolder = (TransactionViewHolder) viewHolder;
 
-                String description = transactionItem.getTransaction().getTransaction_note();
-                int amount = (int) transactionItem.getTransaction().getTransaction_amount();
-                String type = transactionItem.getTransaction().getTransaction_type();
-                String pattern = transactionItem.getTransaction().getTransaction_pattern();
-                String transactionDate = transactionItem.getTransaction().getTransaction_date();
-                String categoryId =  transactionItem.getTransaction().getCategory_id();
+                String description = transactionItem.getTransaction().getNote();
+                int amount = (int) transactionItem.getTransaction().getAmount();
+                String type = transactionItem.getTransaction().getType();
+                String pattern = transactionItem.getTransaction().getPattern();
+                String transactionDate = transactionItem.getTransaction().getDate();
+                String categoryId =  transactionItem.getTransaction().getCategoryId();
                 String subCategoryId= null;
-                int accountId = transactionItem.getTransaction().getAccount_id();
+                int accountId = transactionItem.getTransaction().getAccountId();
 
 
                 final TransactionModel transactionModel = new TransactionModel(description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);

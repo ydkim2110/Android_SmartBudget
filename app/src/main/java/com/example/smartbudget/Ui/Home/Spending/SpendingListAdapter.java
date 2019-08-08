@@ -37,7 +37,7 @@ public class SpendingListAdapter extends RecyclerView.Adapter<SpendingListAdapte
 //        Collections.sort(mTransactionModelList, new Comparator<TransactionModel>() {
 //            @Override
 //            public int compare(TransactionModel o1, TransactionModel o2) {
-//                return o1.getTransaction_date().compareTo(o2.getTransaction_date());
+//                return o1.getDate().compareTo(o2.getDate());
 //            }
 //        });
     }
@@ -55,15 +55,15 @@ public class SpendingListAdapter extends RecyclerView.Adapter<SpendingListAdapte
 
         TransactionModel transaction = mTransactionModelList.get(position);
 
-        Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategory_id());
+        Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategoryId());
 
         holder.iv_category_icon.setImageResource(category.getIconResourceID());
         holder.iv_category_icon.setBackgroundTintList(ColorStateList.valueOf(category.getIconColor()));
         holder.transaction_category.setText(category.getCategoryVisibleName(mContext));
-        holder.transaction_note.setText(transaction.getTransaction_note());
-        holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getTransaction_amount())).append("원"));
+        holder.transaction_note.setText(transaction.getNote());
+        holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getAmount())).append("원"));
         holder.transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
-        holder.transaction_list_date.setText(transaction.getTransaction_date());
+        holder.transaction_list_date.setText(transaction.getDate());
 
         setAnimation(holder.itemView, position);
 

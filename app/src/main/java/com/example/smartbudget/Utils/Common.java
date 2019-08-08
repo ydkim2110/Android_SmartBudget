@@ -49,6 +49,7 @@ public class Common {
 
     public static final SimpleDateFormat yearmonthDateFormate = new SimpleDateFormat("yyyy MMMM", Locale.KOREA);
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat monthdayFormat = new SimpleDateFormat("MM.dd");
 
     ////// Calculator
     public static final String ACTIVITY_MODE = "ActivityMode";
@@ -85,19 +86,19 @@ public class Common {
 
     public static String calcPercentageDownToTwo(int currentValue, int maxValue) {
         return new DecimalFormat("0.00").format(
-                (Double.parseDouble(String.valueOf(currentValue)) * 100/
+                (Double.parseDouble(String.valueOf(currentValue)) * 100 /
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }
 
-    public static String calcPercentageDownToOne (int currentValue, int maxValue) {
+    public static String calcPercentageDownToOne(int currentValue, int maxValue) {
         return new DecimalFormat("0.0").format(
-                (Double.parseDouble(String.valueOf(currentValue)) * 100/
+                (Double.parseDouble(String.valueOf(currentValue)) * 100 /
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }
 
-    public static String calcPercentage (int currentValue, int maxValue) {
+    public static String calcPercentage(int currentValue, int maxValue) {
         return new DecimalFormat("0").format(
-                (Double.parseDouble(String.valueOf(currentValue)) * 100/
+                (Double.parseDouble(String.valueOf(currentValue)) * 100 /
                         (Double.parseDouble(String.valueOf(maxValue)))));
     }
 
@@ -115,6 +116,15 @@ public class Common {
             calendar.add(Calendar.DATE, 1);
         }
         calendar.add(Calendar.DATE, -1);
+        return calendar.getTime();
+    }
+
+    public static Date getMaximumDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+
         return calendar.getTime();
     }
 
@@ -136,12 +146,12 @@ public class Common {
         try {
             Date start = sdf.parse(startDate);
             Date end = sdf.parse(endDate);
-            diffDay = (end.getTime() - start.getTime()) / (24*60*60*1000);
+            diffDay = (end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000);
         } catch (ParseException e) {
             e.printStackTrace();
             diffDay = 0;
         }
-        return diffDay+1;
+        return diffDay + 1;
     }
 
     public static String[] getDiffDays(String fromDate, String toDate) {
@@ -158,7 +168,7 @@ public class Common {
 
         ArrayList<String> list = new ArrayList<>();
 
-        for (int i=0; i<count; i++) {
+        for (int i = 0; i < count; i++) {
             cal.add(Calendar.DATE, 1);
             list.add(sdf.format(cal.getTime()));
         }

@@ -38,11 +38,11 @@ public class DBContract {
 
     public static class Transaction implements BaseColumns {
         public static final String TABLE_NAME = "transaction_table";
-        public static final String COL_NOTE = "transaction_note";
-        public static final String COL_AMOUNT = "transaction_amount";
-        public static final String COL_TYPE = "transaction_type";
-        public static final String COL_PATTERN = "transaction_pattern";
-        public static final String COL_DATE = "transaction_date";
+        public static final String COL_NOTE = "note";
+        public static final String COL_AMOUNT = "amount";
+        public static final String COL_TYPE = "type";
+        public static final String COL_PATTERN = "pattern";
+        public static final String COL_DATE = "date";
         public static final String COL_CATEGORY_ID = "category_id";
         public static final String COL_SUB_CATEGORY_ID = "sub_category_id";
         public static final String COL_ACCOUNT_ID = "account_id";

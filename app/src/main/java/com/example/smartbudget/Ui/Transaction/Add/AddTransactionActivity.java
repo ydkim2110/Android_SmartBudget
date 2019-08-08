@@ -24,11 +24,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
 import com.example.smartbudget.Model.SubCategory;
@@ -127,9 +129,11 @@ public class AddTransactionActivity extends AppCompatActivity
 
             TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
 
-            DatabaseUtils.getAccount(MainActivity.mDBHelper, transactionModel.getAccount_id(), this);
+            DatabaseUtils.getAccount(MainActivity.mDBHelper, transactionModel.getAccountId(), this);
 
             mTransactionModel = transactionModel;
+            selectedType = mTransactionModel.getType();
+            selectedPattern = mTransactionModel.getPattern();
         }
 
         handleClickEvent();
@@ -340,36 +344,38 @@ public class AddTransactionActivity extends AppCompatActivity
             TransactionModel transactionModel = new TransactionModel();
 
             if (saveBtn.getText().toString().toLowerCase().equals("save")) {
-                transactionModel.setTransaction_note(noteEdt.getText().toString());
-                transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
-                transactionModel.setTransaction_type(selectedType);
-                transactionModel.setTransaction_pattern(selectedPattern);
-                transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
-                transactionModel.setCategory_id(selectedCategory.getCategoryID());
-                transactionModel.setSub_category_id("");
-                transactionModel.setAccount_id(mAccountModel.getId());
+                transactionModel.setNote(noteEdt.getText().toString());
+                transactionModel.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionModel.setType(selectedType);
+                transactionModel.setPattern(selectedPattern);
+                transactionModel.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionModel.setCategoryId(selectedCategory.getCategoryID());
+                transactionModel.setSubCategoryId("");
+                transactionModel.setAccountId(mAccountModel.getId());
 
                 if (selectedType.equals("Expense") || selectedType.equals("Income")) {
                     DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
                 } else if (selectedType.equals("Transfer")) {
-                    transactionModel.setTo_account(0);
+                    transactionModel.setToAccount(0);
                     // todo: transfer
 
                 }
-            } else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
-                transactionModel.setTransaction_note(noteEdt.getText().toString());
-                transactionModel.setTransaction_amount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
-                transactionModel.setTransaction_type(selectedType);
-                transactionModel.setTransaction_pattern(selectedPattern);
-                transactionModel.setTransaction_date(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
-                transactionModel.setCategory_id(selectedCategory.getCategoryID());
-                transactionModel.setSub_category_id("");
-                transactionModel.setAccount_id(mAccountModel.getId());
+            }
+            else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
+                transactionModel.setId(mTransactionModel.getId());
+                transactionModel.setNote(noteEdt.getText().toString());
+                transactionModel.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionModel.setType(selectedType);
+                transactionModel.setPattern(selectedPattern);
+                transactionModel.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionModel.setCategoryId(selectedCategory.getCategoryID());
+                transactionModel.setSubCategoryId("");
+                transactionModel.setAccountId(mAccountModel.getId());
 
                 if (selectedType.equals("Expense") || selectedType.equals("Income")) {
                     DatabaseUtils.updateTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
                 } else if (selectedType.equals("Transfer")) {
-                    transactionModel.setTo_account(0);
+                    transactionModel.setToAccount(0);
                     // todo: transfer
                 }
             }
@@ -457,7 +463,8 @@ public class AddTransactionActivity extends AppCompatActivity
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(event.getCategory().getIconColor()));
                 }
-            } else if (event.getCategoryType() == Common.TYPE_SUB_CATEGORY) {
+            }
+            else if (event.getCategoryType() == Common.TYPE_SUB_CATEGORY) {
                 selectedSubCategory = event.getSubCategory();
                 categoryEdt.setText(event.getSubCategory().getCategoryVisibleName(getApplicationContext()));
                 categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getSubCategory().getIconResourceID(), 0);
@@ -470,42 +477,42 @@ public class AddTransactionActivity extends AppCompatActivity
                 selectedType = "Expense";
                 if (ll_pattern_container.getVisibility() == View.GONE)
                     ll_pattern_container.setVisibility(View.VISIBLE);
-            } else if (event.getTransactionType() == Common.TYPE_INCOME_TRANSACTION) {
+            }
+            else if (event.getTransactionType() == Common.TYPE_INCOME_TRANSACTION) {
                 selectedType = "Income";
                 if (ll_pattern_container.getVisibility() == View.VISIBLE)
                     ll_pattern_container.setVisibility(View.GONE);
-            } else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
+            }
+            else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
                 selectedType = "Transfer";
                 if (ll_pattern_container.getVisibility() == View.VISIBLE)
                     ll_pattern_container.setVisibility(View.GONE);
             }
-        } else {
+        }
+        else {
             Log.d(TAG, "onEvent: else!!");
         }
     }
 
     @Override
     public void onAccountLoadSuccess(AccountModel accountModel) {
-        Log.d(TAG, "onAccountLoadSuccess: called!!");
-        Log.d(TAG, "onAccountLoadSuccess: called!!"+accountModel.getId());
-
         mAccountModel = accountModel;
 
         String passedCategory = "default";
-        if (mTransactionModel.getTransaction_type().equals("Expense")) {
+        if (mTransactionModel.getType().equals("Expense")) {
             if (ll_pattern_container.getVisibility() == View.GONE)
                 ll_pattern_container.setVisibility(View.VISIBLE);
-            Category expenseCategory = Common.getExpenseCategory(mTransactionModel.getCategory_id());
+            Category expenseCategory = Common.getExpenseCategory(mTransactionModel.getCategoryId());
             selectedCategory = expenseCategory;
             passedCategory = expenseCategory.getCategoryVisibleName(this);
             categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
             }
-        } else if (mTransactionModel.getTransaction_type().equals("Income")) {
+        } else if (mTransactionModel.getType().equals("Income")) {
             if (ll_pattern_container.getVisibility() == View.VISIBLE)
                 ll_pattern_container.setVisibility(View.GONE);
-            Category incomeCategory = Common.getIncomeCategory(mTransactionModel.getCategory_id());
+            Category incomeCategory = Common.getIncomeCategory(mTransactionModel.getCategoryId());
             selectedCategory = incomeCategory;
             passedCategory = incomeCategory.getCategoryVisibleName(this);
             categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
@@ -514,10 +521,10 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         }
         String passedAccount = mAccountModel.getName();
-        String passedNote = mTransactionModel.getTransaction_note();
-        String passedDate = mTransactionModel.getTransaction_date();
-        String passedPattern = mTransactionModel.getTransaction_pattern();
-        int passedAmount = (int) mTransactionModel.getTransaction_amount();
+        String passedNote = mTransactionModel.getNote();
+        String passedDate = mTransactionModel.getDate();
+        String passedPattern = mTransactionModel.getPattern();
+        int passedAmount = (int) mTransactionModel.getAmount();
 
         categoryEdt.setText(passedCategory);
         accountEdt.setText(passedAccount);
@@ -533,6 +540,11 @@ public class AddTransactionActivity extends AppCompatActivity
 
     @Override
     public void onTransactionUpdateSuccess(Boolean isInserted) {
-
+        if (isInserted) {
+            Toast.makeText(this, "[UPDATE!!]", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "[UPDATE Fail!!]", Toast.LENGTH_SHORT).show();
+        }
     }
 }
