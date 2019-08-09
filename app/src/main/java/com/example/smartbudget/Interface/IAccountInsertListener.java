@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Account;
+package com.example.smartbudget.Interface;
 
 public interface IAccountInsertListener {
     void onAccountInsertSuccess(Boolean isInserted);

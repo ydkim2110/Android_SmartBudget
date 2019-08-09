@@ -14,7 +14,7 @@ import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
-import com.example.smartbudget.Ui.Account.IAccountInsertListener;
+import com.example.smartbudget.Interface.IAccountInsertListener;
 import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Database.Model.SpendingPattern;

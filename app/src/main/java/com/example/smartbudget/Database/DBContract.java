@@ -33,7 +33,11 @@ public class DBContract {
 
     public static class Budget implements BaseColumns {
         public static final String TABLE_NAME = "budget_table";
-        public static final String COL_NAME = "category_name";
+        public static final String COL_DESCRIPTION = "description";
+        public static final String COL_AMOUNT = "amount";
+        public static final String COL_START_DATE = "start_date";
+        public static final String COL_END_DATE = "end_date";
+        public static final String COL_ACCOUNT_ID = "account_id";
     }
 
     public static class Transaction implements BaseColumns {

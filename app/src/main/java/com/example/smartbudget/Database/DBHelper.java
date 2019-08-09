@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Model.AccountModel;
+import com.example.smartbudget.Model.BudgetModel;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
@@ -45,19 +46,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     Account.COL_CREATE_AT + " DATE, " +
                     Account.COL_CURRENCY + " TEXT)";
 
-    private static final String SQL_CREATE_CATEGORY_TABLE =
-            "CREATE TABLE " + Category.TABLE_NAME + " (" +
-                    Category._ID + " INTEGER PRIMARY KEY," +
-                    Category.COL_NAME + " TEXT," +
-                    Category.COL_ICON + " INTEGER)";
-
-    private static final String SQL_CREATE_SUBCATEGORY_TABLE =
-            "CREATE TABLE " + SubCategory.TABLE_NAME + " (" +
-                    SubCategory._ID + " INTEGER PRIMARY KEY, " +
-                    SubCategory.COL_NAME + " TEXT, " +
-                    SubCategory.COL_ICON + " INTEGER, " +
-                    SubCategory.COL_CATEGORY_ID + " INTEGER)";
-
     private static final String SQL_CREATE_TRANSACTION_TABLE =
             "CREATE TABLE " + Transaction.TABLE_NAME + " (" +
                     Transaction._ID + " INTEGER PRIMARY KEY," +
@@ -72,10 +60,21 @@ public class DBHelper extends SQLiteOpenHelper {
                     Transaction.COL_TO_ACCOUNT + " INT REFERENCES " + Account.TABLE_NAME + "(_id)," +
                     "FOREIGN KEY (" + Transaction.COL_ACCOUNT_ID + ") REFERENCES " + Account.TABLE_NAME + "(_id) ON DELETE CASCADE)";
 
+    private static final String SQL_CREATE_BUDGET_TABLE =
+            "CREATE TABLE " + Budget.TABLE_NAME + " (" +
+                    Budget._ID + " INTEGER PRIMARY KEY, " +
+                    Budget.COL_DESCRIPTION + " TEXT, " +
+                    Budget.COL_AMOUNT + " INTEGER, " +
+                    Budget.COL_START_DATE + " TEXT, " +
+                    Budget.COL_END_DATE + " TEXT, " +
+                    Budget.COL_ACCOUNT_ID + " INTEGER)";
+
     private static final String SQL_DELETE_ACCOUNT_TABLE =
             "DROP TABLE IF EXISTS " + Account.TABLE_NAME;
     private static final String SQL_DELETE_TRANSACTION_TABLE =
             "DROP TABLE IF EXISTS " + Transaction.TABLE_NAME;
+    private static final String SQL_DELETE_BUDGET_TABLE =
+            "DROP TABLE IF EXISTS " + Budget.TABLE_NAME;
 
     @Override
     public void onConfigure(SQLiteDatabase db) {
@@ -93,9 +92,8 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ACCOUNT_TABLE);
-        db.execSQL(SQL_CREATE_CATEGORY_TABLE);
-        db.execSQL(SQL_CREATE_SUBCATEGORY_TABLE);
         db.execSQL(SQL_CREATE_TRANSACTION_TABLE);
+        db.execSQL(SQL_CREATE_BUDGET_TABLE);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -176,9 +174,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_ACCOUNT_TABLE);
         db.execSQL(SQL_DELETE_TRANSACTION_TABLE);
+        db.execSQL(SQL_DELETE_BUDGET_TABLE);
         onCreate(db);
     }
 
+    /*
+    ============================================================================
+    ACCOUNT
+    ============================================================================
+     */
     public boolean insertAccount(AccountModel accountModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -194,6 +198,27 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return result != -1;
     }
+
+    /*
+    ============================================================================
+    BUDGET
+    ============================================================================
+     */
+    public boolean insertBudget(BudgetModel budgetModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Budget.COL_DESCRIPTION, budgetModel.getDescription());
+        contentValues.put(Budget.COL_AMOUNT, budgetModel.getAmount());
+        contentValues.put(Budget.COL_START_DATE, budgetModel.getStartDate());
+        contentValues.put(Budget.COL_END_DATE, String.valueOf(budgetModel.getEndDate()));
+        contentValues.put(Budget.COL_ACCOUNT_ID, budgetModel.getAccountId());
+
+        long result = db.insert(Budget.TABLE_NAME, null, contentValues);
+
+        return result != -1;
+    }
+
 
     public boolean updateAccountsByTransfer(double amount, int fromId, int toId) {
         SQLiteDatabase db = this.getWritableDatabase();

@@ -3,20 +3,20 @@ package com.example.smartbudget.Model;
 public class BudgetModel {
 
     private int id;
-    private String name;
+    private String description;
     private String startDate;
     private String endDate;
-    private double targetAmount;
+    private double amount;
     private int accountId;
 
     public BudgetModel() {
     }
 
-    public BudgetModel(String name, String startDate, String endDate, double targetAmount, int accountId) {
-        this.name = name;
+    public BudgetModel(String name, String startDate, String endDate, double amount, int accountId) {
+        this.description = name;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.targetAmount = targetAmount;
+        this.amount = amount;
         this.accountId = accountId;
     }
 
@@ -28,12 +28,12 @@ public class BudgetModel {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getStartDate() {
@@ -52,12 +52,12 @@ public class BudgetModel {
         this.endDate = endDate;
     }
 
-    public double getTargetAmount() {
-        return targetAmount;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setTargetAmount(double targetAmount) {
-        this.targetAmount = targetAmount;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public int getAccountId() {
