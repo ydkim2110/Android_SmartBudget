@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
 import com.example.smartbudget.Database.BudgetRoom.DBBudgetUtils;
+import com.example.smartbudget.Database.Model.SumBudget;
 import com.example.smartbudget.Interface.IBudgetLoadListener;
 import com.example.smartbudget.Model.BudgetModel;
 import com.example.smartbudget.R;
@@ -75,7 +76,7 @@ public class ExpiredFragment extends Fragment implements IBudgetLoadListener {
     }
 
     @Override
-    public void onBudgetLoadSuccess(List<BudgetItem> budgetItemList) {
+    public void onBudgetLoadSuccess(List<SumBudget> budgetItemList) {
         Log.d(TAG, "onBudgetLoadSuccess: called!!");
         BudgetListAdapter adapter = new BudgetListAdapter(getContext(), budgetItemList);
         rv_budget.setAdapter(adapter);

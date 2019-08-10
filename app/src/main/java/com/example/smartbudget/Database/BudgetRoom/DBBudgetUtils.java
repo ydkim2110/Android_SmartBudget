@@ -1,16 +1,12 @@
 package com.example.smartbudget.Database.BudgetRoom;
 
-import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.example.smartbudget.Database.BudgetDatabase;
-import com.example.smartbudget.Database.DBContract;
-import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Database.Model.SumBudget;
 import com.example.smartbudget.Interface.IBudgetLoadListener;
-import com.example.smartbudget.Model.BudgetModel;
 import com.example.smartbudget.Interface.IDBInsertListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DBBudgetUtils {
@@ -58,7 +54,7 @@ public class DBBudgetUtils {
         }
     }
 
-    private static class GetRunningBudgetsAsync extends AsyncTask<Void, Void, List<BudgetItem>> {
+    private static class GetRunningBudgetsAsync extends AsyncTask<Void, Void, List<SumBudget>> {
 
         BudgetDatabase mBudgetDatabase;
         String date;
@@ -71,18 +67,18 @@ public class DBBudgetUtils {
         }
 
         @Override
-        protected List<BudgetItem> doInBackground(Void... voids) {
+        protected List<SumBudget> doInBackground(Void... voids) {
             return mBudgetDatabase.budgetDAO().getRunningBudgets(date);
         }
 
         @Override
-        protected void onPostExecute(List<BudgetItem> budgetItemList) {
+        protected void onPostExecute(List<SumBudget> budgetItemList) {
             super.onPostExecute(budgetItemList);
             mListener.onBudgetLoadSuccess(budgetItemList);
         }
     }
 
-    private static class GetExpiredBudgetsAsync extends AsyncTask<Void, Void, List<BudgetItem>> {
+    private static class GetExpiredBudgetsAsync extends AsyncTask<Void, Void, List<SumBudget>> {
 
         BudgetDatabase mBudgetDatabase;
         String date;
@@ -95,12 +91,12 @@ public class DBBudgetUtils {
         }
 
         @Override
-        protected List<BudgetItem> doInBackground(Void... voids) {
+        protected List<SumBudget> doInBackground(Void... voids) {
             return mBudgetDatabase.budgetDAO().getExpiredBudgets(date);
         }
 
         @Override
-        protected void onPostExecute(List<BudgetItem> budgetItemList) {
+        protected void onPostExecute(List<SumBudget> budgetItemList) {
             super.onPostExecute(budgetItemList);
             mListener.onBudgetLoadSuccess(budgetItemList);
         }

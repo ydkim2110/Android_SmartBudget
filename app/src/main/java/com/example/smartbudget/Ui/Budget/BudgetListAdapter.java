@@ -1,10 +1,13 @@
 package com.example.smartbudget.Ui.Budget;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
 import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
+import com.example.smartbudget.Database.Model.SumBudget;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -31,10 +35,10 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
     private static final String TAG = BudgetListAdapter.class.getSimpleName();
 
     private Context mContext;
-    private List<BudgetItem> mBudgetItemList;
-    private BudgetItem mBudgetItem;
+    private List<SumBudget> mBudgetItemList;
+    private SumBudget mBudgetItem;
 
-    public BudgetListAdapter(Context mContext, List<BudgetItem> budgetItemList) {
+    public BudgetListAdapter(Context mContext, List<SumBudget> budgetItemList) {
         this.mContext = mContext;
         this.mBudgetItemList = budgetItemList;
     }
@@ -52,22 +56,24 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
 
         mBudgetItem = mBudgetItemList.get(position);
 
-//        DBTransactionUtils.getSumAmountByBudget(MainActivity.db, mBudgetItem.getStartDate(), mBudgetItem.getEndDate(),
-//                mBudgetItem.getType(), mBudgetItem.getAccountId(), this);
-
-        Log.d(TAG, "onBindViewHolder: startDate: "+mBudgetItem.getStartDate());
-        Log.d(TAG, "onBindViewHolder: endDate: "+mBudgetItem.getEndDate());
-
-        DBTransactionUtils.getSumAmountByBudget(MainActivity.db, mBudgetItem.getStartDate(), mBudgetItem.getEndDate(),
-                mBudgetItem.getType(), mBudgetItem.getAccountId(),this);
-
-        holder.tv_name.setText(mBudgetItemList.get(position).getDescription());
-        holder.tv_target_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mBudgetItemList.get(position).getAmount())).append("원"));
+        holder.tv_name.setText(mBudgetItem.getDescription());
+        holder.tv_used_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mBudgetItem.getSumTransaction())).append("원"));
+        holder.tv_target_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mBudgetItem.getAmount())).append("원"));
         holder.tv_date_period.setText(new StringBuilder("(")
-                .append(mBudgetItemList.get(position).getStartDate())
+                .append(mBudgetItem.getStartDate())
                 .append(" ~ ")
-                .append(mBudgetItemList.get(position).getEndDate())
+                .append(mBudgetItem.getEndDate())
                 .append(")"));
+
+        holder.pb_circle.setMax((int) mBudgetItem.getAmount());
+        ObjectAnimator progressAnim = ObjectAnimator.ofInt(holder.pb_circle, "progress", 0, (int) mBudgetItem.getSumTransaction());
+        progressAnim.setDuration(500);
+        progressAnim.setInterpolator(new LinearInterpolator());
+        progressAnim.start();
+
+        int percentage = (int) (mBudgetItem.getSumTransaction() / mBudgetItem.getAmount() * 100);
+        holder.tv_percenage.setText(new StringBuilder(""+percentage).append("%"));
+
     }
 
     @Override
@@ -77,17 +83,23 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
 
     @Override
     public void onSumAmountByBudgeSuccess(double sumAmount) {
-        Log.d(TAG, "onSumAmountByBudgeSuccess: "+sumAmount);
+            Log.d(TAG, "onSumAmountByBudgeSuccess: "+sumAmount);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tv_name)
         TextView tv_name;
+        @BindView(R.id.tv_used_amount)
+        TextView tv_used_amount;
         @BindView(R.id.tv_target_amount)
         TextView tv_target_amount;
         @BindView(R.id.tv_date_period)
         TextView tv_date_period;
+        @BindView(R.id.pb_circle)
+        ProgressBar pb_circle;
+        @BindView(R.id.tv_percentage)
+        TextView tv_percenage;
 
         Unbinder mUnbinder;
 

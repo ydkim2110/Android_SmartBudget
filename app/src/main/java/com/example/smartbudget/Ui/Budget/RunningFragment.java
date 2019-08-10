@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 
 import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
 import com.example.smartbudget.Database.BudgetRoom.DBBudgetUtils;
+import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
+import com.example.smartbudget.Database.Model.SumBudget;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Interface.IBudgetLoadListener;
-import com.example.smartbudget.Model.BudgetModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +50,9 @@ public class RunningFragment extends Fragment implements IBudgetLoadListener {
     @BindView(R.id.rv_budget)
     RecyclerView rv_budget;
 
+    private List<BudgetItem> addedBudgetItemList = new ArrayList<>();
+    private int currentListNum = 0;
+
     Unbinder mUnbinder;
 
     @Override
@@ -72,14 +78,17 @@ public class RunningFragment extends Fragment implements IBudgetLoadListener {
     }
 
     @Override
-    public void onBudgetLoadSuccess(List<BudgetItem> budgetItemList) {
+    public void onBudgetLoadSuccess(List<SumBudget> budgetItemList) {
         Log.d(TAG, "onBudgetLoadSuccess: called!!");
+        currentListNum = 0;
+
         BudgetListAdapter adapter = new BudgetListAdapter(getContext(), budgetItemList);
         rv_budget.setAdapter(adapter);
     }
 
     @Override
     public void onBudgetLoadFailed(String message) {
-        Log.d(TAG, "onBudgetLoadFailed: called!!");
+
     }
+
 }
