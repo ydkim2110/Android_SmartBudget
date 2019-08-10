@@ -10,11 +10,12 @@ import androidx.annotation.RequiresApi;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IAccountDeleteListener;
 import com.example.smartbudget.Interface.IAccountLoadListener;
+import com.example.smartbudget.Interface.IDBUpdateListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
-import com.example.smartbudget.Interface.IAccountInsertListener;
+import com.example.smartbudget.Interface.IDBInsertListener;
 import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Database.Model.SpendingPattern;
@@ -120,11 +121,11 @@ public class DatabaseUtils {
         task.execute(transactionModels);
     }
 
-    public static void insertAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
+    public static void insertAccountAsync(DBHelper db, IDBInsertListener listener, AccountModel... accountModels) {
         InsertAccountAsync task = new InsertAccountAsync(db, listener);
         task.execute(accountModels);
     }
-    public static void updateAccountAsync(DBHelper db, IAccountInsertListener listener, AccountModel... accountModels) {
+    public static void updateAccountAsync(DBHelper db, IDBUpdateListener listener, AccountModel... accountModels) {
         UpdateAccountAsync task = new UpdateAccountAsync(db, listener);
         task.execute(accountModels);
     }
@@ -164,9 +165,9 @@ public class DatabaseUtils {
     private static class InsertAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
-        IAccountInsertListener mListener;
+        IDBInsertListener mListener;
 
-        public InsertAccountAsync(DBHelper db, IAccountInsertListener listener) {
+        public InsertAccountAsync(DBHelper db, IDBInsertListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -179,16 +180,16 @@ public class DatabaseUtils {
         @Override
         protected void onPostExecute(Boolean isInserted) {
             super.onPostExecute(isInserted);
-            mListener.onAccountInsertSuccess(isInserted);
+            mListener.onDBInsertSuccess(isInserted);
         }
     }
 
     public static class UpdateAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
-        IAccountInsertListener mListener;
+        IDBUpdateListener mListener;
 
-        public UpdateAccountAsync(DBHelper db, IAccountInsertListener listener) {
+        public UpdateAccountAsync(DBHelper db, IDBUpdateListener listener) {
             this.db = db;
             this.mListener = listener;
         }
@@ -207,7 +208,7 @@ public class DatabaseUtils {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
-            mListener.onAccountUpdateSuccess(aBoolean);
+            mListener.onDBUpdateSuccess(aBoolean);
         }
     }
 

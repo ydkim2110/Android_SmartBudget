@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction.Add.Account;
+package com.example.smartbudget.Ui.Input;
 
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Database.DatabaseUtils;

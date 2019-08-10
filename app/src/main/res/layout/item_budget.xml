@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:layout_marginTop="16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -21,7 +22,7 @@
             android:background="@drawable/shape_circle_progressbar"
             android:indeterminate="false"
             android:max="100"
-            android:progress="65"
+            android:progress="0"
             android:progressDrawable="@drawable/rotate_circular_progressbar_normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -15,7 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.IAccountInsertListener;
+import com.example.smartbudget.Interface.IDBInsertListener;
+import com.example.smartbudget.Interface.IDBUpdateListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
@@ -27,7 +28,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AddAccountActivity extends AppCompatActivity implements IAccountInsertListener {
+public class AddAccountActivity extends AppCompatActivity implements IDBInsertListener, IDBUpdateListener {
 
     private static final String TAG = AddAccountActivity.class.getSimpleName();
 
@@ -230,22 +231,27 @@ public class AddAccountActivity extends AppCompatActivity implements IAccountIns
     }
 
     @Override
-    public void onAccountInsertSuccess(Boolean isInserted) {
+    public void onDBInsertSuccess(Boolean isInserted) {
         if (isInserted) {
-            Log.d(TAG, "onAccountInsertSuccess: true");
+            Log.d(TAG, "onDBInsertSuccess: true");
             finish();
         } else {
-            Log.d(TAG, "onAccountInsertSuccess: false");
+            Log.d(TAG, "onDBInsertSuccess: false");
         }
     }
 
     @Override
-    public void onAccountUpdateSuccess(Boolean isUpdated) {
-        if (isUpdated) {
-            Log.d(TAG, "onAccountUpdateSuccess: true");
-            finish();
-        } else {
-            Log.d(TAG, "onAccountUpdateSuccess: false");
-        }
+    public void onDBInsertFailed(String message) {
+        Log.d(TAG, "onDBInsertFailed: called!!");
+    }
+
+    @Override
+    public void onDBUpdateSuccess(boolean isUpdated) {
+        Log.d(TAG, "onDBUpdateSuccess: called!!");
+    }
+
+    @Override
+    public void onDBUpdateFailed(String message) {
+        Log.d(TAG, "onDBUpdateFailed: called!!");
     }
 }

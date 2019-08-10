@@ -1,40 +1,40 @@
 <resources>
-    <style description="AppTheme.NoActionBar">
-        <item description="windowActionBar">false</item>
-        <item description="windowNoTitle">true</item>
-        <item description="android:statusBarColor">@android:color/transparent</item>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style description="FullScreenDialogTheme" parent="Theme.AppCompat.Light.DialogWhenLarge">
-        <item description="android:statusBarColor">#280680</item>
-        <item description="windowNoTitle">true</item>
-        <item description="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+    <style name="FullScreenDialogTheme" parent="Theme.AppCompat.Light.DialogWhenLarge">
+        <item name="android:statusBarColor">#280680</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
     </style>
 
-    <style description="Toolbar" parent="Theme.AppCompat">
+    <style name="Toolbar" parent="Theme.AppCompat">
         <!-- android:actionMenuTextColor is the color of the text of action (menu) items in the Toolbar, at least in the
         Theme.AppCompat theme. For some reason, they already get the textColorPrimary when running on API 21, but not on older versions of
         Android, so this is only necessary to support older Android versions. -->
-        <item description="actionMenuTextColor">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
     </style>
 
-    <style description="ToolbarStyle">
-        <item description="android:minHeight">?attr/actionBarSize</item>
+    <style name="ToolbarStyle">
+        <item name="android:minHeight">?attr/actionBarSize</item>
         <!--<item description="android:background">@color/colorPrimary</item>-->
-        <item description="theme">@style/Toolbar</item>
-        <item description="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item description="colorControlNormal">@android:color/white</item>
-        <item description="colorControlHighlight">#3fff</item>
-        <item description="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
-        <item description="subtitleTextAppearance">@style/ToolbarSubtitleTextAppearance</item>
+        <item name="theme">@style/Toolbar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlHighlight">#3fff</item>
+        <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
+        <item name="subtitleTextAppearance">@style/ToolbarSubtitleTextAppearance</item>
     </style>
 
-    <style description="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item description="android:textColor">@android:color/white</item>
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style description="ToolbarSubtitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item description="android:textColor">@android:color/white</item>
+    <style name="ToolbarSubtitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

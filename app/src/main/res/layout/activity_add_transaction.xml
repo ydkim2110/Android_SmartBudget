@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/add_transaction_account"
+                    android:id="@+id/tv_add_budget_account"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/add_transaction_amount"
+                    android:id="@+id/tv_add_budget_amount"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"

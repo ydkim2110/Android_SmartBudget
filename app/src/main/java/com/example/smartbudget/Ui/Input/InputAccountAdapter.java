@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction.Add.Account;
+package com.example.smartbudget.Ui.Input;
 
 import android.graphics.Color;
 import androidx.annotation.NonNull;

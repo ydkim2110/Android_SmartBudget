@@ -168,6 +168,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 new Object[]{"월급", 3000000, "Income", "", dateFormat.format(calendar19.getTime()), ":salary", null, 1, null});
         db.execSQL("INSERT INTO " + Transaction.TABLE_NAME + " (note, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new Object[]{"이자", 150000, "Income", "", dateFormat.format(calendar20.getTime()), ":interest&dividend", null, 1, null});
+
+        db.execSQL("INSERT INTO " + Budget.TABLE_NAME + "(description, amount, start_date, end_date, account_id) VALUES(?, ?, ?, ?, ?)",
+                new Object[]{"유럽여행", 5000000, "2019-08-01", "2019-12-31", 3});
+        db.execSQL("INSERT INTO " + Budget.TABLE_NAME + "(description, amount, start_date, end_date, account_id) VALUES(?, ?, ?, ?, ?)",
+                new Object[]{"현금모으기", 200000, "2019-08-01", "2019-10-31", 1});
+        db.execSQL("INSERT INTO " + Budget.TABLE_NAME + "(description, amount, start_date, end_date, account_id) VALUES(?, ?, ?, ?, ?)",
+                new Object[]{"차바꾸기", 400000, "2019-05-01", "2019-07-31", 1});
+
     }
 
     @Override
@@ -217,6 +225,32 @@ public class DBHelper extends SQLiteOpenHelper {
         long result = db.insert(Budget.TABLE_NAME, null, contentValues);
 
         return result != -1;
+    }
+
+    public Cursor getRunningBudgets() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String today = Common.dateFormat.format(new Date());
+        String[] args = {today};
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Budget.TABLE_NAME + " WHERE " + Budget.COL_END_DATE + " >= DATE(?)", args);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor getExpiredBudgets() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String today = Common.dateFormat.format(new Date());
+        String[] args = {today};
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Budget.TABLE_NAME + " WHERE " + Budget.COL_END_DATE + " < DATE(?)", args);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
     }
 
 

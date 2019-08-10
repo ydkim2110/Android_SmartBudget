@@ -30,12 +30,11 @@ import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Model.Category;
-import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
 import com.example.smartbudget.Model.SubCategory;
-import com.example.smartbudget.Ui.Transaction.Add.Account.InputAccountActivity;
-import com.example.smartbudget.Ui.Transaction.Add.Amount.InputAmountActivity;
+import com.example.smartbudget.Ui.Input.InputAccountActivity;
+import com.example.smartbudget.Ui.Input.InputAmountActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Category.CategoryDialogFragment;
 import com.example.smartbudget.Ui.Transaction.Add.Category.InputCategoryActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Date.DatePickerDialogFragment;
@@ -242,11 +241,11 @@ public class AddTransactionActivity extends AppCompatActivity
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_add_transaction));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        accountEdt = findViewById(R.id.add_transaction_account);
+        accountEdt = findViewById(R.id.tv_add_budget_account);
         categoryEdt = findViewById(R.id.add_transaction_category);
         noteEdt = findViewById(R.id.add_transaction_description);
         dateEdt = findViewById(R.id.add_transaction_date);
-        amountEdt = findViewById(R.id.add_transaction_amount);
+        amountEdt = findViewById(R.id.tv_add_budget_amount);
         cancelBtn = findViewById(R.id.cancel_btn);
         saveBtn = findViewById(R.id.save_btn);
         saveBtn.setEnabled(false);

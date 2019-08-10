@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.smartbudget">
     <!-- <uses-sdk tools:overrideLibrary="com.github.sundeepk.compactcalendarview" /> -->
-    <uses-permission android:description="android.permission.INTERNET" />
-    <uses-permission android:description="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -13,55 +13,55 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:description=".Ui.Transaction.Transfer.TransferActivity"></activity>
-        <activity android:description=".Ui.Budget.AddBudgetActivity" />
-        <activity android:description=".Ui.Report.ReportActivity" />
-        <activity android:description=".Ui.Calculator.CalcActivity" />
-        <activity android:description=".Ui.Transaction.CalendarActivity" />
-        <activity android:description=".Ui.Transaction.TransactionActivity" />
-        <activity android:description=".Ui.Home.Category.ExpenseByCategoryActivity" />
-        <activity android:description=".Ui.Budget.BudgetActivity" />
-        <activity android:description=".Ui.Account.AccountActivity" />
+        <activity android:name=".Ui.Transaction.Transfer.TransferActivity"></activity>
+        <activity android:name=".Ui.Budget.AddBudgetActivity" />
+        <activity android:name=".Ui.Report.ReportActivity" />
+        <activity android:name=".Ui.Calculator.CalcActivity" />
+        <activity android:name=".Ui.Transaction.CalendarActivity" />
+        <activity android:name=".Ui.Transaction.TransactionActivity" />
+        <activity android:name=".Ui.Home.Category.ExpenseByCategoryActivity" />
+        <activity android:name=".Ui.Budget.BudgetActivity" />
+        <activity android:name=".Ui.Account.AccountActivity" />
 
         <meta-data
-            android:description="com.facebook.accountkit.ApplicationName"
+            android:name="com.facebook.accountkit.ApplicationName"
             android:value="@string/app_name" />
         <meta-data
-            android:description="com.facebook.sdk.ApplicationId"
+            android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/FACEBOOK_APP_ID" />
         <meta-data
-            android:description="com.facebook.accountkit.ClientToken"
+            android:name="com.facebook.accountkit.ClientToken"
             android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
 
-        <activity android:description="com.facebook.accountkit.ui.AccountKitActivity" />
-        <activity android:description=".Ui.Main.SignInActivity" />
-        <activity android:description=".Ui.Home.Spending.SpendingActivity" />
-        <activity android:description=".Ui.Transaction.Add.Category.InputCategoryActivity" />
-        <activity android:description=".Ui.Travel.TravelFullListActivity" />
-        <activity android:description=".Ui.Travel.AddTravelTransactionActivity" />
-        <activity android:description=".Ui.Travel.TravelDetailActivity" />
-        <activity android:description=".Ui.Travel.AddTravelActivity" />
-        <activity android:description=".Ui.Transaction.Add.Account.InputAccountActivity" />
-        <activity android:description=".Ui.Account.AccountDetailActivity" />
-        <activity android:description=".Ui.Account.AddAccountActivity" />
-        <activity android:description=".Ui.Budget.ViewTransactionActivity" />
-        <activity android:description=".Ui.Transaction.Add.Amount.InputAmountActivity" />
-        <activity android:description=".Ui.Transaction.Add.Note.InputNoteActivity" />
+        <activity android:name="com.facebook.accountkit.ui.AccountKitActivity" />
+        <activity android:name=".Ui.Main.SignInActivity" />
+        <activity android:name=".Ui.Home.Spending.SpendingActivity" />
+        <activity android:name=".Ui.Transaction.Add.Category.InputCategoryActivity" />
+        <activity android:name=".Ui.Travel.TravelFullListActivity" />
+        <activity android:name=".Ui.Travel.AddTravelTransactionActivity" />
+        <activity android:name=".Ui.Travel.TravelDetailActivity" />
+        <activity android:name=".Ui.Travel.AddTravelActivity" />
+        <activity android:name=".Ui.Input.InputAccountActivity" />
+        <activity android:name=".Ui.Account.AccountDetailActivity" />
+        <activity android:name=".Ui.Account.AddAccountActivity" />
+        <activity android:name=".Ui.Budget.ViewTransactionActivity" />
+        <activity android:name=".Ui.Input.InputAmountActivity" />
+        <activity android:name=".Ui.Transaction.Add.Note.InputNoteActivity" />
         <activity
-            android:description=".Ui.Main.SplashActivity"
+            android:name=".Ui.Main.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:description="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:description="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:description=".Ui.Transaction.Add.AddTransactionActivity"
+            android:name=".Ui.Transaction.Add.AddTransactionActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:description=".Ui.Home.Overview.OverviewActivity" />
+        <activity android:name=".Ui.Home.Overview.OverviewActivity" />
         <activity
-            android:description=".Ui.Main.MainActivity"
+            android:name=".Ui.Main.MainActivity"
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />

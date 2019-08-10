@@ -20,8 +20,8 @@ import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Transaction.Add.Account.InputAccountActivity;
-import com.example.smartbudget.Ui.Transaction.Add.Amount.InputAmountActivity;
+import com.example.smartbudget.Ui.Input.InputAccountActivity;
+import com.example.smartbudget.Ui.Input.InputAmountActivity;
 import com.example.smartbudget.Utils.Common;
 
 import butterknife.BindView;
