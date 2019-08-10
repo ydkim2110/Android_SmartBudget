@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#e9e9e9"
     tools:context=".Ui.Budget.ExpiredFragment">
 
     <androidx.recyclerview.widget.RecyclerView

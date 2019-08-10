@@ -1,13 +1,13 @@
 package com.example.smartbudget.Utils;
 
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.widget.TextView;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.DefaultCategories;
-import com.example.smartbudget.Model.TransactionModel;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,8 +33,8 @@ public class Common {
     public static final int TYPE_TRANSFER_TRANSACTION = 2;
     public static final String LOGGED_KEY = "";
 
-    public static AccountModel SELECTED_ACCOUNT = null;
-    public static List<TransactionModel> TRANSACTION_LIST = null;
+    public static AccountItem SELECTED_ACCOUNT = null;
+    public static List<TransactionItem> TRANSACTION_LIST = null;
 
     // Intent
     public static final String EXTRA_INPUT_ACCOUNT = "INPUT_ACCOUNT";

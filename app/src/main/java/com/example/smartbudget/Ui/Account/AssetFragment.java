@@ -12,9 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
 import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.IAccountsLoadListener;
-import com.example.smartbudget.Model.AccountModel;
+import com.example.smartbudget.Database.Interface.IAccountsLoadListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 
@@ -58,7 +59,7 @@ public class AssetFragment extends Fragment implements IAccountsLoadListener {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv_asset.setLayoutManager(layoutManager);
 
-        DatabaseUtils.getAccountsByType(MainActivity.mDBHelper, "asset", this);
+        DBAccountUtils.getAccountsByType(MainActivity.db, "asset", this);
 
         return view;
     }
@@ -69,16 +70,15 @@ public class AssetFragment extends Fragment implements IAccountsLoadListener {
         super.onDestroy();
     }
 
+
     @Override
-    public void onAccountsLoadSuccess(List<AccountModel> accountList) {
-        if (accountList != null) {
-            AccountAdapter adapter = new AccountAdapter(getContext(), accountList);
-            rv_asset.setAdapter(adapter);
-        }
+    public void onAccountsLoadSuccess(List<AccountItem> accountItemList) {
+        AccountAdapter adapter = new AccountAdapter(getContext(), accountItemList);
+        rv_asset.setAdapter(adapter);
     }
 
     @Override
-    public void onAccountDeleteSuccess(boolean isSuccess) {
+    public void onAccountsLoadFailed(String message) {
 
     }
 }

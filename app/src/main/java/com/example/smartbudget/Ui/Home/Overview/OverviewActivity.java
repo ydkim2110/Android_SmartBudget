@@ -11,14 +11,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
-import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -40,7 +40,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OverviewActivity extends AppCompatActivity implements IThisMonthTransactionByCategoryLoadListener {
+public class OverviewActivity extends AppCompatActivity implements IThisMonthTransactionsByCategoryLoadListener {
 
     private static final String TAG = OverviewActivity.class.getSimpleName();
 
@@ -86,7 +86,7 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             int expense = 0;
             int income = 0;
 
-            for (TransactionModel model : Common.TRANSACTION_LIST) {
+            for (TransactionItem model : Common.TRANSACTION_LIST) {
                 if (model.getType().equals("Income")) {
                     income += model.getAmount();
                 } else if (model.getType().equals("Expense")) {
@@ -106,7 +106,7 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
         //setUpPieGraph();
 
 
-        DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper, passed_date, this);
+        DBTransactionUtils.getThisMonthTransactionByCategory(MainActivity.db, passed_date, this);
     }
 
     private void setProgressBar(int income, int expense) {

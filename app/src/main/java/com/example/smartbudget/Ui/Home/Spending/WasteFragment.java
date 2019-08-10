@@ -11,8 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -29,7 +33,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WasteFragment extends Fragment implements IThisMonthTransactionLoadListener {
+public class WasteFragment extends Fragment implements IThisMonthTransactionsLoadListener {
 
     private static final String TAG = WasteFragment.class.getSimpleName();
 
@@ -54,6 +58,8 @@ public class WasteFragment extends Fragment implements IThisMonthTransactionLoad
 
     @BindView(R.id.rv_waste)
     RecyclerView rv_waste;
+    @BindView(R.id.tv_no_transactions)
+    TextView tv_no_transactions;
 
     Unbinder mUnbinder;
 
@@ -71,19 +77,27 @@ public class WasteFragment extends Fragment implements IThisMonthTransactionLoad
             passed_date = getArguments().getString("passed_date");
         }
 
-        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, passed_date,"Waste", this);
+        DBTransactionUtils.getThisMonthTransactionListByPattern(MainActivity.db, passed_date,"Waste", this);
 
         return view;
     }
 
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionList);
-        rv_waste.setAdapter(adapter);
+    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        if (transactionItemList != null) {
+            if (transactionItemList.size() < 1) {
+                tv_no_transactions.setVisibility(View.VISIBLE);
+            }
+            else {
+                tv_no_transactions.setVisibility(View.GONE);
+                SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionItemList);
+                rv_waste.setAdapter(adapter);
+            }
+        }
     }
 
     @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
+    public void onThisMonthTransactionsLoadFailed(String message) {
 
     }
 }

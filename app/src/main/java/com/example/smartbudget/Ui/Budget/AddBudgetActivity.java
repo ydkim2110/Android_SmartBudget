@@ -13,9 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.smartbudget.Database.DBBudgetUtils;
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.IBudgetLoadListener;
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
+import com.example.smartbudget.Database.BudgetRoom.DBBudgetUtils;
 import com.example.smartbudget.Interface.IDBInsertListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.BudgetModel;
@@ -23,7 +23,6 @@ import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Input.InputAccountActivity;
 import com.example.smartbudget.Ui.Input.InputAmountActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Date.DatePickerDialogFragment;
 import com.example.smartbudget.Ui.Transaction.Add.Date.IDialogSendListener;
 import com.example.smartbudget.Ui.Transaction.Add.Note.InputNoteActivity;
@@ -63,7 +62,7 @@ public class AddBudgetActivity extends AppCompatActivity implements IDialogSendL
 
     private boolean isStartDate = false;
 
-    private AccountModel mAccountModel;
+    private AccountItem mAccountItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,15 +125,15 @@ public class AddBudgetActivity extends AppCompatActivity implements IDialogSendL
         btn_cancel.setOnClickListener(v -> finish());
 
         btn_save.setOnClickListener(v -> {
-            BudgetModel budgetModel = new BudgetModel();
+            BudgetItem budgetItem = new BudgetItem();
 
-            budgetModel.setDescription(edt_description.getText().toString());
-            budgetModel.setAmount(Double.parseDouble(edt_amount.getText().toString()));
-            budgetModel.setStartDate(edt_start_date.getText().toString());
-            budgetModel.setEndDate(edt_end_date.getText().toString());
-            budgetModel.setAccountId(mAccountModel.getId());
+            budgetItem.setDescription(edt_description.getText().toString());
+            budgetItem.setAmount(Double.parseDouble(edt_amount.getText().toString()));
+            budgetItem.setStartDate(edt_start_date.getText().toString());
+            budgetItem.setEndDate(edt_end_date.getText().toString());
+            budgetItem.setAccountId(mAccountItem.getId());
 
-            DBBudgetUtils.insertBudgetAsync(MainActivity.mDBHelper, this, budgetModel);
+            DBBudgetUtils.insertBudgetAsync(MainActivity.db, this, budgetItem);
 
         });
     }
@@ -145,8 +144,8 @@ public class AddBudgetActivity extends AppCompatActivity implements IDialogSendL
         if (requestCode == INPUT_ACCOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    mAccountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
-                    edt_account.setText(mAccountModel.getName());
+                    mAccountItem = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
+                    edt_account.setText(mAccountItem.getName());
                 }
             }
         }

@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.smartbudget.Database.DBBudgetUtils;
+import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
+import com.example.smartbudget.Database.BudgetRoom.DBBudgetUtils;
 import com.example.smartbudget.Interface.IBudgetLoadListener;
 import com.example.smartbudget.Model.BudgetModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Utils.Common;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -57,7 +60,7 @@ public class RunningFragment extends Fragment implements IBudgetLoadListener {
         rv_budget.setHasFixedSize(true);
         rv_budget.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        DBBudgetUtils.getRunningBudgets(MainActivity.mDBHelper, this);
+        DBBudgetUtils.getRunningBudgets(MainActivity.db, Common.dateFormat.format(new Date()), this);
 
         return view;
     }
@@ -69,9 +72,9 @@ public class RunningFragment extends Fragment implements IBudgetLoadListener {
     }
 
     @Override
-    public void onBudgetLoadSuccess(List<BudgetModel> budgetModelList) {
+    public void onBudgetLoadSuccess(List<BudgetItem> budgetItemList) {
         Log.d(TAG, "onBudgetLoadSuccess: called!!");
-        BudgetListAdapter adapter = new BudgetListAdapter(getContext(), budgetModelList);
+        BudgetListAdapter adapter = new BudgetListAdapter(getContext(), budgetItemList);
         rv_budget.setAdapter(adapter);
     }
 

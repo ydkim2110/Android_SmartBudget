@@ -2,12 +2,11 @@ package com.example.smartbudget.Ui.Account;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.IAccountDeleteListener;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
+import com.example.smartbudget.Database.Interface.IAccountDeleteListener;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -61,7 +60,7 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment implements 
                     .setMessage(getContext().getResources().getString(R.string.alert_delete_message))
                     .setPositiveButton("OK", (dialog, which) -> {
                         dialog.dismiss();
-                        DatabaseUtils.deleteAccountAsync(MainActivity.mDBHelper, this, Common.SELECTED_ACCOUNT);
+                        DBAccountUtils.deleteAccountAsync(MainActivity.db, this, Common.SELECTED_ACCOUNT);
                     })
                     .setNegativeButton("Cancel", ((dialog, which) -> {
                         dialog.dismiss();
@@ -79,6 +78,8 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment implements 
     @Override
     public void onAccountDeleteSuccess(boolean isDeleted) {
         Log.d(TAG, "onAccountDeleteSuccess: success!!");
+        if (isDeleted) {
+        }
         Common.SELECTED_ACCOUNT = null;
     }
 

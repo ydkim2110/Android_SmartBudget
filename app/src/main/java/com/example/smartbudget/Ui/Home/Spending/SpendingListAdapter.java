@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
@@ -27,11 +28,12 @@ import butterknife.Unbinder;
 public class SpendingListAdapter extends RecyclerView.Adapter<SpendingListAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<TransactionModel> mTransactionModelList;
+    private List<TransactionItem> mTransactionModelList;
+    private TransactionItem mTransactionItem;
 
     private int lastPosition = -1;
 
-    public SpendingListAdapter(Context context, List<TransactionModel> transactionModelList) {
+    public SpendingListAdapter(Context context, List<TransactionItem> transactionModelList) {
         mContext = context;
         mTransactionModelList = transactionModelList;
 //        Collections.sort(mTransactionModelList, new Comparator<TransactionModel>() {
@@ -53,17 +55,17 @@ public class SpendingListAdapter extends RecyclerView.Adapter<SpendingListAdapte
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        TransactionModel transaction = mTransactionModelList.get(position);
+        mTransactionItem = mTransactionModelList.get(position);
 
         Category category = Common.getExpenseCategory(mTransactionModelList.get(position).getCategoryId());
 
         holder.iv_category_icon.setImageResource(category.getIconResourceID());
         holder.iv_category_icon.setBackgroundTintList(ColorStateList.valueOf(category.getIconColor()));
         holder.transaction_category.setText(category.getCategoryVisibleName(mContext));
-        holder.transaction_note.setText(transaction.getNote());
-        holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getAmount())).append("원"));
+        holder.transaction_note.setText(mTransactionItem.getDescription());
+        holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mTransactionItem.getAmount())).append("원"));
         holder.transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
-        holder.transaction_list_date.setText(transaction.getDate());
+        holder.transaction_list_date.setText(mTransactionItem.getDate());
 
         setAnimation(holder.itemView, position);
 

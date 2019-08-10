@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.smartbudget.Model.TransactionModel;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
@@ -28,10 +28,10 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
     private static final String TAG = "WeekTransactionAdapter";
 
     private Context mContext;
-    private HashMap<String, List<TransactionModel>> mHashMap;
+    private HashMap<String, List<TransactionItem>> mHashMap;
     private ArrayList<String> mKeys = new ArrayList<>();
 
-    public WeekTransactionAdapter(Context mContext, HashMap<String, List<TransactionModel>> hashMap) {
+    public WeekTransactionAdapter(Context mContext, HashMap<String, List<TransactionItem>> hashMap) {
         this.mContext = mContext;
         this.mHashMap = hashMap;
         for (String aKey : mHashMap.keySet()) {
@@ -56,9 +56,9 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
         holder.tv_date_2.setText(new SimpleDateFormat("EE").format(date));
         holder.tv_date_3.setText(new SimpleDateFormat("MMMM yyyy").format(date));
 
-        List<TransactionModel> value = mHashMap.get(mKeys.get(position));
+        List<TransactionItem> value = mHashMap.get(mKeys.get(position));
 
-        for (TransactionModel model : value) {
+        for (TransactionItem model : value) {
             if(model.getType().equals("Expense")) {
                 total -= model.getAmount();
             }

@@ -8,17 +8,17 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
-import com.example.smartbudget.Interface.IAccountDeleteListener;
+import com.example.smartbudget.Database.Model.SpendingByPattern;
+import com.example.smartbudget.Database.Interface.IAccountDeleteListener;
 import com.example.smartbudget.Interface.IAccountLoadListener;
 import com.example.smartbudget.Interface.IDBUpdateListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
+import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Interface.IDBInsertListener;
 import com.example.smartbudget.Interface.IAccountsLoadListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
-import com.example.smartbudget.Database.Model.SpendingPattern;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
@@ -111,7 +111,7 @@ public class DatabaseUtils {
         task.execute();
     }
 
-    public static void getThisMonthTransactionByCategory(DBHelper db, String date, IThisMonthTransactionByCategoryLoadListener listener) {
+    public static void getThisMonthTransactionByCategory(DBHelper db, String date, IThisMonthTransactionsByCategoryLoadListener listener) {
         GetThisMonthTransactionByCategoryAsync task = new GetThisMonthTransactionByCategoryAsync(db, date, listener);
         task.execute();
     }
@@ -887,7 +887,7 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetThisMonthTransactionByPatternAsync extends AsyncTask<Void, Void, List<SpendingPattern>> {
+    private static class GetThisMonthTransactionByPatternAsync extends AsyncTask<Void, Void, List<SpendingByPattern>> {
 
         DBHelper db;
         IThisMonthTransactionByPatternLoadListener mListener;
@@ -900,14 +900,14 @@ public class DatabaseUtils {
         }
 
         @Override
-        protected List<SpendingPattern> doInBackground(Void... voids) {
+        protected List<SpendingByPattern> doInBackground(Void... voids) {
             Cursor cursor = db.getThisMonthTransactionsByPattern(date);
 
-            List<SpendingPattern> spendingPatternList = new ArrayList<>();
+            List<SpendingByPattern> spendingPatternList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 try {
                     do {
-                        SpendingPattern spendingPattern = new SpendingPattern();
+                        SpendingByPattern spendingPattern = new SpendingByPattern();
                         String pattern = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Transaction.COL_PATTERN));
                         String patternSum = cursor.getString(cursor.getColumnIndexOrThrow("pattern_sum"));
                         String patternCount = cursor.getString(cursor.getColumnIndexOrThrow("pattern_count"));
@@ -927,7 +927,7 @@ public class DatabaseUtils {
         }
 
         @Override
-        protected void onPostExecute(List<SpendingPattern> spendingPatternList) {
+        protected void onPostExecute(List<SpendingByPattern> spendingPatternList) {
             super.onPostExecute(spendingPatternList);
             if (spendingPatternList != null)
                 mListener.onThisMonthTransactionByPatternLoadSuccess(spendingPatternList);
@@ -937,10 +937,10 @@ public class DatabaseUtils {
     private static class GetThisMonthTransactionByCategoryAsync extends AsyncTask<Void, Void, List<ExpenseByCategory>> {
 
         DBHelper db;
-        IThisMonthTransactionByCategoryLoadListener mListener;
+        IThisMonthTransactionsByCategoryLoadListener mListener;
         String date = "";
 
-        public GetThisMonthTransactionByCategoryAsync(DBHelper db, String date, IThisMonthTransactionByCategoryLoadListener listener) {
+        public GetThisMonthTransactionByCategoryAsync(DBHelper db, String date, IThisMonthTransactionsByCategoryLoadListener listener) {
             this.db = db;
             mListener = listener;
             this.date = date;

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Model.AccountModel;
@@ -40,7 +41,7 @@ public class AccountDetailActivity extends AppCompatActivity implements IThisMon
 
     private AccountDetailAdapter mAdapter;
 
-    private AccountModel account;
+    private AccountItem account;
 
 
     @Override

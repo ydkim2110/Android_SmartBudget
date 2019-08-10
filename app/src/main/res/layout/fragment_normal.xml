@@ -4,11 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#e9e9e9"
     tools:context=".Ui.Home.Spending.NormalFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_normal"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_no_transactions"
+        android:visibility="gone"
+        android:text="No transactions..."
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

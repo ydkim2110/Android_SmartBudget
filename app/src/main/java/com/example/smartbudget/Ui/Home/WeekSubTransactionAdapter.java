@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.TransactionModel;
@@ -31,9 +32,9 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
     private static final String TAG = "WeekSubTransactionAdapter";
 
     private Context mContext;
-    private List<TransactionModel> mTransactionModelList;
+    private List<TransactionItem> mTransactionModelList;
 
-    public WeekSubTransactionAdapter(Context mContext, List<TransactionModel> mTransactionModelList) {
+    public WeekSubTransactionAdapter(Context mContext, List<TransactionItem> mTransactionModelList) {
         this.mContext = mContext;
         this.mTransactionModelList = mTransactionModelList;
     }
@@ -54,7 +55,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         int id = mTransactionModelList.get(position).getId();
-        String description = mTransactionModelList.get(position).getNote();
+        String description = mTransactionModelList.get(position).getDescription();
         int amount = (int) mTransactionModelList.get(position).getAmount();
         String type = mTransactionModelList.get(position).getType();
         String pattern = mTransactionModelList.get(position).getPattern();
@@ -70,7 +71,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             holder.iv_transaction_icon.setBackgroundTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
             holder.tv_transaction_category.setText(expenseCategory.getCategoryVisibleName(mContext));
 
-            holder.tv_transaction_note.setText(mTransactionModelList.get(position).getNote());
+            holder.tv_transaction_note.setText(mTransactionModelList.get(position).getDescription());
             holder.tv_transaction_amount.setText(new StringBuilder("-").append(Common.changeNumberToComma(amount)).append("원"));
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         }
@@ -81,7 +82,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             holder.iv_transaction_icon.setBackgroundTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
             holder.tv_transaction_category.setText(incomeCategory.getCategoryVisibleName(mContext));
 
-            holder.tv_transaction_note.setText(mTransactionModelList.get(position).getNote());
+            holder.tv_transaction_note.setText(mTransactionModelList.get(position).getDescription());
             holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorRevenue));
         }

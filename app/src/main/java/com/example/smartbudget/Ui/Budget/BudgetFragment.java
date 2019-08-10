@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import android.view.ViewGroup;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
@@ -26,7 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class BudgetFragment extends Fragment implements IThisMonthTransactionByCategoryLoadListener {
+public class BudgetFragment extends Fragment implements IThisMonthTransactionsByCategoryLoadListener {
 
     private static final String TAG = BudgetFragment.class.getSimpleName();
 

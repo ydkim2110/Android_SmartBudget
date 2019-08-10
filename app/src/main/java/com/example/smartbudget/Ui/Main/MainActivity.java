@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Interface.IDateChangeListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
@@ -109,6 +110,8 @@ public class MainActivity extends AppCompatActivity
     private Animation fabClose;
     private boolean isFabOpen = false;
 
+    public static BudgetDatabase db;
+
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
@@ -124,6 +127,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        db = BudgetDatabase.getInstance(this);
 
         fabOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open);
         fabClose = AnimationUtils.loadAnimation(this, R.anim.fab_close);

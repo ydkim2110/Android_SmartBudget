@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
@@ -27,7 +31,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CalendarActivity extends AppCompatActivity implements IThisMonthTransactionLoadListener {
+public class CalendarActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
 
     private static final String TAG = CalendarActivity.class.getSimpleName();
 
@@ -41,6 +45,7 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
     private List<Date> mDateList = new ArrayList<>();
     private Calendar mCalendar = Calendar.getInstance(Locale.KOREA);
     private String passedDate = "";
+    private Date displayDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,14 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
 
         if (getIntent() != null) {
             passedDate = getIntent().getStringExtra("date");
+
+            try {
+                displayDate = Common.dateFormat.parse(passedDate);;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                displayDate = new Date();
+            }
+
             int year = Integer.parseInt(passedDate.split("-")[0]);
             int month = Integer.parseInt(passedDate.split("-")[1]);
             int dayOfMonth = Integer.parseInt(passedDate.split("-")[2]);
@@ -58,10 +71,8 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
             mCalendar.set(Calendar.MONTH, month-1);
             mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             Log.d(TAG, "onCreate: passed Date: "+mCalendar.getTime());
+
         }
-
-        Log.d(TAG, "onCreate: date: "+passedDate);
-
 
         initView();
     }
@@ -72,7 +83,7 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
 
         setSupportActionBar(toolbar);
         setTitle(getResources().getString(R.string.toolbar_title_calendar));
-        getSupportActionBar().setSubtitle(passedDate);
+        getSupportActionBar().setSubtitle(Common.yearmonthDateFormate.format(displayDate));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
@@ -110,7 +121,7 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
 
         Log.d(TAG, "setUpCalendar: monthCalendar.getTime(): "+monthCalendar.getTime());
 
-        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, passedDate, this);
+        DBTransactionUtils.getThisMonthTransactions(MainActivity.db, passedDate, this);
 
         while (mDateList.size() < MAX_CALENDAR_DAYS) {
             mDateList.add(monthCalendar.getTime());
@@ -119,14 +130,15 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
     }
 
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        Log.d(TAG, "onTransactionLoadSuccess: "+transactionList.size());
-        mAdapter = new CalendarAdapter(this, mDateList, mCalendar, transactionList);
-        rv_calendar.setAdapter(mAdapter);
+    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        Log.d(TAG, "onThisMonthTransactionsLoadSuccess: called!!");
+            mAdapter = new CalendarAdapter(this, mDateList, mCalendar, transactionItemList);
+            rv_calendar.setAdapter(mAdapter);
     }
 
     @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
-
+    public void onThisMonthTransactionsLoadFailed(String message) {
+        Log.d(TAG, "onThisMonthTransactionsLoadFailed: called!!");
+        Toast.makeText(this, "[Failed!!]", Toast.LENGTH_SHORT).show();
     }
 }

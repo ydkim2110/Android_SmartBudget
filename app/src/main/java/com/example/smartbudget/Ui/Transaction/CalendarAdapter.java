@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
@@ -39,9 +40,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     private List<Date> mDateList;
     private Calendar mCalendar;
     ;
-    private List<TransactionModel> mTransactionList;
+    private List<TransactionItem> mTransactionList;
 
-    public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar, List<TransactionModel> transactionList) {
+    public CalendarAdapter(Context context, List<Date> dateList, Calendar calendar, List<TransactionItem> transactionList) {
         mContext = context;
         mDateList = dateList;
         mCalendar = calendar;

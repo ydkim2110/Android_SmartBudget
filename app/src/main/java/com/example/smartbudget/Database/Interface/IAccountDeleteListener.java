@@ -1,4 +1,4 @@
-package com.example.smartbudget.Interface;
+package com.example.smartbudget.Database.Interface;
 
 import com.example.smartbudget.Model.AccountModel;
 

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IDBInsertListener;
 import com.example.smartbudget.Interface.IDBUpdateListener;
@@ -56,7 +57,7 @@ public class AddAccountActivity extends AppCompatActivity implements IDBInsertLi
     private DecimalFormat dfnd;
     private boolean hasFractionalPart;
 
-    private AccountModel passedAccount;
+    private AccountItem passedAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

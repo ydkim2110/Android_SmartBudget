@@ -2,7 +2,7 @@ package com.example.smartbudget.Ui.Home;
 
 import com.example.smartbudget.Model.TransactionModel;
 
-public class TransactionItem extends ListItem {
+public class Transaction123 extends ListItem {
 
     private TransactionModel transactionModel;
 

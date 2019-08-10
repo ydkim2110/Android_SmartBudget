@@ -64,7 +64,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 dateViewHolder.setData(date, dateItem.getTotal());
                 break;
             case ListItem.TYPE_TRANSACTION:
-                TransactionItem transactionItem = (TransactionItem) consolidatedList.get(i);
+                Transaction123 transactionItem = (Transaction123) consolidatedList.get(i);
                 TransactionViewHolder transactionViewHolder = (TransactionViewHolder) viewHolder;
 
                 String description = transactionItem.getTransaction().getNote();

@@ -1,12 +1,10 @@
-package com.example.smartbudget.Interface;
+package com.example.smartbudget.Database.Interface;
 
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
-import com.example.smartbudget.Database.Model.SpendingPattern;
-import com.example.smartbudget.Model.TransactionModel;
 
 import java.util.List;
 
-public interface IThisMonthTransactionByCategoryLoadListener {
+public interface IThisMonthTransactionsByCategoryLoadListener {
     void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList);
     void onThisMonthTransactionByCategoryLoadFailed(String message);
 }

@@ -6,15 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,21 +14,30 @@ import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Database.Model.SpendingPattern;
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.example.smartbudget.Database.Interface.ILastFewDaysTransactionsLoadListener;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByPatternLoadListener;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.Model.SpendingByPattern;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IDateChangeListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
-import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
-import com.example.smartbudget.Model.TransactionModel;
+import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryActivity;
 import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
-import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.Spending.SpendingActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 
@@ -49,10 +49,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +59,8 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment implements IDateChangeListener,
-        IThisMonthTransactionLoadListener, IThisMonthTransactionByPatternLoadListener, IThisWeekTransactionLoadListener {
+        IThisMonthTransactionsByPatternLoadListener,
+        IThisMonthTransactionsLoadListener, ILastFewDaysTransactionsLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -136,7 +134,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     private WeekTransactionAdapter mAdapter;
 
-    private HashMap<String, List<TransactionModel>> groupedHashMap;
+    private HashMap<String, List<TransactionItem>> groupedHashMap;
 
     private int total = 0;
     private int normal_percentage = 0;
@@ -243,18 +241,18 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private HashMap<String, List<TransactionModel>> groupDataIntoHashMap(List<TransactionModel> listOfTransaction) {
+    private HashMap<String, List<TransactionItem>> groupDataIntoHashMap(List<TransactionItem> transactionItemList) {
 
-        HashMap<String, List<TransactionModel>> groupedHashMap = new HashMap<>();
+        HashMap<String, List<TransactionItem>> groupedHashMap = new HashMap<>();
 
-        if (listOfTransaction != null) {
-            for (TransactionModel dataModel : listOfTransaction) {
+        if (transactionItemList != null) {
+            for (TransactionItem dataModel : transactionItemList) {
                 String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getDate()));
 
                 if (groupedHashMap.containsKey(hashMapkey)) {
                     groupedHashMap.get(hashMapkey).add(dataModel);
                 } else {
-                    List<TransactionModel> list = new ArrayList<>();
+                    List<TransactionItem> list = new ArrayList<>();
                     list.add(dataModel);
                     groupedHashMap.put(hashMapkey, list);
                 }
@@ -265,69 +263,19 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     }
 
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        int expense = 0;
-        int income = 0;
-        if (transactionList != null) {
-            Common.TRANSACTION_LIST = transactionList;
+    public void onThisMonthTransactionsByPatternLoadSuccess(List<SpendingByPattern> spendingPatterns) {
+        Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: called!!");
+        Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: size: "+spendingPatterns.size());
 
-            for (TransactionModel model : transactionList) {
-                if (model.getType().equals("Income")) {
-                    income += model.getAmount();
-                } else if (model.getType().equals("Expense")) {
-                    expense += model.getAmount();
-                }
-            }
-        }
-        Common.animateTextView(1000, 0, income, tv_income_total);
-        Common.animateTextView(1000, 0, expense, tv_expense_total);
-        Common.animateTextView(1000, 0, (income - expense), tv_balance);
-
-        setProgressBar(expense);
-    }
-
-
-    @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onThisWeekTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        if (transactionList == null) {
-            rv_transaction.setVisibility(View.GONE);
-            ll_no_items.setVisibility(View.VISIBLE);
-        } else {
-            rv_transaction.setVisibility(View.VISIBLE);
-            ll_no_items.setVisibility(View.GONE);
+        for (int i = 0; i < spendingPatterns.size(); i++) {
+            Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: "+spendingPatterns.get(i).getSum());
         }
 
-        groupedHashMap = groupDataIntoHashMap(transactionList);
-
-        Set set = groupedHashMap.entrySet();
-
-        Iterator iterator = set.iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            Log.d(TAG, "onTransactionLoadSuccess: " + entry.getKey());
-        }
-
-        loadData();
-    }
-
-    @Override
-    public void onThisWeekTransactionDeleteSuccess(boolean isSuccess) {
-
-    }
-
-    @Override
-    public void onThisMonthTransactionByPatternLoadSuccess(List<SpendingPattern> spendingPatternList) {
         total = 0;
         normal_percentage = 0;
         waste_percentage = 0;
         invest_percentage = 0;
+
         tv_normal.setText(new StringBuilder("Normal\n").append("0.0%"));
         tv_normal_sum.setText(zeroMoney);
         tv_waste.setText(new StringBuilder("Waste\n").append("0.0%"));
@@ -335,29 +283,36 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         tv_invest.setText(new StringBuilder("Invest\n").append("0.0%"));
         tv_invest_sum.setText(zeroMoney);
 
-        for (SpendingPattern spendingPattern : spendingPatternList) {
+        for (SpendingByPattern spendingPattern : spendingPatterns) {
             {
                 total += (int) spendingPattern.getSum();
             }
         }
+
         tv_total_spending.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
 
-        for (SpendingPattern spendingPattern : spendingPatternList) {
-            if (spendingPattern.getPattern().equals("Normal")) {
+        for (SpendingByPattern spendingPattern : spendingPatterns) {
+            if (spendingPattern.getPattern().equals("Normal") && total != 0) {
                 normal_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_normal.setText(new StringBuilder("Normal\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
                 tv_normal_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
-            } else if (spendingPattern.getPattern().equals("Waste")) {
+            } else if (spendingPattern.getPattern().equals("Waste") && total != 0) {
                 waste_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_waste.setText(new StringBuilder("Waste\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
                 tv_waste_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
-            } else if (spendingPattern.getPattern().equals("Invest")) {
+            } else if (spendingPattern.getPattern().equals("Invest") && total != 0) {
                 invest_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_invest.setText(new StringBuilder("Invest\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
                 tv_invest_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
             }
         }
         setCircleProgressbar(normal_percentage, waste_percentage, invest_percentage);
+    }
+
+    @Override
+    public void onThisMonthTransactionsByPatternLoadFailed(String message) {
+        Log.d(TAG, "onThisMonthTransactionsByPatternLoadFailed: called!!");
+        Toast.makeText(getContext(), "[Failed]", Toast.LENGTH_SHORT).show();
     }
 
     private void setCircleProgressbar(int normal_percentage, int waste_percentage, int invest_percentage) {
@@ -380,11 +335,6 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     }
 
     @Override
-    public void onThisMonthTransactionByPatternLoadFailed(String message) {
-
-    }
-
-    @Override
     public void onDateChanged(String date) {
         Log.d(TAG, "onDateChanged: "+date);
         currentDate = date;
@@ -393,8 +343,11 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     private void loadFromDatabase(String date) {
         Log.d(TAG, "loadFromDatabase: called!!");
-        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, date, this);
-        DatabaseUtils.getThisMonthTransactionByPattern(MainActivity.mDBHelper, date, this);
+
+        DBTransactionUtils.getThisMonthTransactions(MainActivity.db, date, this);
+
+        // Expense By Pattern
+        DBTransactionUtils.getThisMonthTransactionByPattern(MainActivity.db, date, this);
 
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -422,6 +375,58 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
                 .append(Common.monthdayFormat.format(endDate))
                 .append(")"));
 
-        DatabaseUtils.getLastFewDaysTransactions(MainActivity.mDBHelper, Common.dateFormat.format(startDate), Common.dateFormat.format(endDate), this);
+        DBTransactionUtils.getLastFewDaysTransactions(MainActivity.db, Common.dateFormat.format(startDate),
+                Common.dateFormat.format(endDate), this);
+    }
+
+    @Override
+    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        int expense = 0;
+        int income = 0;
+        if (transactionItemList != null) {
+            Common.TRANSACTION_LIST = transactionItemList;
+
+            for (TransactionItem model : transactionItemList) {
+                if (model.getType().equals("Income")) {
+                    income += model.getAmount();
+                } else if (model.getType().equals("Expense")) {
+                    expense += model.getAmount();
+                }
+            }
+        }
+        Common.animateTextView(1000, 0, income, tv_income_total);
+        Common.animateTextView(1000, 0, expense, tv_expense_total);
+        Common.animateTextView(1000, 0, (income - expense), tv_balance);
+
+        setProgressBar(expense);
+    }
+
+    @Override
+    public void onThisMonthTransactionsLoadFailed(String message) {
+        Log.d(TAG, "onThisMonthTransactionsLoadFailed: called!!");
+        Toast.makeText(getContext(), "Failed!!", Toast.LENGTH_SHORT).show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onLastFewDaysTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        Log.d(TAG, "onLastFewDaysTransactionsLoadSuccess: called!!");
+        if (transactionItemList == null) {
+            rv_transaction.setVisibility(View.GONE);
+            ll_no_items.setVisibility(View.VISIBLE);
+        } else {
+            rv_transaction.setVisibility(View.VISIBLE);
+            ll_no_items.setVisibility(View.GONE);
+        }
+
+        groupedHashMap = groupDataIntoHashMap(transactionItemList);
+
+        loadData();
+    }
+
+    @Override
+    public void onLastFewDaysTransactionsFailed(String message) {
+        Log.d(TAG, "onLastFewDaysTransactionsFailed: called!!");
+        Toast.makeText(getContext(), "Failed!!", Toast.LENGTH_SHORT).show();
     }
 }

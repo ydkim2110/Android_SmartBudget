@@ -10,8 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -25,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class InvestFragment extends Fragment implements IThisMonthTransactionLoadListener {
+public class InvestFragment extends Fragment implements IThisMonthTransactionsLoadListener {
 
     private static final String TAG = InvestFragment.class.getSimpleName();
 
@@ -50,6 +54,8 @@ public class InvestFragment extends Fragment implements IThisMonthTransactionLoa
 
     @BindView(R.id.rv_invest)
     RecyclerView rv_invest;
+    @BindView(R.id.tv_no_transactions)
+    TextView tv_no_transactions;
 
     Unbinder mUnbinder;
 
@@ -67,19 +73,27 @@ public class InvestFragment extends Fragment implements IThisMonthTransactionLoa
             passed_date = getArguments().getString("passed_date");
         }
 
-        DatabaseUtils.getThisMonthTransactionListPattern(MainActivity.mDBHelper, passed_date,"Invest", this);
+        DBTransactionUtils.getThisMonthTransactionListByPattern(MainActivity.db, passed_date,"Invest", this);
 
         return view;
     }
 
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionList);
-        rv_invest.setAdapter(adapter);
+    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        if (transactionItemList != null) {
+            if (transactionItemList.size() < 1) {
+                tv_no_transactions.setVisibility(View.VISIBLE);
+            }
+            else {
+                tv_no_transactions.setVisibility(View.GONE);
+                SpendingListAdapter adapter = new SpendingListAdapter(getContext(), transactionItemList);
+                rv_invest.setAdapter(adapter);
+            }
+        }
     }
 
     @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
+    public void onThisMonthTransactionsLoadFailed(String message) {
 
     }
 }

@@ -1,15 +1,15 @@
 package com.example.smartbudget.Database.Model;
 
-public class SpendingPattern {
+public class SpendingByPattern {
 
     private String pattern;
     private double sum;
     private int count;
 
-    public SpendingPattern() {
+    public SpendingByPattern() {
     }
 
-    public SpendingPattern(String pattern, double sum, int count) {
+    public SpendingByPattern(String pattern, double sum, int count) {
         this.pattern = pattern;
         this.sum = sum;
         this.count = count;

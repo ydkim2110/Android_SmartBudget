@@ -59,5 +59,11 @@ dependencies {
     // Compact Calendar
     implementation 'com.github.sundeepk:compact-calendar-view:2.0.2.2'
 
+    // Material
     implementation 'com.google.android.material:material:1.0.0-beta01'
+
+    // Room
+    implementation 'androidx.room:room-runtime:2.1.0'
+    implementation 'androidx.room:room-rxjava2:2.1.0'
+    annotationProcessor 'androidx.room:room-compiler:2.1.0'
 }

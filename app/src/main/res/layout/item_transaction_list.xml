@@ -6,6 +6,7 @@
     android:background="@android:color/white"
     android:elevation="4dp"
     android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginTop="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 

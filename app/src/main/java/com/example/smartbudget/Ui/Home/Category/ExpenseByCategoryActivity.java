@@ -10,22 +10,20 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
-import com.example.smartbudget.Interface.IThisMonthTransactionByCategoryLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Budget.BudgetAdapter;
 import com.example.smartbudget.Ui.Main.MainActivity;
-import com.example.smartbudget.Utils.Common;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ExpenseByCategoryActivity extends AppCompatActivity implements IThisMonthTransactionByCategoryLoadListener {
+public class ExpenseByCategoryActivity extends AppCompatActivity implements IThisMonthTransactionsByCategoryLoadListener {
 
     private static final String TAG = ExpenseByCategoryActivity.class.getSimpleName();
 
@@ -65,7 +63,7 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
         });
 
 
-        DatabaseUtils.getThisMonthTransactionByCategory(MainActivity.mDBHelper, passed_date, this);
+        DBTransactionUtils.getThisMonthTransactionByCategory(MainActivity.db, passed_date, this);
 
         rv_expense_by_category.setHasFixedSize(true);
         rv_expense_by_category.setLayoutManager(new LinearLayoutManager(this));

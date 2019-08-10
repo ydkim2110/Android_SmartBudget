@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
@@ -27,14 +28,14 @@ import butterknife.Unbinder;
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<AccountModel> mAccountModelList;
+    private List<AccountItem> mAccountModelList;
     public static BSAccountMenuFragment mBSAccountMenuFragment;
 
     private int colorRevenue;
     private int colorExpense;
     private int balance = 0;
 
-    public AccountAdapter(Context context, List<AccountModel> accountModelList) {
+    public AccountAdapter(Context context, List<AccountItem> accountModelList) {
         mContext = context;
         mAccountModelList = accountModelList;
         colorRevenue = ContextCompat.getColor(mContext, R.color.colorRevenue);

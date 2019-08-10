@@ -12,10 +12,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.IAccountDeleteListener;
-import com.example.smartbudget.Interface.ISumAccountsLoadListener;
-import com.example.smartbudget.Model.AccountModel;
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
+import com.example.smartbudget.Database.Interface.IAccountsLoadListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
@@ -29,7 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AccountActivity extends AppCompatActivity implements ISumAccountsLoadListener {
+public class AccountActivity extends AppCompatActivity implements IAccountsLoadListener {
 
     private static final String TAG = AccountActivity.class.getSimpleName();
 
@@ -78,7 +77,7 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
 
     private void loadData() {
         Log.d(TAG, "loadData: called!!");
-        DatabaseUtils.getSumAccountsByType(MainActivity.mDBHelper, this);
+        DBAccountUtils.getSumAccountsByType(MainActivity.db, this);
     }
 
     private void initView() {
@@ -143,14 +142,15 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
     }
 
     @Override
-    public void onSumAccountsLoadSuccess(List<AccountModel> accountModelList) {
-        if (accountModelList != null) {
-            for (int i = 0; i < accountModelList.size(); i++) {
-                if (accountModelList.get(i).getType().equals("asset")) {
-                    assetTotal = (int) accountModelList.get(i).getAmount();
+    public void onAccountsLoadSuccess(List<AccountItem> accountItemList) {
+        Log.d(TAG, "onAccountsLoadSuccess: called!!");
+        if (accountItemList != null) {
+            for (int i = 0; i < accountItemList.size(); i++) {
+                if (accountItemList.get(i).getType().equals("asset")) {
+                    assetTotal = (int) accountItemList.get(i).getAmount();
                 }
-                else if (accountModelList.get(i).getType().equals("debt")) {
-                    debtTotal = (int) accountModelList.get(i).getAmount();
+                else if (accountItemList.get(i).getType().equals("debt")) {
+                    debtTotal = (int) accountItemList.get(i).getAmount();
                 }
             }
         }
@@ -160,7 +160,7 @@ public class AccountActivity extends AppCompatActivity implements ISumAccountsLo
     }
 
     @Override
-    public void onSumAccountsLoadFailed(String message) {
-
+    public void onAccountsLoadFailed(String message) {
+        Log.d(TAG, "onAccountsLoadFailed: called!!");
     }
 }

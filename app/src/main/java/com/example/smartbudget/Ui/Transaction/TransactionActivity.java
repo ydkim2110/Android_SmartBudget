@@ -22,6 +22,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
@@ -45,7 +48,7 @@ import java.util.TimeZone;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TransactionActivity extends AppCompatActivity implements IThisMonthTransactionLoadListener {
+public class TransactionActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
 
     private static final String TAG = TransactionActivity.class.getSimpleName();
 
@@ -90,7 +93,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     private boolean isExpanded = false;
     private String currentDate;
 
-    private HashMap<String, List<TransactionModel>> groupedHashMap;
+    private HashMap<String, List<TransactionItem>> groupedHashMap;
 
     private Animation fabOpen;
     private Animation fabClose;
@@ -185,7 +188,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     }
 
     private void loadData(Date date) {
-        DatabaseUtils.getThisMonthTransaction(MainActivity.mDBHelper, Common.dateFormat.format(date), this);
+        DBTransactionUtils.getThisMonthTransactions(MainActivity.db, Common.dateFormat.format(date), this);
     }
 
     @Override
@@ -231,9 +234,31 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
+    private HashMap<String, List<TransactionItem>> groupDataIntoHashMap(List<TransactionItem> transactionItemList) {
+
+        HashMap<String, List<TransactionItem>> groupedHashMap = new HashMap<>();
+
+        if (transactionItemList != null) {
+            for (TransactionItem dataModel : transactionItemList) {
+                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getDate()));
+
+                if (groupedHashMap.containsKey(hashMapkey)) {
+                    groupedHashMap.get(hashMapkey).add(dataModel);
+                } else {
+                    List<TransactionItem> list = new ArrayList<>();
+                    list.add(dataModel);
+                    groupedHashMap.put(hashMapkey, list);
+                }
+            }
+        }
+
+        return groupedHashMap;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        if (transactionList.size() < 1) {
+    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        if (transactionItemList.size() < 1) {
             rv_transaction.setVisibility(View.INVISIBLE);
             tv_no_item.setVisibility(View.VISIBLE);
         } else {
@@ -244,8 +269,8 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         int totalIncome = 0;
         int totalExpense = 0;
 
-        if (transactionList != null) {
-            for (TransactionModel model : transactionList) {
+        if (transactionItemList != null) {
+            for (TransactionItem model : transactionItemList) {
                 if (model.getType().equals("Income")) {
                     totalIncome = (int) (totalIncome + model.getAmount());
                     Log.d(TAG, "onTransactionLoadSuccess: income: " + totalIncome);
@@ -261,36 +286,14 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         Common.animateTextView(500, 0, totalIncome, tv_total_income);
         Common.animateTextView(500, 0, totalExpense, tv_total_expense);
 
-        groupedHashMap = groupDataIntoHashMap(transactionList);
+        groupedHashMap = groupDataIntoHashMap(transactionItemList);
 
         WeekTransactionAdapter adapter = new WeekTransactionAdapter(this, groupedHashMap);
         rv_transaction.setAdapter(adapter);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private HashMap<String, List<TransactionModel>> groupDataIntoHashMap(List<TransactionModel> listOfTransaction) {
-
-        HashMap<String, List<TransactionModel>> groupedHashMap = new HashMap<>();
-
-        if (listOfTransaction != null) {
-            for (TransactionModel dataModel : listOfTransaction) {
-                String hashMapkey = Common.dateFormat.format(DateHelper.changeStringToDate(dataModel.getDate()));
-
-                if (groupedHashMap.containsKey(hashMapkey)) {
-                    groupedHashMap.get(hashMapkey).add(dataModel);
-                } else {
-                    List<TransactionModel> list = new ArrayList<>();
-                    list.add(dataModel);
-                    groupedHashMap.put(hashMapkey, list);
-                }
-            }
-        }
-
-        return groupedHashMap;
-    }
-
     @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
+    public void onThisMonthTransactionsLoadFailed(String message) {
 
     }
 }
