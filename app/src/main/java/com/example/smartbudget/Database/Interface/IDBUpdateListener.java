@@ -1,4 +1,4 @@
-package com.example.smartbudget.Interface;
+package com.example.smartbudget.Database.Interface;
 
 public interface IDBUpdateListener {
     void onDBUpdateSuccess(boolean isUpdated);

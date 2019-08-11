@@ -12,9 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.smartbudget.Interface.IAccountsLoadListener;
-import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Model.AccountModel;
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
+import com.example.smartbudget.Database.Interface.IAccountsLoadListener;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -25,7 +25,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class InputAccountActivity extends AppCompatActivity implements IAccountsLoadListener, InputAccountAdapter.SaveButtonListener {
+public class InputAccountActivity extends AppCompatActivity
+        implements IAccountsLoadListener, InputAccountAdapter.SaveButtonListener {
 
     private static final String TAG = InputAccountActivity.class.getSimpleName();
 
@@ -40,7 +41,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
     @BindView(R.id.tv_no_account_message)
     TextView tv_no_account_message;
 
-    private AccountModel selectedAccount = null;
+    private AccountItem selectedAccount = null;
     private String passedAccountName = "";
 
     @Override
@@ -49,7 +50,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
         setContentView(R.layout.activity_input_account);
         Log.d(TAG, "onCreate: started!!");
 
-        DatabaseUtils.getAllAccounts(MainActivity.mDBHelper, this);
+        DBAccountUtils.getAllAccounts(MainActivity.db, this);
 
         // todo: 이전 선택된 아이템은 선택되어졌다고 표시하기
         if (getIntent() != null) {
@@ -92,7 +93,7 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
     }
 
     @Override
-    public void onAccountsLoadSuccess(List<AccountModel> accountList) {
+    public void onAccountsLoadSuccess(List<AccountItem> accountList) {
         if (accountList == null) {
             tv_no_account_message.setVisibility(View.VISIBLE);
             accountList = new ArrayList<>();
@@ -107,12 +108,12 @@ public class InputAccountActivity extends AppCompatActivity implements IAccounts
     }
 
     @Override
-    public void onAccountDeleteSuccess(boolean isSuccess) {
+    public void onAccountsLoadFailed(String message) {
 
     }
 
     @Override
-    public void onUpdate(boolean status, AccountModel accountModel) {
+    public void onUpdate(boolean status, AccountItem accountModel) {
         if (status) {
             rv_input_account.setEnabled(true);
             selectedAccount = accountModel;

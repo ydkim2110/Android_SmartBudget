@@ -16,9 +16,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.R;
+import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryDetailActivity;
+import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
@@ -34,10 +39,12 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
     private Context mContext;
     private List<ExpenseByCategory> mExpenseByCategoryList;
+    private String passed_date;
 
-    public BudgetAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList) {
+    public BudgetAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date) {
         this.mContext = context;
         this.mExpenseByCategoryList = expenseByCategoryList;
+        this.passed_date = passed_date;
     }
 
     @NonNull
@@ -67,14 +74,15 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
         holder.pb_budget.setMax(amount);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(holder.pb_budget, "progress", 0, mExpenseByCategoryList.get(position).getSumByCategory());
-        progressAnim.setDuration(500);
+        progressAnim.setDuration(1000);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
-            Intent viewTransactionIntent = new Intent(view.getContext(), ViewTransactionActivity.class);
-            viewTransactionIntent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, category.getCategoryVisibleName(mContext));
-            view.getContext().startActivity(viewTransactionIntent);
+            Intent intent = new Intent(view.getContext(), ExpenseByCategoryDetailActivity.class);
+            intent.putExtra("passed_date", passed_date);
+            intent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, category.getCategoryVisibleName(mContext));
+            view.getContext().startActivity(intent);
         });
     }
 

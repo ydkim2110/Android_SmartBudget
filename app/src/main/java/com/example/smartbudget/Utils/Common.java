@@ -48,6 +48,7 @@ public class Common {
     public static final String EXTRA_PASS_BUDGET_CATEGORY = "PASS_BUDGET_CATEGORY";
 
     public static final String EXTRA_EDIT_TRANSACTION = "EDIT_TRANSACTION";
+    public static final String EXTRA_EDIT_BUDGET = "EDIT_BUDGET";
 
     public static final SimpleDateFormat yearmonthDateFormate = new SimpleDateFormat("yyyy MMMM", Locale.KOREA);
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

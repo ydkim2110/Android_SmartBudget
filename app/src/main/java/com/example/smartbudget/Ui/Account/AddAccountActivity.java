@@ -16,8 +16,8 @@ import android.widget.EditText;
 
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.DatabaseUtils;
-import com.example.smartbudget.Interface.IDBInsertListener;
-import com.example.smartbudget.Interface.IDBUpdateListener;
+import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
+import com.example.smartbudget.Database.Interface.IDBUpdateListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
@@ -29,7 +29,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AddAccountActivity extends AppCompatActivity implements IDBInsertListener, IDBUpdateListener {
+public class AddAccountActivity extends AppCompatActivity implements IBudgetInsertListener, IDBUpdateListener {
 
     private static final String TAG = AddAccountActivity.class.getSimpleName();
 
@@ -232,7 +232,17 @@ public class AddAccountActivity extends AppCompatActivity implements IDBInsertLi
     }
 
     @Override
-    public void onDBInsertSuccess(Boolean isInserted) {
+    public void onDBUpdateSuccess(boolean isUpdated) {
+        Log.d(TAG, "onDBUpdateSuccess: called!!");
+    }
+
+    @Override
+    public void onDBUpdateFailed(String message) {
+        Log.d(TAG, "onDBUpdateFailed: called!!");
+    }
+
+    @Override
+    public void onBudgetInsertSuccess(Boolean isInserted) {
         if (isInserted) {
             Log.d(TAG, "onDBInsertSuccess: true");
             finish();
@@ -242,17 +252,7 @@ public class AddAccountActivity extends AppCompatActivity implements IDBInsertLi
     }
 
     @Override
-    public void onDBInsertFailed(String message) {
-        Log.d(TAG, "onDBInsertFailed: called!!");
-    }
-
-    @Override
-    public void onDBUpdateSuccess(boolean isUpdated) {
-        Log.d(TAG, "onDBUpdateSuccess: called!!");
-    }
-
-    @Override
-    public void onDBUpdateFailed(String message) {
-        Log.d(TAG, "onDBUpdateFailed: called!!");
+    public void onBudgetInsertFailed(String message) {
+        Log.d(TAG, "onBudgetInsertFailed: called!!");
     }
 }

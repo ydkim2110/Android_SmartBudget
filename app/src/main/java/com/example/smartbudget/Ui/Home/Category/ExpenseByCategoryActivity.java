@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Budget.BudgetAdapter;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -62,7 +64,6 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
             Toast.makeText(this, "[FAB]", Toast.LENGTH_SHORT).show();
         });
 
-
         DBTransactionUtils.getThisMonthTransactionByCategory(MainActivity.db, passed_date, this);
 
         rv_expense_by_category.setHasFixedSize(true);
@@ -82,7 +83,7 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
     @Override
     public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
         if (expenseByCategoryList != null) {
-            BudgetAdapter budgetAdapter = new BudgetAdapter(ExpenseByCategoryActivity.this, expenseByCategoryList);
+            BudgetAdapter budgetAdapter = new BudgetAdapter(ExpenseByCategoryActivity.this, expenseByCategoryList, passed_date);
             rv_expense_by_category.setAdapter(budgetAdapter);
         }
     }
@@ -91,4 +92,5 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
     public void onThisMonthTransactionByCategoryLoadFailed(String message) {
 
     }
+
 }

@@ -2,6 +2,7 @@ package com.example.smartbudget.Ui.Budget;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
 import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
 import com.example.smartbudget.Database.Model.SumBudget;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
@@ -57,8 +59,19 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
         mBudgetItem = mBudgetItemList.get(position);
 
         holder.tv_name.setText(mBudgetItem.getDescription());
+        holder.tv_type.setText(mBudgetItem.getType());
         holder.tv_used_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mBudgetItem.getSumTransaction())).append("원"));
         holder.tv_target_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mBudgetItem.getAmount())).append("원"));
+        holder.tv_left_amount.setText(new StringBuilder(Common.changeNumberToComma((int) (mBudgetItem.getSumTransaction() - mBudgetItem.getAmount())))
+                .append("원"));
+
+        if ((mBudgetItem.getSumTransaction() - mBudgetItem.getAmount()) > 0) {
+            holder.tv_left_title.setText("Over Amount");
+        }
+        else {
+            holder.tv_left_title.setText("Left Amount");
+        }
+
         holder.tv_date_period.setText(new StringBuilder("(")
                 .append(mBudgetItem.getStartDate())
                 .append(" ~ ")
@@ -72,7 +85,22 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
         progressAnim.start();
 
         int percentage = (int) (mBudgetItem.getSumTransaction() / mBudgetItem.getAmount() * 100);
-        holder.tv_percenage.setText(new StringBuilder(""+percentage).append("%"));
+        holder.tv_percenage.setText(new StringBuilder("" + percentage).append("%"));
+
+        holder.setListener((view, i) -> {
+            BudgetItem budgetItem = new BudgetItem();
+            budgetItem.setId(mBudgetItemList.get(i).getId());
+            budgetItem.setDescription(mBudgetItemList.get(i).getDescription());
+            budgetItem.setAmount(mBudgetItemList.get(i).getAmount());
+            budgetItem.setStartDate(mBudgetItemList.get(i).getStartDate());
+            budgetItem.setEndDate(mBudgetItemList.get(i).getEndDate());
+            budgetItem.setType(mBudgetItemList.get(i).getType());
+            budgetItem.setAccountId(mBudgetItemList.get(i).getAccountId());
+
+            Intent intent = new Intent(mContext, AddBudgetActivity.class);
+            intent.putExtra(Common.EXTRA_EDIT_BUDGET, budgetItem);
+            view.getContext().startActivity(intent);
+        });
 
     }
 
@@ -83,17 +111,23 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
 
     @Override
     public void onSumAmountByBudgeSuccess(double sumAmount) {
-            Log.d(TAG, "onSumAmountByBudgeSuccess: "+sumAmount);
+        Log.d(TAG, "onSumAmountByBudgeSuccess: " + sumAmount);
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.tv_name)
         TextView tv_name;
+        @BindView(R.id.tv_type)
+        TextView tv_type;
         @BindView(R.id.tv_used_amount)
         TextView tv_used_amount;
         @BindView(R.id.tv_target_amount)
         TextView tv_target_amount;
+        @BindView(R.id.tv_left_amount)
+        TextView tv_left_amount;
+        @BindView(R.id.tv_left_title)
+        TextView tv_left_title;
         @BindView(R.id.tv_date_period)
         TextView tv_date_period;
         @BindView(R.id.pb_circle)
@@ -101,12 +135,25 @@ public class BudgetListAdapter extends RecyclerView.Adapter<BudgetListAdapter.My
         @BindView(R.id.tv_percentage)
         TextView tv_percenage;
 
+        private IRecyclerItemSelectedListener mListener;
+
+        public void setListener(IRecyclerItemSelectedListener listener) {
+            mListener = listener;
+        }
+
         Unbinder mUnbinder;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mUnbinder = ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.onItemSelected(v, getAdapterPosition());
         }
     }
 }

@@ -1,19 +1,26 @@
 package com.example.smartbudget.Database.BudgetRoom;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.smartbudget.Database.BudgetDatabase;
+import com.example.smartbudget.Database.Interface.IBudgetDeleteListener;
 import com.example.smartbudget.Database.Model.SumBudget;
 import com.example.smartbudget.Interface.IBudgetLoadListener;
-import com.example.smartbudget.Interface.IDBInsertListener;
+import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
 
 import java.util.List;
 
 public class DBBudgetUtils {
     private static final String TAG = DBBudgetUtils.class.getSimpleName();
 
-    public static void insertBudgetAsync(BudgetDatabase db, IDBInsertListener listener, BudgetItem... budgetItems) {
+    public static void insertBudget(BudgetDatabase db, IBudgetInsertListener listener, BudgetItem... budgetItems) {
         InsertBudgetAsync task = new InsertBudgetAsync(db, listener);
+        task.execute(budgetItems);
+    }
+
+    public static void deleteBudget(BudgetDatabase db, IBudgetDeleteListener listener, BudgetItem... budgetItems) {
+        DeleteBudgetAsync task = new DeleteBudgetAsync(db, listener);
         task.execute(budgetItems);
     }
 
@@ -34,23 +41,49 @@ public class DBBudgetUtils {
      */
     private static class InsertBudgetAsync extends AsyncTask<BudgetItem, Void, Boolean> {
 
-        BudgetDatabase db;
-        IDBInsertListener mListener;
+        BudgetDatabase mBudgetDatabase;
+        IBudgetInsertListener mListener;
 
-        public InsertBudgetAsync(BudgetDatabase db, IDBInsertListener listener) {
-            this.db = db;
+        public InsertBudgetAsync(BudgetDatabase budgetDatabase, IBudgetInsertListener listener) {
+            this.mBudgetDatabase = budgetDatabase;
             mListener = listener;
         }
 
         @Override
         protected Boolean doInBackground(BudgetItem... budgetItems) {
-            return null;
+            long result = mBudgetDatabase.budgetDAO().insertBudget(budgetItems[0]);
+            Log.d(TAG, "doInBackground: result: "+result);
+            return result != -1;
         }
 
         @Override
         protected void onPostExecute(Boolean isInserted) {
             super.onPostExecute(isInserted);
-            mListener.onDBInsertSuccess(isInserted);
+            mListener.onBudgetInsertSuccess(isInserted);
+        }
+    }
+
+    private static class DeleteBudgetAsync extends AsyncTask<BudgetItem, Void, Boolean> {
+
+        BudgetDatabase mBudgetDatabase;
+        IBudgetDeleteListener mListener;
+
+        public DeleteBudgetAsync(BudgetDatabase budgetDatabase, IBudgetDeleteListener listener) {
+            this.mBudgetDatabase = budgetDatabase;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(BudgetItem... budgetItems) {
+            long result = mBudgetDatabase.budgetDAO().deleteBudget(budgetItems[0]);
+            Log.d(TAG, "doInBackground: result: "+result);
+            return result == 1;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isInserted) {
+            super.onPostExecute(isInserted);
+            mListener.onBudgetDeleteSuccess(isInserted);
         }
     }
 

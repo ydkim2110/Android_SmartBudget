@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Ui.Transaction.Transfer.TransferActivity"></activity>
+        <activity android:name=".Ui.Transaction.Transfer.TransferActivity" />
         <activity android:name=".Ui.Budget.AddBudgetActivity" />
         <activity android:name=".Ui.Report.ReportActivity" />
         <activity android:name=".Ui.Calculator.CalcActivity" />
@@ -44,7 +44,7 @@
         <activity android:name=".Ui.Input.InputAccountActivity" />
         <activity android:name=".Ui.Account.AccountDetailActivity" />
         <activity android:name=".Ui.Account.AddAccountActivity" />
-        <activity android:name=".Ui.Budget.ViewTransactionActivity" />
+        <activity android:name=".Ui.Home.Category.ExpenseByCategoryDetailActivity" />
         <activity android:name=".Ui.Input.InputAmountActivity" />
         <activity android:name=".Ui.Transaction.Add.Note.InputNoteActivity" />
         <activity

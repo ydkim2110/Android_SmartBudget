@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -23,15 +24,15 @@ public class InputAccountAdapter extends RecyclerView.Adapter<InputAccountAdapte
     private static final String TAG = InputAccountAdapter.class.getSimpleName();
 
     public interface SaveButtonListener {
-        void onUpdate(boolean status, AccountModel accountModel);
+        void onUpdate(boolean status, AccountItem accountItem);
     }
 
     public SaveButtonListener mSaveButtonListener;
 
-    private List<AccountModel> mAccountModelList;
+    private List<AccountItem> mAccountModelList;
     private List<CardView> mCardViewList;
 
-    public InputAccountAdapter(List<AccountModel> accountModelList, SaveButtonListener listener) {
+    public InputAccountAdapter(List<AccountItem> accountModelList, SaveButtonListener listener) {
         mAccountModelList = accountModelList;
         mCardViewList = new ArrayList<>();
         this.mSaveButtonListener = listener;

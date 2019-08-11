@@ -81,5 +81,6 @@
     <string name="toolbar_title_overview">Overview</string>
     <string name="alert_delete_title">Delete</string>
     <string name="alert_delete_message">Warning! If you delete this account, All transactions will be deteled!!</string>
+    <string name="toolbar_edit_budget">Edit Budget</string>
 
 </resources>

@@ -10,15 +10,13 @@ import androidx.annotation.RequiresApi;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.Interface.IAccountDeleteListener;
-import com.example.smartbudget.Interface.IAccountLoadListener;
-import com.example.smartbudget.Interface.IDBUpdateListener;
+import com.example.smartbudget.Database.Interface.IDBUpdateListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
-import com.example.smartbudget.Interface.IDBInsertListener;
-import com.example.smartbudget.Interface.IAccountsLoadListener;
+import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;
 import com.example.smartbudget.Ui.Transaction.Add.ICategoryLoadListener;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
@@ -26,11 +24,8 @@ import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.CategoryModel;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
-import com.example.smartbudget.Utils.Common;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DatabaseUtils {
@@ -47,25 +42,25 @@ public class DatabaseUtils {
         task.execute(transactionModels);
     }
 
-    public static void getAccount(DBHelper db, int accountId, IAccountLoadListener listener) {
-        GetAccountAsync task = new GetAccountAsync(db, accountId, listener);
-        task.execute();
-    }
+//    public static void getAccount(DBHelper db, int accountId, IAccountLoadListener listener) {
+//        GetAccountAsync task = new GetAccountAsync(db, accountId, listener);
+//        task.execute();
+//    }
+//
+//    public static void getAllAccounts(DBHelper db, IAccountsLoadListener listener) {
+//        GetAllAccountsAsync task = new GetAllAccountsAsync(db, listener);
+//        task.execute();
+//    }
+//
+//    public static void getAccountsByType(DBHelper db, String type, IAccountsLoadListener listener) {
+//        GetAccountsByTypeAsync task = new GetAccountsByTypeAsync(db, type, listener);
+//        task.execute();
+//    }
 
-    public static void getAllAccounts(DBHelper db, IAccountsLoadListener listener) {
-        GetAllAccountsAsync task = new GetAllAccountsAsync(db, listener);
-        task.execute();
-    }
-
-    public static void getAccountsByType(DBHelper db, String type, IAccountsLoadListener listener) {
-        GetAccountsByTypeAsync task = new GetAccountsByTypeAsync(db, type, listener);
-        task.execute();
-    }
-
-    public static void getSumAccountsByType(DBHelper db, ISumAccountsLoadListener listener) {
-        GetSumAccountsByTypeAsync task = new GetSumAccountsByTypeAsync(db, listener);
-        task.execute();
-    }
+//    public static void getSumAccountsByType(DBHelper db, ISumAccountsLoadListener listener) {
+//        GetSumAccountsByTypeAsync task = new GetSumAccountsByTypeAsync(db, listener);
+//        task.execute();
+//    }
 
     public static void updateAccountsByTransfer(DBHelper db, double amount, int fromId, int toId, IUpdateAccountListener listener) {
         UpdateAccountsByTransferAsync task = new UpdateAccountsByTransferAsync(db, amount, fromId, toId, listener);
@@ -121,7 +116,7 @@ public class DatabaseUtils {
         task.execute(transactionModels);
     }
 
-    public static void insertAccountAsync(DBHelper db, IDBInsertListener listener, AccountModel... accountModels) {
+    public static void insertAccountAsync(DBHelper db, IBudgetInsertListener listener, AccountModel... accountModels) {
         InsertAccountAsync task = new InsertAccountAsync(db, listener);
         task.execute(accountModels);
     }
@@ -165,9 +160,9 @@ public class DatabaseUtils {
     private static class InsertAccountAsync extends AsyncTask<AccountModel, Void, Boolean> {
 
         DBHelper db;
-        IDBInsertListener mListener;
+        IBudgetInsertListener mListener;
 
-        public InsertAccountAsync(DBHelper db, IDBInsertListener listener) {
+        public InsertAccountAsync(DBHelper db, IBudgetInsertListener listener) {
             this.db = db;
             mListener = listener;
         }
@@ -180,7 +175,7 @@ public class DatabaseUtils {
         @Override
         protected void onPostExecute(Boolean isInserted) {
             super.onPostExecute(isInserted);
-            mListener.onDBInsertSuccess(isInserted);
+            mListener.onBudgetInsertSuccess(isInserted);
         }
     }
 
@@ -287,184 +282,184 @@ public class DatabaseUtils {
         }
     }
 
-    private static class GetAccountAsync extends AsyncTask<Void, Void, AccountModel> {
+//    private static class GetAccountAsync extends AsyncTask<Void, Void, AccountModel> {
+//
+//        DBHelper db;
+//        IAccountLoadListener mListener;
+//        int accountId = 0;
+//
+//        public GetAccountAsync(DBHelper db, int accountId, IAccountLoadListener listener) {
+//            this.db = db;
+//            mListener = listener;
+//            this.accountId = accountId;
+//        }
+//
+//        @Override
+//        protected AccountModel doInBackground(Void... voids) {
+//            Cursor cursor = db.getAccount(accountId);
+//            AccountModel account = new AccountModel();
+//            Log.d(TAG, "doInBackground: cursor.getCount(): "+cursor.getCount());
+//            if (cursor != null && cursor.getCount() > 0) {
+//                try {
+//                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
+//                    String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
+//                    String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
+//                    String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+//                    String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
+//                    String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+//                    String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
+//                    String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
+//
+//                    account.setId((int) id);
+//                    account.setName(name);
+//                    account.setDescription(description);
+//                    account.setHighCategory(highCategory);
+//                    account.setAmount(Double.parseDouble(amount));
+//                    account.setType(type);
+//                    Date dt = null;
+//                    try {
+//                        dt = Common.dateFormat.parse(createAt);
+//                        account.setCreateAt(dt);
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                    account.setCurrency(currency);
+//
+//                } finally {
+//                    cursor.close();
+//                }
+//                return account;
+//            }
+//            return account;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(AccountModel accountModel) {
+//            super.onPostExecute(accountModel);
+//            mListener.onAccountLoadSuccess(accountModel);
+//        }
+//    }
 
-        DBHelper db;
-        IAccountLoadListener mListener;
-        int accountId = 0;
+//    private static class GetAllAccountsAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+//
+//        DBHelper db;
+//        IAccountsLoadListener mListener;
+//
+//        public GetAllAccountsAsync(DBHelper db, IAccountsLoadListener listener) {
+//            this.db = db;
+//            mListener = listener;
+//        }
+//
+//        @Override
+//        protected List<AccountModel> doInBackground(Void... voids) {
+//            Cursor cursor = db.getAllAccounts();
+//            List<AccountModel> accountList = new ArrayList<>();
+//            if (cursor != null && cursor.getCount() > 0) {
+//                try {
+//                    do {
+//                        AccountModel account = new AccountModel();
+//                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
+//                        String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
+//                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
+//                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+//                        String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
+//                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+//                        String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
+//                        String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
+//
+//                        account.setId((int) id);
+//                        account.setName(name);
+//                        account.setDescription(description);
+//                        account.setAmount(Double.parseDouble(amount));
+//                        account.setHighCategory(highCategory);
+//                        account.setType(type);
+//
+//                        Date dt = null;
+//                        try {
+//                            dt = Common.dateFormat.parse(createAt);
+//                            account.setCreateAt(dt);
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                        account.setCurrency(currency);
+//                        accountList.add(account);
+//                    }
+//                    while (cursor.moveToNext());
+//                } finally {
+//                    cursor.close();
+//                }
+//                return accountList;
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<AccountModel> accountList) {
+//            super.onPostExecute(accountList);
+//            mListener.onAccountsLoadSuccess(accountList);
+//        }
+//    }
 
-        public GetAccountAsync(DBHelper db, int accountId, IAccountLoadListener listener) {
-            this.db = db;
-            mListener = listener;
-            this.accountId = accountId;
-        }
-
-        @Override
-        protected AccountModel doInBackground(Void... voids) {
-            Cursor cursor = db.getAccount(accountId);
-            AccountModel account = new AccountModel();
-            Log.d(TAG, "doInBackground: cursor.getCount(): "+cursor.getCount());
-            if (cursor != null && cursor.getCount() > 0) {
-                try {
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
-                    String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
-                    String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
-                    String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
-                    String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
-                    String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
-                    String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
-
-                    account.setId((int) id);
-                    account.setName(name);
-                    account.setDescription(description);
-                    account.setHighCategory(highCategory);
-                    account.setAmount(Double.parseDouble(amount));
-                    account.setType(type);
-                    Date dt = null;
-                    try {
-                        dt = Common.dateFormat.parse(createAt);
-                        account.setCreateAt(dt);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    account.setCurrency(currency);
-
-                } finally {
-                    cursor.close();
-                }
-                return account;
-            }
-            return account;
-        }
-
-        @Override
-        protected void onPostExecute(AccountModel accountModel) {
-            super.onPostExecute(accountModel);
-            mListener.onAccountLoadSuccess(accountModel);
-        }
-    }
-
-    private static class GetAllAccountsAsync extends AsyncTask<Void, Void, List<AccountModel>> {
-
-        DBHelper db;
-        IAccountsLoadListener mListener;
-
-        public GetAllAccountsAsync(DBHelper db, IAccountsLoadListener listener) {
-            this.db = db;
-            mListener = listener;
-        }
-
-        @Override
-        protected List<AccountModel> doInBackground(Void... voids) {
-            Cursor cursor = db.getAllAccounts();
-            List<AccountModel> accountList = new ArrayList<>();
-            if (cursor != null && cursor.getCount() > 0) {
-                try {
-                    do {
-                        AccountModel account = new AccountModel();
-                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
-                        String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
-                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
-                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
-                        String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
-                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
-                        String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
-                        String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
-
-                        account.setId((int) id);
-                        account.setName(name);
-                        account.setDescription(description);
-                        account.setAmount(Double.parseDouble(amount));
-                        account.setHighCategory(highCategory);
-                        account.setType(type);
-
-                        Date dt = null;
-                        try {
-                            dt = Common.dateFormat.parse(createAt);
-                            account.setCreateAt(dt);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        account.setCurrency(currency);
-                        accountList.add(account);
-                    }
-                    while (cursor.moveToNext());
-                } finally {
-                    cursor.close();
-                }
-                return accountList;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<AccountModel> accountList) {
-            super.onPostExecute(accountList);
-            mListener.onAccountsLoadSuccess(accountList);
-        }
-    }
-
-    private static class GetAccountsByTypeAsync extends AsyncTask<Void, Void, List<AccountModel>> {
-
-        DBHelper db;
-        String type = "";
-        IAccountsLoadListener mListener;
-
-        public GetAccountsByTypeAsync(DBHelper db, String type, IAccountsLoadListener listener) {
-            this.db = db;
-            this.type = type;
-            mListener = listener;
-        }
-
-        @Override
-        protected List<AccountModel> doInBackground(Void... voids) {
-            Cursor cursor = db.getAccountsByType(type);
-            List<AccountModel> accountList = new ArrayList<>();
-            if (cursor != null && cursor.getCount() > 0) {
-                try {
-                    do {
-                        AccountModel account = new AccountModel();
-                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
-                        String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
-                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
-                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
-                        String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
-                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
-                        String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
-                        String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
-
-                        account.setId((int) id);
-                        account.setName(name);
-                        account.setDescription(description);
-                        account.setAmount(Double.parseDouble(amount));
-                        account.setHighCategory(highCategory);
-                        account.setType(type);
-                        Date dt = null;
-                        try {
-                            dt = Common.dateFormat.parse(createAt);
-                            account.setCreateAt(dt);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        account.setCurrency(currency);
-                        accountList.add(account);
-                    }
-                    while (cursor.moveToNext());
-                } finally {
-                    cursor.close();
-                }
-                return accountList;
-            }
-            return accountList;
-        }
-
-        @Override
-        protected void onPostExecute(List<AccountModel> accountList) {
-            super.onPostExecute(accountList);
-            mListener.onAccountsLoadSuccess(accountList);
-        }
-    }
+//    private static class GetAccountsByTypeAsync extends AsyncTask<Void, Void, List<AccountModel>> {
+//
+//        DBHelper db;
+//        String type = "";
+//        IAccountsLoadListener mListener;
+//
+//        public GetAccountsByTypeAsync(DBHelper db, String type, IAccountsLoadListener listener) {
+//            this.db = db;
+//            this.type = type;
+//            mListener = listener;
+//        }
+//
+//        @Override
+//        protected List<AccountModel> doInBackground(Void... voids) {
+//            Cursor cursor = db.getAccountsByType(type);
+//            List<AccountModel> accountList = new ArrayList<>();
+//            if (cursor != null && cursor.getCount() > 0) {
+//                try {
+//                    do {
+//                        AccountModel account = new AccountModel();
+//                        long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBContract.Account._ID));
+//                        String name = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_NAME));
+//                        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_DESCRIPTION));
+//                        String amount = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_AMOUNT));
+//                        String highCategory = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_HIGH_CATEGORY));
+//                        String type = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_TYPE));
+//                        String createAt = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CREATE_AT));
+//                        String currency = cursor.getString(cursor.getColumnIndexOrThrow(DBContract.Account.COL_CURRENCY));
+//
+//                        account.setId((int) id);
+//                        account.setName(name);
+//                        account.setDescription(description);
+//                        account.setAmount(Double.parseDouble(amount));
+//                        account.setHighCategory(highCategory);
+//                        account.setType(type);
+//                        Date dt = null;
+//                        try {
+//                            dt = Common.dateFormat.parse(createAt);
+//                            account.setCreateAt(dt);
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                        account.setCurrency(currency);
+//                        accountList.add(account);
+//                    }
+//                    while (cursor.moveToNext());
+//                } finally {
+//                    cursor.close();
+//                }
+//                return accountList;
+//            }
+//            return accountList;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<AccountModel> accountList) {
+//            super.onPostExecute(accountList);
+//            mListener.onAccountsLoadSuccess(accountList);
+//        }
+//    }
 
     private static class GetSumAccountsByTypeAsync extends AsyncTask<Void, Void, List<AccountModel>> {
 

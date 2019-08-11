@@ -9,12 +9,6 @@ public class SpendingByPattern {
     public SpendingByPattern() {
     }
 
-    public SpendingByPattern(String pattern, double sum, int count) {
-        this.pattern = pattern;
-        this.sum = sum;
-        this.count = count;
-    }
-
     public String getPattern() {
         return pattern;
     }

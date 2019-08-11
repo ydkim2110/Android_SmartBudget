@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,15 @@ import android.widget.Toast;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
+import com.example.smartbudget.Model.EventBus.AddBudgetEvent;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -75,9 +81,14 @@ public class NormalFragment extends Fragment implements IThisMonthTransactionsLo
             passed_date = getArguments().getString("passed_date");
         }
 
-        DBTransactionUtils.getThisMonthTransactionListByPattern(MainActivity.db, passed_date,"Normal", this);
+        loadData();
 
         return view;
+    }
+
+    private void loadData() {
+        Log.d(TAG, "loadData: called!!");
+        DBTransactionUtils.getThisMonthTransactionListByPattern(MainActivity.db, passed_date,"Normal", this);
     }
 
     @Override
