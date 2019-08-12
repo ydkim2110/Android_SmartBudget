@@ -142,7 +142,7 @@ public class TransactionItem implements Parcelable {
         if (subCategoryId == null || subCategoryId.isEmpty()) {
             return ":other";
         }
-        return subCategoryId;
+        return categoryId;
     }
 
     public void setSubCategoryId(String subCategoryId) {

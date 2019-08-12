@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.TransactionModel;
@@ -28,15 +29,15 @@ import butterknife.Unbinder;
 public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<TransactionModel> mTransactionModelList;
-    private TransactionModel transaction;
+    private List<TransactionItem> mTransactionModelList;
+    private TransactionItem transaction;
     private Category expenseCategory;
     private Category incomeCategory;
 
     private int revenueColor;
     private int expenseColor;
 
-    public AccountDetailAdapter(Context context, List<TransactionModel> transactionModelList) {
+    public AccountDetailAdapter(Context context, List<TransactionItem> transactionModelList) {
         mContext = context;
         mTransactionModelList = transactionModelList;
         revenueColor = ContextCompat.getColor(mContext, R.color.colorRevenue);
@@ -74,7 +75,7 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
             holder.tv_transaction_amount.setTextColor(revenueColor);
         }
 
-        holder.tv_transaction_note.setText(transaction.getNote());
+        holder.tv_transaction_note.setText(transaction.getDescription());
         holder.tv_transaction_date.setText(transaction.getDate());
         holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) transaction.getAmount())).append("원"));
 

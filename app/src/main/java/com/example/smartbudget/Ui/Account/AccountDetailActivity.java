@@ -12,7 +12,11 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.TransactionModel;
@@ -26,7 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AccountDetailActivity extends AppCompatActivity implements IThisMonthTransactionLoadListener {
+public class AccountDetailActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
 
     private static final String TAG = AccountDetailActivity.class.getSimpleName();
 
@@ -73,7 +77,7 @@ public class AccountDetailActivity extends AppCompatActivity implements IThisMon
         rv_account_detail.setLayoutManager(new LinearLayoutManager(this));
         rv_account_detail.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        DatabaseUtils.getThisMonthTransactionsByAccount(MainActivity.mDBHelper, Common.dateFormat.format(new Date()), account.getId(), this);
+        DBTransactionUtils.getThisMonthTransactionsByAccount(MainActivity.db, Common.dateFormat.format(new Date()), account.getId(), this);
     }
 
     @Override
@@ -88,17 +92,15 @@ public class AccountDetailActivity extends AppCompatActivity implements IThisMon
     }
 
     @Override
-    public void onTransactionLoadSuccess(List<TransactionModel> transactionList) {
-        Log.d(TAG, "onTransactionLoadSuccess: "+transactionList.size());
-        if (transactionList != null) {
-            mAdapter = new AccountDetailAdapter(this, transactionList);
+    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        if (transactionItemList != null) {
+            mAdapter = new AccountDetailAdapter(this, transactionItemList);
             rv_account_detail.setAdapter(mAdapter);
         }
     }
 
     @Override
-    public void onTransactionDeleteSuccess(boolean isSuccess) {
+    public void onThisMonthTransactionsLoadFailed(String message) {
 
     }
-
 }

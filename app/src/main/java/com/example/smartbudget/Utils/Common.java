@@ -8,6 +8,7 @@ import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.DefaultCategories;
+import com.example.smartbudget.Model.SubCategory;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -192,6 +193,16 @@ public class Common {
         for (Category category : categoryList) {
             if (category.getCategoryID().equals(categoryId)) {
                 return category;
+            }
+        }
+        return null;
+    }
+
+    public static SubCategory getExpenseSubCategory(String subCategoryId) {
+        List<SubCategory> subCategoryList = Arrays.asList(DefaultCategories.getDefaultSubExpenseCategories());
+        for (SubCategory subCategory : subCategoryList) {
+            if (subCategory.getId().equals(subCategoryId)) {
+                return subCategory;
             }
         }
         return null;

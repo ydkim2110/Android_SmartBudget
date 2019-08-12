@@ -1,18 +1,14 @@
 package com.example.smartbudget.Database.TransactionRoom;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.example.smartbudget.Database.DBContract;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
+import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
 
 import java.util.List;
 
@@ -49,10 +45,24 @@ public interface TransactionDAO {
 
     @Query("SELECT * FROM transaction_table"
             + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"
+            + " AND account_id LIKE :accountId"
+            + " ORDER BY date DESC")
+    List<TransactionItem> getThisMonthTransactionsByAccount(String date, int accountId);
+
+    @Query("SELECT * FROM transaction_table"
+            + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"
             + " AND category_id LIKE :categoryId"
             + " AND type LIKE 'Expense'"
             + " ORDER BY date DESC")
     List<TransactionItem> getThisMonthTransactionListByCategory(String date, String categoryId);
+
+    @Query("SELECT sub_category_id AS subCategoryId, SUM(amount) AS sumBySubCategory FROM transaction_table"
+            + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"
+            + " AND category_id LIKE :categoryId"
+            + " AND type LIKE 'Expense'"
+            + " GROUP BY sub_category_id"
+            + " ORDER BY date DESC")
+    List<SumTransactionBySubCategory> getThisMonthSumTransactionBySubCategory(String date, String categoryId);
 
     @Query("SELECT category_id AS categoryId, SUM(amount) AS sumByCategory, COUNT(amount) AS countByCategory FROM transaction_table"
             + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"

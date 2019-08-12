@@ -2,8 +2,11 @@ package com.example.smartbudget.Database.TransactionRoom;
 
 import android.os.AsyncTask;
 
+import com.example.smartbudget.Database.DBHelper;
+import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.ILastFewDaysTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
+import com.example.smartbudget.Database.Interface.IThisMonthSumTransactionBySubCategoryListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.ITransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByPatternLoadListener;
@@ -11,6 +14,8 @@ import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
+import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
+import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 
 
 import java.util.List;
@@ -24,6 +29,11 @@ public class DBTransactionUtils {
 
     public static void getThisMonthTransactions(BudgetDatabase db, String date, IThisMonthTransactionsLoadListener listener) {
         GetThisMonthTransactionAsync task = new GetThisMonthTransactionAsync(db, date, listener);
+        task.execute();
+    }
+
+    public static void getThisMonthTransactionsByAccount(BudgetDatabase db, String date, int accountId, IThisMonthTransactionsLoadListener listener) {
+        GetThisMonthTransactionsByAccountAsync task = new GetThisMonthTransactionsByAccountAsync(db, date, accountId, listener);
         task.execute();
     }
 
@@ -52,6 +62,10 @@ public class DBTransactionUtils {
         task.execute();
     }
 
+    public static void getThisMonthSumTransactionBySubCategory(BudgetDatabase db, String date, String categoryId, IThisMonthSumTransactionBySubCategoryListener listener) {
+        GetThisMonthSumTransactionBySubCategoryAsync task = new GetThisMonthSumTransactionBySubCategoryAsync(db, date, categoryId, listener);
+        task.execute();
+    }
 
     public static void getSumAmountByBudget(BudgetDatabase db, String startDate, String endDate, String type, int accountId, ISumAmountByBudgetListener listener) {
         GetSumAmountByBudget task = new GetSumAmountByBudget(db, startDate, endDate, type, accountId, listener);
@@ -131,6 +145,32 @@ public class DBTransactionUtils {
         protected void onPostExecute(List<SpendingByPattern> spendingPatterns) {
             super.onPostExecute(spendingPatterns);
             mListener.onThisMonthTransactionsByPatternLoadSuccess(spendingPatterns);
+        }
+    }
+
+    private static class GetThisMonthTransactionsByAccountAsync extends AsyncTask<Void, Void, List<TransactionItem>> {
+
+        BudgetDatabase mBudgetDatabase;
+        String date;
+        int accountId;
+        private IThisMonthTransactionsLoadListener mListener;
+
+        public GetThisMonthTransactionsByAccountAsync(BudgetDatabase mBudgetDatabase, String date, int accountId, IThisMonthTransactionsLoadListener mListener) {
+            this.mBudgetDatabase = mBudgetDatabase;
+            this.date = date;
+            this.accountId = accountId;
+            this.mListener = mListener;
+        }
+
+        @Override
+        protected List<TransactionItem> doInBackground(Void... voids) {
+            return mBudgetDatabase.transactionDAO().getThisMonthTransactionsByAccount(date, accountId);
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionItem> transactionItemList) {
+            super.onPostExecute(transactionItemList);
+            mListener.onThisMonthTransactionsLoadSuccess(transactionItemList);
         }
     }
 
@@ -233,6 +273,32 @@ public class DBTransactionUtils {
         protected void onPostExecute(List<TransactionItem> transactionItemList) {
             super.onPostExecute(transactionItemList);
             mListener.onThisMonthTransactionsLoadSuccess(transactionItemList);
+        }
+    }
+
+    private static class GetThisMonthSumTransactionBySubCategoryAsync extends AsyncTask<Void, Void, List<SumTransactionBySubCategory>> {
+
+        BudgetDatabase mBudgetDatabase;
+        String date;
+        String categoryId;
+        IThisMonthSumTransactionBySubCategoryListener mListener;
+
+        public GetThisMonthSumTransactionBySubCategoryAsync(BudgetDatabase budgetDatabase, String date, String categoryId, IThisMonthSumTransactionBySubCategoryListener listener) {
+            mBudgetDatabase = budgetDatabase;
+            this.date = date;
+            this.categoryId = categoryId;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<SumTransactionBySubCategory> doInBackground(Void... voids) {
+            return mBudgetDatabase.transactionDAO().getThisMonthSumTransactionBySubCategory(date, categoryId);
+        }
+
+        @Override
+        protected void onPostExecute(List<SumTransactionBySubCategory> sumTransactionBySubCategoryList) {
+            super.onPostExecute(sumTransactionBySubCategoryList);
+            mListener.onThisMonthSumTransactionBySubCategorySuccess(sumTransactionBySubCategoryList);
         }
     }
 

@@ -264,13 +264,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     @Override
     public void onThisMonthTransactionsByPatternLoadSuccess(List<SpendingByPattern> spendingPatterns) {
-        Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: called!!");
-        Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: size: "+spendingPatterns.size());
-
-        for (int i = 0; i < spendingPatterns.size(); i++) {
-            Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: "+spendingPatterns.get(i).getSum());
-        }
-
+        Log.d(TAG, "onThisMonthTransactionsByPatternLoadSuccess: called!");
         total = 0;
         normal_percentage = 0;
         waste_percentage = 0;
@@ -353,20 +347,30 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(Common.stringToDate(date));
 
+        Log.d(TAG, "loadFromDatabase: compareTo: "+cal1.compareTo(cal2));
+
+
         int todayYear = cal1.get(Calendar.YEAR);
         int todayMonth = cal1.get(Calendar.MONTH)+1;
         int currentYear = cal2.get(Calendar.YEAR);
         int currentMonth = cal2.get(Calendar.MONTH)+1;
 
-        if (currentYear == todayYear && currentMonth == todayMonth) {
-            endDate = cal1.getTime();
-            cal1.add(Calendar.DAY_OF_MONTH, -6);
-            startDate = cal1.getTime();
+        if (cal1.compareTo(cal2) == -1) {
+            endDate = Common.getMaximumDate(cal2.getTime());
+            cal2.add(Calendar.DAY_OF_MONTH, 0);
+            startDate = cal2.getTime();
         }
         else {
-            endDate = Common.getMaximumDate(cal2.getTime());
-            cal2.add(Calendar.DAY_OF_MONTH, -7);
-            startDate = cal2.getTime();
+            if (currentYear == todayYear && currentMonth == todayMonth) {
+                endDate = cal1.getTime();
+                cal1.add(Calendar.DAY_OF_MONTH, -6);
+                startDate = cal1.getTime();
+            } else {
+                endDate = Common.getMaximumDate(cal2.getTime());
+                cal2.add(Calendar.DAY_OF_MONTH, -6);
+                cal2.add(Calendar.MONTH, 1);
+                startDate = cal2.getTime();
+            }
         }
 
         tv_weekday.setText(new StringBuilder("(")

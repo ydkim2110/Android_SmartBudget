@@ -3,13 +3,16 @@ package com.example.smartbudget.Ui.Home.Category;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IThisMonthSumTransactionBySubCategoryListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.Category;
@@ -22,7 +25,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ExpenseByCategoryDetailActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
+public class ExpenseByCategoryDetailActivity extends AppCompatActivity implements IThisMonthSumTransactionBySubCategoryListener {
 
     private static final String TAG = ExpenseByCategoryDetailActivity.class.getSimpleName();
 
@@ -51,7 +54,7 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
 
         initView();
 
-        DBTransactionUtils.getThisMonthTransactionListByCategory(MainActivity.db, passed_date, categoryId,this);
+        DBTransactionUtils.getThisMonthSumTransactionBySubCategory(MainActivity.db, passed_date, categoryId,this);
 
     }
 
@@ -61,6 +64,9 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(category.getCategoryVisibleName(this));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        rv_category_detail.setHasFixedSize(true);
+        rv_category_detail.setLayoutManager(new GridLayoutManager(this, 2));
 
     }
 
@@ -74,14 +80,14 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
     }
 
     @Override
-    public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
-        for (int i = 0; i < transactionItemList.size(); i++) {
-            Log.d(TAG, "onThisMonthTransactionsLoadSuccess: "+transactionItemList.get(i).getDescription());
-        }
+    public void onThisMonthSumTransactionBySubCategorySuccess(List<SumTransactionBySubCategory> sumTransactionBySumCategoryList) {
+        Log.d(TAG, "onThisMonthSumTransactionBySubCategorySuccess: called!!");
+        ExpenseByCategoryDetailAdapter adapter = new ExpenseByCategoryDetailAdapter(this, sumTransactionBySumCategoryList);
+        rv_category_detail.setAdapter(adapter);
     }
 
     @Override
-    public void onThisMonthTransactionsLoadFailed(String message) {
-
+    public void onThisMonthSumTransactionBySubCategoryFailed(String message) {
+        Log.d(TAG, "onThisMonthSumTransactionBySubCategoryFailed: called!!");
     }
 }
