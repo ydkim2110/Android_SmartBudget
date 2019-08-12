@@ -258,6 +258,7 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onThisMonthTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
+        Log.d(TAG, "onThisMonthTransactionsLoadSuccess: called!!");
         if (transactionItemList.size() < 1) {
             rv_transaction.setVisibility(View.INVISIBLE);
             tv_no_item.setVisibility(View.VISIBLE);
@@ -294,6 +295,6 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
     @Override
     public void onThisMonthTransactionsLoadFailed(String message) {
-
+        Log.d(TAG, "onThisMonthTransactionsLoadFailed: called!!");
     }
 }

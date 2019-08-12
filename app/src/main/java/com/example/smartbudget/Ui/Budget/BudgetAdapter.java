@@ -27,6 +27,8 @@ import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,7 +47,20 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
         this.mContext = context;
         this.mExpenseByCategoryList = expenseByCategoryList;
         this.passed_date = passed_date;
+        Collections.sort(mExpenseByCategoryList, new Comparator<ExpenseByCategory>() {
+            @Override
+            public int compare(ExpenseByCategory o1, ExpenseByCategory o2) {
+                if (o1.getSumByCategory() > o2.getSumByCategory())
+                    return -1;
+                else if (o1.getSumByCategory() < o2.getSumByCategory())
+                    return 1;
+                else
+                    return 0;
+            }
+        });
     }
+
+    private Category category;
 
     @NonNull
     @Override
@@ -58,7 +73,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-        Category category = Common.getExpenseCategory(mExpenseByCategoryList.get(position).getCategoryId());
+        category = Common.getExpenseCategory(mExpenseByCategoryList.get(position).getCategoryId());
 
         int amount = 500000;
 
@@ -81,7 +96,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Intent intent = new Intent(view.getContext(), ExpenseByCategoryDetailActivity.class);
             intent.putExtra("passed_date", passed_date);
-            intent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, category.getCategoryVisibleName(mContext));
+            intent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, mExpenseByCategoryList.get(i).getCategoryId());
             view.getContext().startActivity(intent);
         });
     }

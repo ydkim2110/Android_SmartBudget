@@ -47,6 +47,13 @@ public interface TransactionDAO {
             + " ORDER BY date DESC")
     List<TransactionItem> getThisMonthTransactionListByPattern(String date, String pattern);
 
+    @Query("SELECT * FROM transaction_table"
+            + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"
+            + " AND category_id LIKE :categoryId"
+            + " AND type LIKE 'Expense'"
+            + " ORDER BY date DESC")
+    List<TransactionItem> getThisMonthTransactionListByCategory(String date, String categoryId);
+
     @Query("SELECT category_id AS categoryId, SUM(amount) AS sumByCategory, COUNT(amount) AS countByCategory FROM transaction_table"
             + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"
             + " AND type LIKE 'Expense'"

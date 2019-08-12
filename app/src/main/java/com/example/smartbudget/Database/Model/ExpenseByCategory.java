@@ -1,5 +1,7 @@
 package com.example.smartbudget.Database.Model;
 
+import java.util.Comparator;
+
 public class ExpenseByCategory {
     private String categoryId;
     private int sumByCategory;
@@ -31,4 +33,5 @@ public class ExpenseByCategory {
     public void setCountByCategory(int countByCategory) {
         this.countByCategory = countByCategory;
     }
+
 }

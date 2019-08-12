@@ -139,6 +139,9 @@ public class TransactionItem implements Parcelable {
     }
 
     public String getSubCategoryId() {
+        if (subCategoryId == null || subCategoryId.isEmpty()) {
+            return ":other";
+        }
         return subCategoryId;
     }
 

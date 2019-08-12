@@ -12,6 +12,7 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
+import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
@@ -30,8 +31,10 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
     @BindView(R.id.rv_category_detail)
     RecyclerView rv_category_detail;
 
-    private String budgetCategory;
+    private String categoryId;
     private String passed_date;
+
+    private Category category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +44,14 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
         ButterKnife.bind(this);
 
         if (getIntent() != null) {
-            budgetCategory = getIntent().getStringExtra(Common.EXTRA_PASS_BUDGET_CATEGORY);
+            categoryId = getIntent().getStringExtra(Common.EXTRA_PASS_BUDGET_CATEGORY);
+            category = Common.getExpenseCategory(categoryId);
             passed_date = getIntent().getStringExtra("passed_date");
         }
 
         initView();
 
-        DBTransactionUtils.getThisMonthTransactions(MainActivity.db, passed_date, this);
+        DBTransactionUtils.getThisMonthTransactionListByCategory(MainActivity.db, passed_date, categoryId,this);
 
     }
 
@@ -55,7 +59,7 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
         Log.d(TAG, "initView: called!!");
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(budgetCategory);
+        getSupportActionBar().setTitle(category.getCategoryVisibleName(this));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }

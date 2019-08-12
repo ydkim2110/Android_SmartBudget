@@ -2,7 +2,6 @@ package com.example.smartbudget.Database.TransactionRoom;
 
 import android.os.AsyncTask;
 
-import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.ILastFewDaysTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
@@ -12,8 +11,6 @@ import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
-import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
-import com.example.smartbudget.Ui.Home.Spending.InvestFragment;
 
 
 import java.util.List;
@@ -46,9 +43,15 @@ public class DBTransactionUtils {
     }
 
     public static void getThisMonthTransactionListByPattern(BudgetDatabase db, String date, String pattern, IThisMonthTransactionsLoadListener listener) {
-        GetThisMonthTransactionListByPattern task = new GetThisMonthTransactionListByPattern(db, date, pattern, listener);
+        GetThisMonthTransactionListByPatternAsync task = new GetThisMonthTransactionListByPatternAsync(db, date, pattern, listener);
         task.execute();
     }
+
+    public static void getThisMonthTransactionListByCategory(BudgetDatabase db, String date, String categoryId, IThisMonthTransactionsLoadListener listener) {
+        GetThisMonthTransactionListByCategoryAsync task = new GetThisMonthTransactionListByCategoryAsync(db, date, categoryId, listener);
+        task.execute();
+    }
+
 
     public static void getSumAmountByBudget(BudgetDatabase db, String startDate, String endDate, String type, int accountId, ISumAmountByBudgetListener listener) {
         GetSumAmountByBudget task = new GetSumAmountByBudget(db, startDate, endDate, type, accountId, listener);
@@ -181,14 +184,14 @@ public class DBTransactionUtils {
         }
     }
 
-    private static class GetThisMonthTransactionListByPattern extends AsyncTask<Void, Void, List<TransactionItem>> {
+    private static class GetThisMonthTransactionListByPatternAsync extends AsyncTask<Void, Void, List<TransactionItem>> {
 
         BudgetDatabase mBudgetDatabase;
         String date;
         String pattern;
         IThisMonthTransactionsLoadListener mListener;
 
-        public GetThisMonthTransactionListByPattern(BudgetDatabase budgetDatabase, String date, String pattern, IThisMonthTransactionsLoadListener listener) {
+        public GetThisMonthTransactionListByPatternAsync(BudgetDatabase budgetDatabase, String date, String pattern, IThisMonthTransactionsLoadListener listener) {
             mBudgetDatabase = budgetDatabase;
             this.date = date;
             this.pattern = pattern;
@@ -198,6 +201,32 @@ public class DBTransactionUtils {
         @Override
         protected List<TransactionItem> doInBackground(Void... voids) {
             return mBudgetDatabase.transactionDAO().getThisMonthTransactionListByPattern(date, pattern);
+        }
+
+        @Override
+        protected void onPostExecute(List<TransactionItem> transactionItemList) {
+            super.onPostExecute(transactionItemList);
+            mListener.onThisMonthTransactionsLoadSuccess(transactionItemList);
+        }
+    }
+
+    private static class GetThisMonthTransactionListByCategoryAsync extends AsyncTask<Void, Void, List<TransactionItem>> {
+
+        BudgetDatabase mBudgetDatabase;
+        String date;
+        String categoryId;
+        IThisMonthTransactionsLoadListener mListener;
+
+        public GetThisMonthTransactionListByCategoryAsync(BudgetDatabase budgetDatabase, String date, String categoryId, IThisMonthTransactionsLoadListener listener) {
+            mBudgetDatabase = budgetDatabase;
+            this.date = date;
+            this.categoryId = categoryId;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<TransactionItem> doInBackground(Void... voids) {
+            return mBudgetDatabase.transactionDAO().getThisMonthTransactionListByCategory(date, categoryId);
         }
 
         @Override

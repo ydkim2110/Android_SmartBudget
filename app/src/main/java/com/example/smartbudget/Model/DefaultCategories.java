@@ -30,7 +30,7 @@ public class DefaultCategories {
             new SubCategory(":snack", "간식", R.drawable.category_food, Color.parseColor("#c2185b"), ":food&drink"),
             new SubCategory(":coffee&beberage", "커피/음료", R.drawable.category_food, Color.parseColor("#c2185b"), ":food&drink"),
             new SubCategory(":other", "기타", R.drawable.category_food, Color.parseColor("#c2185b"), ":food&drink"),
-            new SubCategory(":meintenance_charge", "관리비", R.drawable.category_home, Color.parseColor("#0288d1"), ":utility"),
+            new SubCategory(":maintenance_charge", "관리비", R.drawable.category_home, Color.parseColor("#0288d1"), ":utility"),
             new SubCategory(":electricity_bill", "전기요금", R.drawable.category_home, Color.parseColor("#0288d1"), ":utility"),
             new SubCategory(":water_bill", "수도요금", R.drawable.category_home, Color.parseColor("#0288d1"), ":utility"),
             new SubCategory(":gas_bill", "가스요금", R.drawable.category_home, Color.parseColor("#0288d1"), ":utility"),
