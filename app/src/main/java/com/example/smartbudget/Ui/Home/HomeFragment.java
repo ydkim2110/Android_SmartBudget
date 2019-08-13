@@ -289,15 +289,15 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
             if (spendingPattern.getPattern().equals("Normal") && total != 0) {
                 normal_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_normal.setText(new StringBuilder("Normal\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
-                tv_normal_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), tv_normal_sum);
             } else if (spendingPattern.getPattern().equals("Waste") && total != 0) {
                 waste_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_waste.setText(new StringBuilder("Waste\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
-                tv_waste_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), tv_waste_sum);
             } else if (spendingPattern.getPattern().equals("Invest") && total != 0) {
                 invest_percentage = (int) (spendingPattern.getSum() / total * 100);
                 tv_invest.setText(new StringBuilder("Invest\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
-                tv_invest_sum.setText(new StringBuilder(Common.changeNumberToComma((int) spendingPattern.getSum())).append("원"));
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), tv_invest_sum);
             }
         }
         setCircleProgressbar(normal_percentage, waste_percentage, invest_percentage);
@@ -415,7 +415,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     @Override
     public void onLastFewDaysTransactionsLoadSuccess(List<TransactionItem> transactionItemList) {
         Log.d(TAG, "onLastFewDaysTransactionsLoadSuccess: called!!");
-        if (transactionItemList == null) {
+        if (transactionItemList == null || transactionItemList.size() < 1) {
             rv_transaction.setVisibility(View.GONE);
             ll_no_items.setVisibility(View.VISIBLE);
         } else {

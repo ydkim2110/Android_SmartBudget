@@ -29,6 +29,8 @@ import android.widget.Toast;
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
 import com.example.smartbudget.Database.Interface.IAccountLoadListener;
+import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
+import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
 import com.example.smartbudget.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Model.Category;
@@ -342,41 +344,41 @@ public class AddTransactionActivity extends AppCompatActivity
 
         saveBtn.setOnClickListener(v -> {
 
-            TransactionModel transactionModel = new TransactionModel();
+            TransactionItem transactionItem = new TransactionItem();
 
             if (saveBtn.getText().toString().toLowerCase().equals("save")) {
-                transactionModel.setNote(noteEdt.getText().toString());
-                transactionModel.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
-                transactionModel.setType(selectedType);
-                transactionModel.setPattern(selectedPattern);
-                transactionModel.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
-                transactionModel.setCategoryId(selectedCategory.getCategoryID());
-                transactionModel.setSubCategoryId("");
-                transactionModel.setAccountId(mAccountItem.getId());
+                transactionItem.setDescription(noteEdt.getText().toString());
+                transactionItem.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionItem.setType(selectedType);
+                transactionItem.setPattern(selectedPattern);
+                transactionItem.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionItem.setCategoryId(selectedCategory.getCategoryID());
+                transactionItem.setSubCategoryId("");
+                transactionItem.setAccountId(mAccountItem.getId());
 
                 if (selectedType.equals("Expense") || selectedType.equals("Income")) {
-                    DatabaseUtils.insertTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
+                    DBTransactionUtils.insertTransactionAsync(MainActivity.db, AddTransactionActivity.this, transactionItem);
                 } else if (selectedType.equals("Transfer")) {
-                    transactionModel.setToAccount(0);
+                    transactionItem.setToAccount(0);
                     // todo: transfer
 
                 }
             }
             else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
-                transactionModel.setId(mTransactionModel.getId());
-                transactionModel.setNote(noteEdt.getText().toString());
-                transactionModel.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
-                transactionModel.setType(selectedType);
-                transactionModel.setPattern(selectedPattern);
-                transactionModel.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
-                transactionModel.setCategoryId(selectedCategory.getCategoryID());
-                transactionModel.setSubCategoryId("");
-                transactionModel.setAccountId(mAccountItem.getId());
+                transactionItem.setId(mTransactionModel.getId());
+                transactionItem.setDescription(noteEdt.getText().toString());
+                transactionItem.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionItem.setType(selectedType);
+                transactionItem.setPattern(selectedPattern);
+                transactionItem.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionItem.setCategoryId(selectedCategory.getCategoryID());
+                transactionItem.setSubCategoryId("");
+                transactionItem.setAccountId(mAccountItem.getId());
 
                 if (selectedType.equals("Expense") || selectedType.equals("Income")) {
-                    DatabaseUtils.updateTransactionAsync(MainActivity.mDBHelper, AddTransactionActivity.this, transactionModel);
+                    DBTransactionUtils.updateTransactionAsync(MainActivity.db, AddTransactionActivity.this, transactionItem);
                 } else if (selectedType.equals("Transfer")) {
-                    transactionModel.setToAccount(0);
+                    transactionItem.setToAccount(0);
                     // todo: transfer
                 }
             }

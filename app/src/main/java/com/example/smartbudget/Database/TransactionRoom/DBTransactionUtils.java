@@ -1,6 +1,7 @@
 package com.example.smartbudget.Database.TransactionRoom;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
@@ -16,11 +17,19 @@ import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
 import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
+import com.example.smartbudget.Interface.ITransactionInsertListener;
+import com.example.smartbudget.Interface.ITransactionUpdateListener;
+import com.example.smartbudget.Model.TransactionModel;
 
 
 import java.util.List;
 
 public class DBTransactionUtils {
+
+    public static void insertTransactionAsync(BudgetDatabase db, ITransactionInsertListener listener, TransactionItem... transactionItems) {
+        InsertTransactionAsync task = new InsertTransactionAsync(db, listener);
+        task.execute(transactionItems);
+    }
 
     public static void getAllTransactions(BudgetDatabase db, ITransactionsLoadListener listener) {
         GetAllTransactionAsync task = new GetAllTransactionAsync(db, listener);
@@ -72,11 +81,38 @@ public class DBTransactionUtils {
         task.execute();
     }
 
+    public static void updateTransactionAsync(BudgetDatabase db, ITransactionUpdateListener listener, TransactionItem... transactionItems) {
+        UpdateTransactionAsync task = new UpdateTransactionAsync(db, listener);
+        task.execute(transactionItems);
+    }
+
     /*
     ============================================================================
     ASYNC TASK DEFINE
     ============================================================================
      */
+    private static class InsertTransactionAsync extends AsyncTask<TransactionItem, Void, Boolean> {
+
+        BudgetDatabase mBudgetDatabase;
+        ITransactionInsertListener mListener;
+
+        public InsertTransactionAsync(BudgetDatabase mBudgetDatabase, ITransactionInsertListener mListener) {
+            this.mBudgetDatabase = mBudgetDatabase;
+            this.mListener = mListener;
+        }
+
+        @Override
+        protected Boolean doInBackground(TransactionItem... transactionItems) {
+            mBudgetDatabase.transactionDAO().insertTransactionUpdateAccount(transactionItems[0]);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isInserted) {
+            super.onPostExecute(isInserted);
+            mListener.onTransactionInsertSuccess(isInserted);
+        }
+    }
 
     private static class GetAllTransactionAsync extends AsyncTask<Void, Void, List<TransactionItem>> {
 
@@ -329,6 +365,28 @@ public class DBTransactionUtils {
         protected void onPostExecute(Double aDouble) {
             super.onPostExecute(aDouble);
             mListener.onSumAmountByBudgeSuccess(aDouble);
+        }
+    }
+
+    public static class UpdateTransactionAsync extends AsyncTask<TransactionItem, Void, Boolean> {
+
+        BudgetDatabase db;
+        ITransactionUpdateListener mListener;
+
+        public UpdateTransactionAsync(BudgetDatabase db, ITransactionUpdateListener mListener) {
+            this.db = db;
+            this.mListener = mListener;
+        }
+
+        @Override
+        protected Boolean doInBackground(TransactionItem... transactionItems) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onTransactionUpdateSuccess(aBoolean);
         }
     }
 }

@@ -2,6 +2,8 @@ package com.example.smartbudget.Ui.Home.Overview;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -9,6 +11,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -19,6 +22,7 @@ import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
+import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
@@ -35,6 +39,8 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -65,14 +71,8 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
     @BindView(R.id.pb_expense)
     ProgressBar pb_expense;
 
-    private Float[] yData;
-    private String[] xData;
-
-    private float thisMonthIncome;
-    private float thisMonthExpenses;
-
     private String passed_date;
-    private List<TransactionModel> mTransactionModelList;
+    private int total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,93 +149,6 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
         rv_spending.addItemDecoration(dividerItemDecoration);
     }
 
-    private void setUpPieGraph() {
-        Log.d(TAG, "setUpPieGraph: called!!");
-
-        pie_chart_overview.setUsePercentValues(true);
-        pie_chart_overview.setDrawHoleEnabled(true);
-
-        pie_chart_overview.setTransparentCircleColor(Color.WHITE);
-        pie_chart_overview.setTransparentCircleAlpha(110);
-
-        pie_chart_overview.setHoleRadius(58f);
-        pie_chart_overview.setTransparentCircleRadius(61f);
-
-        pie_chart_overview.setDrawCenterText(true);
-
-        pie_chart_overview.setRotationAngle(0);
-        pie_chart_overview.setRotationEnabled(true);
-
-        pie_chart_overview.setCenterText("June");
-
-        addPieData();
-
-        pie_chart_overview.animateY(1500, Easing.EaseInOutQuad);
-
-        Legend l = pie_chart_overview.getLegend();
-        l.setEnabled(false);
-
-        pie_chart_overview.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                if (e == null) {
-                    return;
-
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
-    }
-
-    private void addPieData() {
-        Log.d(TAG, "addPieData: called!!");
-
-        ArrayList<PieEntry> yVals = new ArrayList<>();
-
-        for (int i = 0; i < yData.length; i++) {
-            yVals.add(new PieEntry(yData[i], i));
-        }
-
-        ArrayList<String> xVals = new ArrayList<>();
-
-        for (int i = 0; i < xData.length; i++) {
-            xVals.add(xData[i]);
-        }
-
-        //create the data set
-        PieDataSet dataSet = new PieDataSet(yVals, "Expenses");
-        dataSet.setSliceSpace(3);
-        dataSet.setSelectionShift(5);
-        dataSet.setValueTextSize(12);
-
-        //add colors to dataset
-        ArrayList<Integer> colors = new ArrayList<>();
-
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-        colors.add(ColorTemplate.getHoloBlue());
-
-        //dataSet.setColors(colors);
-
-        //create pie data object
-        PieData pieData = new PieData(dataSet);
-        pie_chart_overview.setData(pieData);
-        pie_chart_overview.invalidate();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -246,30 +159,63 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
+        Log.d(TAG, "onThisMonthTransactionByCategoryLoadSuccess: called!!");
         if (expenseByCategoryList != null) {
+            Collections.sort(expenseByCategoryList, new Comparator<ExpenseByCategory>() {
+                @Override
+                public int compare(ExpenseByCategory o1, ExpenseByCategory o2) {
+                    if (o1.getSumByCategory() > o2.getSumByCategory())
+                        return -1;
+                    else if (o1.getSumByCategory() < o2.getSumByCategory())
+                        return 1;
+                    else
+                        return 0;
+                }
+            });
+            total = expenseByCategoryList.stream().mapToInt(ExpenseByCategory::getSumByCategory).sum();
 
+            ArrayList<PieEntry> pieEntries = new ArrayList<>();
             ArrayList<Integer> pieColors = new ArrayList<>();
 
-            ArrayList<Float> expenseByCategory = new ArrayList<>();
-
-            for (ExpenseByCategory data : expenseByCategoryList) {
-                expenseByCategory.add((float) data.getSumByCategory());
+            Category category;
+            Drawable drawable;
+            for(ExpenseByCategory expenseByCategory : expenseByCategoryList) {
+                category = Common.getExpenseCategory(expenseByCategory.getCategoryId());
+                drawable = getDrawable(category.getIconResourceID());
+                drawable.setTint(Color.parseColor("#FFFFFF"));
+                pieColors.add(category.getIconColor());
+                pieEntries.add(new PieEntry(expenseByCategory.getSumByCategory(), drawable));
             }
 
-            yData = expenseByCategory.toArray(new Float[expenseByCategory.size()]);
+//            ArrayList<Float> expenseByCategory = new ArrayList<>();
+//
+//            for (ExpenseByCategory data : expenseByCategoryList) {
+//                expenseByCategory.add((float) data.getSumByCategory());
+//            }
+//
+//            yData = expenseByCategory.toArray(new Float[expenseByCategory.size()]);
+//
+//
+//
+//            for (int i = 0; i < yData.length; i++) {
+//                pieEntries.add(new PieEntry(yData[i], i));
+//            }
 
-            ArrayList<PieEntry> yVals = new ArrayList<>();
-
-            for (int i = 0; i < yData.length; i++) {
-                yVals.add(new PieEntry(yData[i], i));
-            }
-
-            PieDataSet dataSet = new PieDataSet(yVals, "Expense");
+            PieDataSet dataSet = new PieDataSet(pieEntries, "");
+            dataSet.setDrawValues(false);
             dataSet.setSliceSpace(3);
             dataSet.setSelectionShift(5);
             dataSet.setValueTextSize(12);
+
+            //dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+            //dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+
+            // When valuePosition is OutsideSlice, indicates offset as percentage out of the slice size
+            // dataSet.setValueLinePart1OffsetPercentage(100f);
+
 
             //add colors to dataset
             ArrayList<Integer> colors = new ArrayList<>();
@@ -286,11 +232,34 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
                 colors.add(c);
             colors.add(ColorTemplate.getHoloBlue());
 
-            dataSet.setColors(colors);
+            dataSet.setColors(pieColors);
 
             //create pie data object
             PieData pieData = new PieData(dataSet);
             pie_chart_overview.setData(pieData);
+            pie_chart_overview.getLegend().setEnabled(false);
+            pie_chart_overview.getDescription().setEnabled(false);
+
+            pie_chart_overview.setUsePercentValues(true);
+            pie_chart_overview.setDrawHoleEnabled(true);
+
+            pie_chart_overview.setTransparentCircleColor(Color.WHITE);
+            pie_chart_overview.setTransparentCircleAlpha(110);
+
+            pie_chart_overview.setHoleRadius(58f);
+            pie_chart_overview.setTransparentCircleRadius(61f);
+
+            pie_chart_overview.setDrawCenterText(true);
+
+            pie_chart_overview.setRotationAngle(0);
+            pie_chart_overview.setRotationEnabled(true);
+
+            StringBuilder sb = new StringBuilder(passed_date).append("\n").append(Common.changeNumberToComma(total)).append("원");
+
+            pie_chart_overview.setCenterText(sb);
+
+            pie_chart_overview.animateY(1500, Easing.EaseInOutQuad);
+
             pie_chart_overview.invalidate();
 
 //            pieDataSet.setDrawValues(false);
@@ -314,7 +283,7 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
 //
 //            pie_chart_overview.invalidate();
 
-            SpendingAdapter adapter = new SpendingAdapter(OverviewActivity.this, expenseByCategoryList);
+            SpendingAdapter adapter = new SpendingAdapter(OverviewActivity.this, expenseByCategoryList, passed_date);
             rv_spending.setAdapter(adapter);
         }
     }

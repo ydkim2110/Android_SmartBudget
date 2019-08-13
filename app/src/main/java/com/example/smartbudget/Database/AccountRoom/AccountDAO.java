@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ public interface AccountDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAccount(AccountItem... accountItems);
+
+    @Update
+    void updateAccount(AccountItem... accountItems);
 
     @Delete
     int deleteAccount(AccountItem accountItem);
