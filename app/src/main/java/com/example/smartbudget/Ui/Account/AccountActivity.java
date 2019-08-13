@@ -154,9 +154,9 @@ public class AccountActivity extends AppCompatActivity implements IAccountsLoadL
                 }
             }
         }
-        Common.animateTextView(1000, 0, assetTotal, tv_asset);
-        Common.animateTextView(1000, 0, debtTotal, tv_debt);
-        Common.animateTextView(1000, 0, (assetTotal - debtTotal), tv_balance_total);
+        Common.animateTextView(1000, 0,  assetTotal, "원", tv_asset);
+        Common.animateTextView(1000, 0, debtTotal, "원", tv_debt);
+        Common.animateTextView(1000, 0, (assetTotal - debtTotal), "원", tv_balance_total);
     }
 
     @Override

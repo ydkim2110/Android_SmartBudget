@@ -218,13 +218,13 @@ public class Common {
         return null;
     }
 
-    public static void animateTextView(int duration, int initialValue, int finalValue, final TextView textview) {
+    public static void animateTextView(int duration, int initialValue, int finalValue, String unit, final TextView textview) {
 
         ValueAnimator valueAnimator = ValueAnimator.ofInt(initialValue, finalValue);
         valueAnimator.setDuration(duration);
 
         valueAnimator.addUpdateListener(valueAnimator1 -> {
-                textview.setText(new StringBuilder(changeNumberToComma(Integer.parseInt(valueAnimator1.getAnimatedValue().toString()))).append("원"));
+                textview.setText(new StringBuilder(changeNumberToComma(Integer.parseInt(valueAnimator1.getAnimatedValue().toString()))).append(unit));
         });
         valueAnimator.start();
     }

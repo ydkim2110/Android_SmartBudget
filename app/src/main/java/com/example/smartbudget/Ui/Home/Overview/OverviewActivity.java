@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -70,6 +71,8 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
     ProgressBar pb_income;
     @BindView(R.id.pb_expense)
     ProgressBar pb_expense;
+    @BindView(R.id.tv_no_transactions)
+    TextView tv_no_transactions;
 
     private String passed_date;
     private int total;
@@ -94,9 +97,9 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
                 }
             }
 
-            Common.animateTextView(1500, 0, income, tv_income);
-            Common.animateTextView(1500, 0, expense, tv_expense);
-            Common.animateTextView(1500, 0, (income - expense), tv_balance);
+            Common.animateTextView(1500, 0, income, "원", tv_income);
+            Common.animateTextView(1500, 0, expense, "원", tv_expense);
+            Common.animateTextView(1500, 0, (income - expense), "원", tv_balance);
 
             setProgressBar(income, expense);
         }
@@ -163,17 +166,20 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
     @Override
     public void onThisMonthTransactionByCategoryLoadSuccess(List<ExpenseByCategory> expenseByCategoryList) {
         Log.d(TAG, "onThisMonthTransactionByCategoryLoadSuccess: called!!");
-        if (expenseByCategoryList != null) {
-            Collections.sort(expenseByCategoryList, new Comparator<ExpenseByCategory>() {
-                @Override
-                public int compare(ExpenseByCategory o1, ExpenseByCategory o2) {
-                    if (o1.getSumByCategory() > o2.getSumByCategory())
-                        return -1;
-                    else if (o1.getSumByCategory() < o2.getSumByCategory())
-                        return 1;
-                    else
-                        return 0;
-                }
+        if (expenseByCategoryList == null || expenseByCategoryList.size() < 1) {
+            tv_no_transactions.setVisibility(View.VISIBLE);
+            pie_chart_overview.setVisibility(View.GONE);
+        } else  {
+            tv_no_transactions.setVisibility(View.GONE);
+            pie_chart_overview.setVisibility(View.VISIBLE);
+
+            Collections.sort(expenseByCategoryList, (o1, o2) -> {
+                if (o1.getSumByCategory() > o2.getSumByCategory())
+                    return -1;
+                else if (o1.getSumByCategory() < o2.getSumByCategory())
+                    return 1;
+                else
+                    return 0;
             });
             total = expenseByCategoryList.stream().mapToInt(ExpenseByCategory::getSumByCategory).sum();
 
@@ -190,25 +196,12 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
                 pieEntries.add(new PieEntry(expenseByCategory.getSumByCategory(), drawable));
             }
 
-//            ArrayList<Float> expenseByCategory = new ArrayList<>();
-//
-//            for (ExpenseByCategory data : expenseByCategoryList) {
-//                expenseByCategory.add((float) data.getSumByCategory());
-//            }
-//
-//            yData = expenseByCategory.toArray(new Float[expenseByCategory.size()]);
-//
-//
-//
-//            for (int i = 0; i < yData.length; i++) {
-//                pieEntries.add(new PieEntry(yData[i], i));
-//            }
-
             PieDataSet dataSet = new PieDataSet(pieEntries, "");
             dataSet.setDrawValues(false);
             dataSet.setSliceSpace(3);
             dataSet.setSelectionShift(5);
             dataSet.setValueTextSize(12);
+            dataSet.setColors(pieColors);
 
             //dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
             //dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
@@ -216,23 +209,6 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             // When valuePosition is OutsideSlice, indicates offset as percentage out of the slice size
             // dataSet.setValueLinePart1OffsetPercentage(100f);
 
-
-            //add colors to dataset
-            ArrayList<Integer> colors = new ArrayList<>();
-
-            for (int c : ColorTemplate.VORDIPLOM_COLORS)
-                colors.add(c);
-            for (int c : ColorTemplate.JOYFUL_COLORS)
-                colors.add(c);
-            for (int c : ColorTemplate.COLORFUL_COLORS)
-                colors.add(c);
-            for (int c : ColorTemplate.LIBERTY_COLORS)
-                colors.add(c);
-            for (int c : ColorTemplate.PASTEL_COLORS)
-                colors.add(c);
-            colors.add(ColorTemplate.getHoloBlue());
-
-            dataSet.setColors(pieColors);
 
             //create pie data object
             PieData pieData = new PieData(dataSet);
@@ -261,27 +237,6 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             pie_chart_overview.animateY(1500, Easing.EaseInOutQuad);
 
             pie_chart_overview.invalidate();
-
-//            pieDataSet.setDrawValues(false);
-//            pieDataSet.setColors(pieColors);
-//            pieDataSet.setSliceSpace(2f);
-//
-//            PieData data = new PieData(pieDataSet);
-//            pie_chart_overview.setData(data);
-//            pie_chart_overview.setTouchEnabled(false);
-//            pie_chart_overview.getLegend().setEnabled(false);
-//            pie_chart_overview.getDescription().setEnabled(false);
-//
-//            pie_chart_overview.setDrawHoleEnabled(true);
-//            //  pie_chart_overview.setHoleColor(ContextCompat.getColor(this, R.color.khaki));
-//            pie_chart_overview.setHoleRadius(55f);
-//            pie_chart_overview.setTransparentCircleRadius(55f);
-//            pie_chart_overview.setDrawCenterText(true);
-//            pie_chart_overview.setRotationAngle(270);
-//            pie_chart_overview.setRotationEnabled(false);
-//            pie_chart_overview.setHighlightPerTapEnabled(true);
-//
-//            pie_chart_overview.invalidate();
 
             SpendingAdapter adapter = new SpendingAdapter(OverviewActivity.this, expenseByCategoryList, passed_date);
             rv_spending.setAdapter(adapter);

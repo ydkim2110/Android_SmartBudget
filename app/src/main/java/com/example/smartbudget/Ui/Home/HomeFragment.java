@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
         mUnbinder = ButterKnife.bind(this, view);
 
-        initView(view);
+        initView();
 
         rv_transaction.setHasFixedSize(true);
         rv_transaction.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -178,9 +178,9 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         Log.d(TAG, "setProgressBar: called!!");
         int maxValue = 1400000;
 
-        tv_used_expense.setText(new StringBuilder(Common.changeNumberToComma(usedExpense)).append("원"));
-        tv_total_expense.setText(new StringBuilder(Common.changeNumberToComma(maxValue)).append("원"));
-        tv_percentage.setText(new StringBuilder(Common.calcPercentageDownToTwo(usedExpense, maxValue)).append("%"));
+        Common.animateTextView(1000, 0, usedExpense, "원", tv_used_expense);
+        Common.animateTextView(1000, 0, maxValue, "원", tv_total_expense);
+        Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage(usedExpense, maxValue)), "%", tv_percentage);
 
         pb_expense_by_category.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_expense_by_category, "progress", 0, usedExpense);
@@ -213,7 +213,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void initView(View view) {
+    private void initView() {
         Log.d(TAG, "initView: called!!");
 
         nsv_container.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -223,16 +223,19 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         home_overview_container.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), OverviewActivity.class);
             intent.putExtra(OverviewActivity.EXTRA_PASS_DATE, currentDate);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             getContext().startActivity(intent);
         });
         home_expense_by_category_container.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ExpenseByCategoryActivity.class);
             intent.putExtra("passed_date", currentDate);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             getContext().startActivity(intent);
         });
         home_spending_pattern_container.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SpendingActivity.class);
             intent.putExtra("passed_date", currentDate);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             getContext().startActivity(intent);
         });
         refresh_home_fragment.setOnRefreshListener(() -> {
@@ -270,11 +273,11 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         waste_percentage = 0;
         invest_percentage = 0;
 
-        tv_normal.setText(new StringBuilder("Normal\n").append("0.0%"));
+        tv_normal.setText("0%");
         tv_normal_sum.setText(zeroMoney);
-        tv_waste.setText(new StringBuilder("Waste\n").append("0.0%"));
+        tv_waste.setText("0%");
         tv_waste_sum.setText(zeroMoney);
-        tv_invest.setText(new StringBuilder("Invest\n").append("0.0%"));
+        tv_invest.setText("0%");
         tv_invest_sum.setText(zeroMoney);
 
         for (SpendingByPattern spendingPattern : spendingPatterns) {
@@ -283,21 +286,21 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
             }
         }
 
-        tv_total_spending.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
+        Common.animateTextView(1000, 0, total, "원", tv_total_spending);
 
         for (SpendingByPattern spendingPattern : spendingPatterns) {
             if (spendingPattern.getPattern().equals("Normal") && total != 0) {
                 normal_percentage = (int) (spendingPattern.getSum() / total * 100);
-                tv_normal.setText(new StringBuilder("Normal\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
-                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), tv_normal_sum);
+                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), "%", tv_normal);
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), "원", tv_normal_sum);
             } else if (spendingPattern.getPattern().equals("Waste") && total != 0) {
                 waste_percentage = (int) (spendingPattern.getSum() / total * 100);
-                tv_waste.setText(new StringBuilder("Waste\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
-                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), tv_waste_sum);
+                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), "%", tv_waste);
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), "원", tv_waste_sum);
             } else if (spendingPattern.getPattern().equals("Invest") && total != 0) {
                 invest_percentage = (int) (spendingPattern.getSum() / total * 100);
-                tv_invest.setText(new StringBuilder("Invest\n").append(Common.calcPercentageDownToOne((int) spendingPattern.getSum(), total)).append("%"));
-                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), tv_invest_sum);
+                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), "%", tv_invest);
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), "원", tv_invest_sum);
             }
         }
         setCircleProgressbar(normal_percentage, waste_percentage, invest_percentage);
@@ -398,9 +401,9 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
                 }
             }
         }
-        Common.animateTextView(1000, 0, income, tv_income_total);
-        Common.animateTextView(1000, 0, expense, tv_expense_total);
-        Common.animateTextView(1000, 0, (income - expense), tv_balance);
+        Common.animateTextView(1000, 0, income, "원", tv_income_total);
+        Common.animateTextView(1000, 0, expense, "원", tv_expense_total);
+        Common.animateTextView(1000, 0, (income - expense), "원", tv_balance);
 
         setProgressBar(expense);
     }

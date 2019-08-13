@@ -284,8 +284,8 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
         Log.d(TAG, "onTransactionLoadSuccess: Total expense: " + totalExpense);
 
-        Common.animateTextView(500, 0, totalIncome, tv_total_income);
-        Common.animateTextView(500, 0, totalExpense, tv_total_expense);
+        Common.animateTextView(500, 0, totalIncome, "원", tv_total_income);
+        Common.animateTextView(500, 0, totalExpense, "원", tv_total_expense);
 
         groupedHashMap = groupDataIntoHashMap(transactionItemList);
 

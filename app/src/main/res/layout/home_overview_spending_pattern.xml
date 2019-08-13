@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_spending_pattern_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -24,14 +24,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <ProgressBar
         android:id="@+id/pb_circle_normal"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         android:background="@drawable/shape_circle_progressbar"
         android:indeterminate="false"
         android:max="100"
@@ -39,6 +38,33 @@
         android:progressDrawable="@drawable/rotate_circular_progressbar_normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_normal"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_normal"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_normal"
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_normal">
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal" />
+
+        <TextView
+            android:id="@+id/tv_normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pb_circle_waste"
@@ -55,13 +81,38 @@
         app:layout_constraintStart_toEndOf="@+id/pb_circle_normal"
         app:layout_constraintTop_toTopOf="@+id/pb_circle_normal" />
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_waste"
+        app:layout_constraintEnd_toEndOf="@+id/pb_circle_waste"
+        app:layout_constraintStart_toStartOf="@+id/pb_circle_waste"
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_waste">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Waste" />
+
+        <TextView
+            android:id="@+id/tv_waste"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pb_circle_invest"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/shape_circle_progressbar"
         android:indeterminate="false"
@@ -69,40 +120,34 @@
         android:progress="0"
         android:progressDrawable="@drawable/rotate_circular_progressbar_invest"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <TextView
-        android:id="@+id/tv_normal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Normal\n0%"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_normal"
-        app:layout_constraintEnd_toEndOf="@+id/pb_circle_normal"
-        app:layout_constraintStart_toStartOf="@+id/pb_circle_normal"
-        app:layout_constraintTop_toTopOf="@+id/pb_circle_normal" />
-
-    <TextView
-        android:id="@+id/tv_waste"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Waste\n0%"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@+id/pb_circle_waste"
-        app:layout_constraintEnd_toEndOf="@+id/pb_circle_waste"
-        app:layout_constraintStart_toStartOf="@+id/pb_circle_waste"
         app:layout_constraintTop_toTopOf="@+id/pb_circle_waste" />
 
-    <TextView
-        android:id="@+id/tv_invest"
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Invest\n0%"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@+id/pb_circle_invest"
         app:layout_constraintEnd_toEndOf="@+id/pb_circle_invest"
         app:layout_constraintStart_toStartOf="@+id/pb_circle_invest"
-        app:layout_constraintTop_toTopOf="@+id/pb_circle_invest" />
+        app:layout_constraintTop_toTopOf="@+id/pb_circle_invest">
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invest" />
+
+        <TextView
+            android:id="@+id/tv_invest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_total_spending"
@@ -110,7 +155,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="0원"
+        android:textColor="@android:color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -14,15 +14,16 @@ import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
+import com.example.smartbudget.Utils.Common;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OverViewDetailActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
+public class TransactionListByCategoryActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
 
-    private static final String TAG = OverViewDetailActivity.class.getSimpleName();
+    private static final String TAG = TransactionListByCategoryActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -35,7 +36,7 @@ public class OverViewDetailActivity extends AppCompatActivity implements IThisMo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_over_view_detail);
+        setContentView(R.layout.activity_transaction_list_by_category);
         Log.d(TAG, "onCreate: started!!");
         ButterKnife.bind(this);
 
@@ -53,7 +54,7 @@ public class OverViewDetailActivity extends AppCompatActivity implements IThisMo
         Log.d(TAG, "initView: called!!");
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_overview));
+        getSupportActionBar().setTitle(Common.getExpenseCategory(categoryId).getCategoryVisibleName(this));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         rv_list_by_category.setHasFixedSize(true);

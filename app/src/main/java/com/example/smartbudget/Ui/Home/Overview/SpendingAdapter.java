@@ -12,13 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
-import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryActivity;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.Collections;
@@ -54,6 +52,7 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
             }
         });
         total = mCategoryList.stream().mapToInt(ExpenseByCategory::getSumByCategory).sum();
+
     }
 
     private Category category;
@@ -77,7 +76,7 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
         //viewHolder.percentage.setText(spendingList.get(i).getPercentage());
 
         holder.setIRecyclerItemSelectedListener((view, position) -> {
-            Intent intent = new Intent(mContext, OverViewDetailActivity.class);
+            Intent intent = new Intent(mContext, TransactionListByCategoryActivity.class);
             intent.putExtra("date", passed_date);
             intent.putExtra("categoryId", mCategoryList.get(position).getCategoryId());
             view.getContext().startActivity(intent);
