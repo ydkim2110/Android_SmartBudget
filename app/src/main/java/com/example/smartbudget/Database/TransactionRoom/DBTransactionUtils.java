@@ -370,17 +370,18 @@ public class DBTransactionUtils {
 
     public static class UpdateTransactionAsync extends AsyncTask<TransactionItem, Void, Boolean> {
 
-        BudgetDatabase db;
+        BudgetDatabase mBudgetDatabase;
         ITransactionUpdateListener mListener;
 
-        public UpdateTransactionAsync(BudgetDatabase db, ITransactionUpdateListener mListener) {
-            this.db = db;
+        public UpdateTransactionAsync(BudgetDatabase budgetDatabase, ITransactionUpdateListener mListener) {
+            this.mBudgetDatabase = budgetDatabase;
             this.mListener = mListener;
         }
 
         @Override
         protected Boolean doInBackground(TransactionItem... transactionItems) {
-            return null;
+            mBudgetDatabase.transactionDAO().updateTransactionUpdateAccount(transactionItems[0]);
+            return true;
         }
 
         @Override

@@ -96,7 +96,7 @@ public class AddTransactionActivity extends AppCompatActivity
 
     @OnClick(R.id.iv_delete)
     void deleteTransaction() {
-        DatabaseUtils.deleteTransactionAsync(MainActivity.mDBHelper, mTransactionModel);
+        //DatabaseUtils.deleteTransactionAsync(MainActivity.mDBHelper, mTransactionModel);
         finish();
     }
 
@@ -105,7 +105,7 @@ public class AddTransactionActivity extends AppCompatActivity
     int _day;
 
     private AccountItem mAccountItem;
-    private TransactionModel mTransactionModel;
+    private TransactionItem mTransactionItem;
     private String selectedType = "";
     private Category selectedCategory = null;
     private SubCategory selectedSubCategory = null;
@@ -130,13 +130,13 @@ public class AddTransactionActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_edit_transaction));
             saveBtn.setText(getResources().getString(R.string.btn_update));
 
-            TransactionModel transactionModel = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
+            TransactionItem transactionItem = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
 
-            DBAccountUtils.getAccount(MainActivity.db, transactionModel.getAccountId(), this);
+            DBAccountUtils.getAccount(MainActivity.db, transactionItem.getAccountId(), this);
 
-            mTransactionModel = transactionModel;
-            selectedType = mTransactionModel.getType();
-            selectedPattern = mTransactionModel.getPattern();
+            mTransactionItem = transactionItem;
+            selectedType = mTransactionItem.getType();
+            selectedPattern = mTransactionItem.getPattern();
         }
 
         handleClickEvent();
@@ -347,6 +347,7 @@ public class AddTransactionActivity extends AppCompatActivity
             TransactionItem transactionItem = new TransactionItem();
 
             if (saveBtn.getText().toString().toLowerCase().equals("save")) {
+
                 transactionItem.setDescription(noteEdt.getText().toString());
                 transactionItem.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
                 transactionItem.setType(selectedType);
@@ -365,7 +366,8 @@ public class AddTransactionActivity extends AppCompatActivity
                 }
             }
             else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
-                transactionItem.setId(mTransactionModel.getId());
+
+                transactionItem.setId(mTransactionItem.getId());
                 transactionItem.setDescription(noteEdt.getText().toString());
                 transactionItem.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
                 transactionItem.setType(selectedType);
@@ -502,20 +504,20 @@ public class AddTransactionActivity extends AppCompatActivity
         mAccountItem = accountItem;
 
         String passedCategory = "default";
-        if (mTransactionModel.getType().equals("Expense")) {
+        if (mTransactionItem.getType().equals("Expense")) {
             if (ll_pattern_container.getVisibility() == View.GONE)
                 ll_pattern_container.setVisibility(View.VISIBLE);
-            Category expenseCategory = Common.getExpenseCategory(mTransactionModel.getCategoryId());
+            Category expenseCategory = Common.getExpenseCategory(mTransactionItem.getCategoryId());
             selectedCategory = expenseCategory;
             passedCategory = expenseCategory.getCategoryVisibleName(this);
             categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
             }
-        } else if (mTransactionModel.getType().equals("Income")) {
+        } else if (mTransactionItem.getType().equals("Income")) {
             if (ll_pattern_container.getVisibility() == View.VISIBLE)
                 ll_pattern_container.setVisibility(View.GONE);
-            Category incomeCategory = Common.getIncomeCategory(mTransactionModel.getCategoryId());
+            Category incomeCategory = Common.getIncomeCategory(mTransactionItem.getCategoryId());
             selectedCategory = incomeCategory;
             passedCategory = incomeCategory.getCategoryVisibleName(this);
             categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
@@ -524,10 +526,10 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         }
         String passedAccount = mAccountItem.getName();
-        String passedNote = mTransactionModel.getNote();
-        String passedDate = mTransactionModel.getDate();
-        String passedPattern = mTransactionModel.getPattern();
-        int passedAmount = (int) mTransactionModel.getAmount();
+        String passedNote = mTransactionItem.getDescription();
+        String passedDate = mTransactionItem.getDate();
+        String passedPattern = mTransactionItem.getPattern();
+        int passedAmount = (int) mTransactionItem.getAmount();
 
         categoryEdt.setText(passedCategory);
         accountEdt.setText(passedAccount);

@@ -1,11 +1,14 @@
 package com.example.smartbudget.Database.TransactionRoom;
 
+import android.util.Log;
+
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.example.smartbudget.Database.AccountRoom.AccountDAO;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
@@ -16,6 +19,8 @@ import java.util.List;
 
 @Dao
 public abstract class TransactionDAO {
+
+    private static final String TAG = "TransactionDAO";
 
     @Query("SELECT * FROM transaction_table")
     abstract List<TransactionItem> getAllTransactions();
@@ -90,14 +95,29 @@ public abstract class TransactionDAO {
     @Query("UPDATE account_table SET amount = amount + :amount WHERE id = :accountId")
     abstract void updateAddAccount(double amount, int accountId);
 
+    @Query("UPDATE account_table SET amount = CASE WHEN :type = 'Expense' THEN amount - :amount"
+            + " WHEN :type = 'Income' THEN amount + :amount"
+            + " END WHERE id = :accountId")
+    abstract void updateAccount(String type, double amount, int accountId);
+
+    @Query("UPDATE account_table SET amount = CASE WHEN (SELECT type FROM transaction_table WHERE id = :transactionId) = 'Expense' THEN amount + (SELECT amount FROM transaction_table WHERE id = :transactionId)"
+            + " WHEN (SELECT type FROM transaction_table WHERE id = :transactionId) = 'Income' THEN amount - (SELECT amount FROM transaction_table WHERE id = :transactionId) END"
+            + " WHERE id = (SELECT account_id FROM transaction_table WHERE id = :transactionId)")
+    abstract void updateAccountBefore(int transactionId);
+
+    @Update
+    abstract void updateTransaction(TransactionItem transactionItem);
+
     @Transaction
     void insertTransactionUpdateAccount(TransactionItem transactionItem) {
         insertTransaction(transactionItem);
-        if (transactionItem.getType().equals("Expense")) {
-            updateSubtractAccount( transactionItem.getAmount(), transactionItem.getAccountId());
-        }
-        else if (transactionItem.getType().equals("Income")) {
-            updateAddAccount( transactionItem.getAmount(), transactionItem.getAccountId());
-        }
+        updateAccount(transactionItem.getType(), transactionItem.getAmount(), transactionItem.getAccountId());
+    }
+
+    @Transaction
+    void updateTransactionUpdateAccount(TransactionItem transactionItem) {
+        updateAccountBefore(transactionItem.getId());
+        updateTransaction(transactionItem);
+        updateAccount(transactionItem.getType(), transactionItem.getAmount(), transactionItem.getAccountId());
     }
 }

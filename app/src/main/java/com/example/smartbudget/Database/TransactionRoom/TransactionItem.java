@@ -57,6 +57,31 @@ public class TransactionItem implements Parcelable {
     public TransactionItem() {
     }
 
+    public TransactionItem(int id, String description, double amount, String type, String pattern, String date, String categoryId, String subCategoryId, int accountId, int toAccount) {
+        this.id = id;
+        this.description = description;
+        this.amount = amount;
+        this.type = type;
+        this.pattern = pattern;
+        this.date = date;
+        this.categoryId = categoryId;
+        this.subCategoryId = subCategoryId;
+        this.accountId = accountId;
+        this.toAccount = toAccount;
+    }
+
+    public TransactionItem(int id, String description, double amount, String type, String pattern, String date, String categoryId, String subCategoryId, int accountId) {
+        this.id = id;
+        this.description = description;
+        this.amount = amount;
+        this.type = type;
+        this.pattern = pattern;
+        this.date = date;
+        this.categoryId = categoryId;
+        this.subCategoryId = subCategoryId;
+        this.accountId = accountId;
+    }
+
     protected TransactionItem(Parcel in) {
         id = in.readInt();
         description = in.readString();

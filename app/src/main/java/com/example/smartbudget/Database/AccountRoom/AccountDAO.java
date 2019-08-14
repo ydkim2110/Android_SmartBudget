@@ -5,32 +5,45 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
 
 @Dao
-public interface AccountDAO {
+public abstract class AccountDAO {
 
     @Query("SELECT * FROM account_table")
-    List<AccountItem> getAllAccounts();
+    abstract List<AccountItem> getAllAccounts();
 
     @Query("SELECT * FROM account_table WHERE id = :id")
-    AccountItem getAccount(int id);
+    abstract AccountItem getAccount(int id);
 
     @Query("SELECT * FROM account_table WHERE type = :type")
-    List<AccountItem> getAccountsByType(String type);
+    abstract List<AccountItem> getAccountsByType(String type);
 
     @Query("SELECT id, type, SUM(amount) AS amount FROM account_table GROUP BY type")
-    List<AccountItem> getSumAccountsByType();
+    abstract List<AccountItem> getSumAccountsByType();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAccount(AccountItem... accountItems);
+    abstract void insertAccount(AccountItem... accountItems);
 
     @Update
-    void updateAccount(AccountItem... accountItems);
+    abstract void updateAccount(AccountItem... accountItems);
 
     @Delete
-    int deleteAccount(AccountItem accountItem);
+    abstract int deleteAccount(AccountItem accountItem);
+
+    @Query("UPDATE account_table SET amount = amount - :amount WHERE id = :fromId")
+    abstract void updateFromAccount(double amount, int fromId);
+
+    @Query("UPDATE account_table SET amount = amount + :amount WHERE id = :toId")
+    abstract void updateToAccount(double amount, int toId);
+
+    @Transaction
+    void updateAccountByTransfer(double amount, int fromId, int toId) {
+        updateFromAccount(amount, fromId);
+        updateFromAccount(amount, toId);
+    }
 
 }

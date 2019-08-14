@@ -76,8 +76,12 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+    <style name="EditText.OutlinedBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/selector_text_input_box</item>
+    </style>
+
+    <style name="hintText" parent="android:TextAppearance">
+        <item name="android:textColor">@color/colorRevenue</item>
     </style>
 
 </resources>

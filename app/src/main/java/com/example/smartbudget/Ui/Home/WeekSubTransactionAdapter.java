@@ -88,8 +88,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
         }
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
-            TransactionModel transactionModel = new TransactionModel(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
-
+            TransactionItem transactionModel = new TransactionItem(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
             Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);
             editTransactionIntent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transactionModel);
             view.getContext().startActivity(editTransactionIntent);

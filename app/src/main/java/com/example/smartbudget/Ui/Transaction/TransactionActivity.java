@@ -1,8 +1,10 @@
 package com.example.smartbudget.Ui.Transaction;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +38,7 @@ import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -56,6 +59,8 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     AppBarLayout app_bar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.collapsingToolbarLayout)
+    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.fab)
     FloatingActionButton fab;
     @BindView(R.id.fab_sub1)
@@ -115,6 +120,18 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         Log.d(TAG, "initView: called!!");
         ButterKnife.bind(this);
 
+        if (app_bar.getLayoutParams() != null) {
+            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) app_bar.getLayoutParams();
+            AppBarLayout.Behavior appBarLayoutBehaviour = new AppBarLayout.Behavior();
+            appBarLayoutBehaviour.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+                @Override
+                public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
+                    return false;
+                }
+            });
+            layoutParams.setBehavior(appBarLayoutBehaviour);
+        }
+
         fabOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open);
         fabClose = AnimationUtils.loadAnimation(this, R.anim.fab_close);
 
@@ -166,6 +183,23 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
 
         rv_transaction.setHasFixedSize(true);
         rv_transaction.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void enableScroll() {
+        final AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)
+                collapsingToolbarLayout.getLayoutParams();
+        params.setScrollFlags(
+                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                        | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+        );
+        collapsingToolbarLayout.setLayoutParams(params);
+    }
+
+    private void disableScroll() {
+        final AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)
+                collapsingToolbarLayout.getLayoutParams();
+        params.setScrollFlags(0);
+        collapsingToolbarLayout.setLayoutParams(params);
     }
 
     private void toggleFab() {
