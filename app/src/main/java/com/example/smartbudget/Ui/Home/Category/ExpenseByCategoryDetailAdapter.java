@@ -32,10 +32,15 @@ public class ExpenseByCategoryDetailAdapter extends RecyclerView.Adapter<Expense
     private List<SumTransactionBySubCategory> mSumTransactionBySubCategoryList;
     private double total;
 
+    private String moneyUnit;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public ExpenseByCategoryDetailAdapter(Context mContext, List<SumTransactionBySubCategory> sumTransactionBySubCategoryList) {
         this.mContext = mContext;
         this.mSumTransactionBySubCategoryList = sumTransactionBySubCategoryList;
+
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
+
         Collections.sort(sumTransactionBySubCategoryList, (o1, o2) -> {
             if (o1.getSumBySubCategory() > o2.getSumBySubCategory())
                 return -1;
@@ -44,6 +49,7 @@ public class ExpenseByCategoryDetailAdapter extends RecyclerView.Adapter<Expense
             else
                 return 0;
         });
+
         total = sumTransactionBySubCategoryList.stream().mapToDouble(SumTransactionBySubCategory::getSumBySubCategory).sum();
     }
 
@@ -62,14 +68,15 @@ public class ExpenseByCategoryDetailAdapter extends RecyclerView.Adapter<Expense
         subCategory = Common.getExpenseSubCategory(mSumTransactionBySubCategoryList.get(position).getSubCategoryId());
 
         holder.tv_sub_category_name.setText(subCategory.getCategoryVisibleName(mContext));
-        holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory())).append("원"));
+        holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory()))
+                .append(moneyUnit));
 
         holder.pb_circle.setMax((int) total);
-        ObjectAnimator progressAnim = ObjectAnimator.ofInt(holder.pb_circle, "progress", 0,(int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory());
-        progressAnim.setDuration(500);
+    ObjectAnimator progressAnim = ObjectAnimator.ofInt(holder.pb_circle, "progress", 0, (int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory());
+        progressAnim.setDuration(1500);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
-    }
+}
 
     @Override
     public int getItemCount() {

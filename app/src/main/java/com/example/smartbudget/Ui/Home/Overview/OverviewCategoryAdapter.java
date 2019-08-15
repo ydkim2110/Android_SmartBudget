@@ -20,39 +20,39 @@ import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Utils.Common;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHolder> {
+public class OverviewCategoryAdapter extends RecyclerView.Adapter<OverviewCategoryAdapter.ViewHolder> {
 
     private Context mContext;
     private List<ExpenseByCategory> mCategoryList;
     private String passed_date;
     private int total;
+    private String moneyUnit;
+    private String percentageSign;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public SpendingAdapter(Context context, List<ExpenseByCategory> categoryList, String date) {
+    public OverviewCategoryAdapter(Context context, List<ExpenseByCategory> categoryList, String date) {
         mContext = context;
         mCategoryList = categoryList;
         passed_date = date;
 
-        Collections.sort(mCategoryList, new Comparator<ExpenseByCategory>() {
-            @Override
-            public int compare(ExpenseByCategory o1, ExpenseByCategory o2) {
-                if (o1.getSumByCategory() > o2.getSumByCategory())
-                    return -1;
-                else if (o1.getSumByCategory() < o2.getSumByCategory())
-                    return 1;
-                else
-                    return 0;
-            }
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
+        percentageSign = mContext.getResources().getString(R.string.percentage_sign);
+
+        Collections.sort(mCategoryList, (o1, o2) -> {
+            if (o1.getSumByCategory() > o2.getSumByCategory())
+                return -1;
+            else if (o1.getSumByCategory() < o2.getSumByCategory())
+                return 1;
+            else
+                return 0;
         });
         total = mCategoryList.stream().mapToInt(ExpenseByCategory::getSumByCategory).sum();
-
     }
 
     private Category category;
@@ -69,16 +69,16 @@ public class SpendingAdapter extends RecyclerView.Adapter<SpendingAdapter.ViewHo
     public void onBindViewHolder(@NonNull final ViewHolder holder, int i) {
         category = Common.getExpenseCategory(mCategoryList.get(i).getCategoryId());
 
-        holder.tv_percentage.setText(new StringBuilder(Common.calcPercentage(mCategoryList.get(i).getSumByCategory(), total)).append("%"));
+        holder.tv_percentage.setText(new StringBuilder(Common.calcPercentage(mCategoryList.get(i).getSumByCategory(), total)).append(percentageSign));
         holder.tv_percentage.setBackgroundTintList(ColorStateList.valueOf(category.getIconColor()));
         holder.tv_category.setText(category.getCategoryVisibleName(mContext));
-        holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma(mCategoryList.get(i).getSumByCategory())).append("원"));
-        //viewHolder.percentage.setText(spendingList.get(i).getPercentage());
+        holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma(mCategoryList.get(i).getSumByCategory())).append(moneyUnit));
 
         holder.setIRecyclerItemSelectedListener((view, position) -> {
-            Intent intent = new Intent(mContext, TransactionListByCategoryActivity.class);
-            intent.putExtra("date", passed_date);
-            intent.putExtra("categoryId", mCategoryList.get(position).getCategoryId());
+            Intent intent = new Intent(mContext, TAListByCategoryActivity.class);
+            intent.putExtra(TAListByCategoryActivity.EXTRA_PASSED_DATE, passed_date);
+            intent.putExtra(TAListByCategoryActivity.EXTRA_CATEGORY_ID, mCategoryList.get(position).getCategoryId());
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             view.getContext().startActivity(intent);
         });
     }

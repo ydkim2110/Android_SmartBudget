@@ -22,14 +22,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class TransactionListByCategoryAdapter extends RecyclerView.Adapter<TransactionListByCategoryAdapter.MyViewHolder> {
+public class TAListByCategoryAdapter extends RecyclerView.Adapter<TAListByCategoryAdapter.MyViewHolder> {
     private Context mContext;
     private List<TransactionItem> mTransactionItemList;
     private TransactionItem mTransactionItem;
 
-    public TransactionListByCategoryAdapter(Context context, List<TransactionItem> transactionModelList) {
+    private String moneyUnit;
+
+    public TAListByCategoryAdapter(Context context, List<TransactionItem> transactionModelList) {
         mContext = context;
         mTransactionItemList = transactionModelList;
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
     }
 
     @NonNull
@@ -50,7 +53,7 @@ public class TransactionListByCategoryAdapter extends RecyclerView.Adapter<Trans
         holder.iv_category_icon.setBackgroundTintList(ColorStateList.valueOf(category.getIconColor()));
         holder.transaction_category.setText(category.getCategoryVisibleName(mContext));
         holder.transaction_note.setText(mTransactionItem.getDescription());
-        holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mTransactionItem.getAmount())).append("원"));
+        holder.transaction_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mTransactionItem.getAmount())).append(moneyUnit));
         holder.transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         holder.transaction_list_date.setText(mTransactionItem.getDate());
     }

@@ -1,8 +1,7 @@
-package com.example.smartbudget.Ui.Home;
+package com.example.smartbudget.Ui.Transaction;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +23,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransactionAdapter.MyViewHolder> {
-    private static final String TAG = "WeekTransactionAdapter";
+public class TAGroupListHeaderAdapter extends RecyclerView.Adapter<TAGroupListHeaderAdapter.MyViewHolder> {
+
+    private static final String TAG = TAGroupListHeaderAdapter.class.getSimpleName();
 
     private Context mContext;
     private HashMap<String, List<TransactionItem>> mHashMap;
     private ArrayList<String> mKeys = new ArrayList<>();
 
-    public WeekTransactionAdapter(Context mContext, HashMap<String, List<TransactionItem>> hashMap) {
+    private String moneyUnit;
+
+    public TAGroupListHeaderAdapter(Context mContext, HashMap<String, List<TransactionItem>> hashMap) {
         this.mContext = mContext;
         this.mHashMap = hashMap;
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
+
         for (String aKey : mHashMap.keySet()) {
             mKeys.add(aKey);
         }
@@ -67,11 +71,11 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
             }
         }
 
-        holder.tv_date_total.setText(new StringBuilder(Common.changeNumberToComma(total)).append("원"));
+        holder.tv_date_total.setText(new StringBuilder(Common.changeNumberToComma(total)).append(moneyUnit));
 
         holder.rv_transaction_list.setHasFixedSize(true);
         holder.rv_transaction_list.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-        WeekSubTransactionAdapter adapter = new WeekSubTransactionAdapter(mContext, value);
+        TAGroupListAdapter adapter = new TAGroupListAdapter(mContext, value);
         holder.rv_transaction_list.setAdapter(adapter);
 
         holder.itemView.startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left));
@@ -79,7 +83,6 @@ public class WeekTransactionAdapter extends RecyclerView.Adapter<WeekTransaction
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount: "+mHashMap.size());
         return mHashMap != null ? mHashMap.size() : 0;
     }
 

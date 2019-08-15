@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction.Transfer;
+package com.example.smartbudget.Ui.Transfer;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

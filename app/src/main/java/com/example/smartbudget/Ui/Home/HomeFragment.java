@@ -33,6 +33,8 @@ import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IDateChangeListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
+import com.example.smartbudget.Model.EventBus.DeleteTransactionEvent;
+import com.example.smartbudget.Model.EventBus.UpdateTransactionEvent;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryActivity;
 import com.example.smartbudget.Ui.Home.Overview.OverviewActivity;
@@ -65,6 +67,8 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     private static final String TAG = HomeFragment.class.getSimpleName();
 
     private static HomeFragment instance;
+
+    private Context mContext;
 
     public static HomeFragment getInstance() {
         return instance == null ? new HomeFragment() : instance;
@@ -132,7 +136,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     Unbinder mUnbinder;
 
-    private WeekTransactionAdapter mAdapter;
+    private HomeTAGroupListHeaderAdapter mAdapter;
 
     private HashMap<String, List<TransactionItem>> groupedHashMap;
 
@@ -143,12 +147,21 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     private String currentDate = "";
     private Date startDate;
     private Date endDate;
+
     private String zeroMoney;
+    private String moneyUnit;
+    private String typeExpense;
+    private String typeIncome;
+    private String percentageSign;
+    private String patternNormal;
+    private String patternWaste;
+    private String patternInvest;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mINSVScrollChangeListener = (INSVScrollChangeListener) context;
+        mContext = context;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -157,7 +170,14 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
                              Bundle savedInstanceState) {
         EventBus.getDefault().register(this);
 
+        moneyUnit = getActivity().getResources().getString(R.string.money_unit);
+        typeExpense = getActivity().getResources().getString(R.string.type_expense);
+        typeIncome = getActivity().getResources().getString(R.string.type_income);
         zeroMoney = getActivity().getResources().getString(R.string.zero_money);
+        percentageSign = getActivity().getResources().getString(R.string.percentage_sign);
+        patternNormal = getActivity().getResources().getString(R.string.normal);
+        patternWaste = getActivity().getResources().getString(R.string.waste);
+        patternInvest = getActivity().getResources().getString(R.string.invest);
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -178,9 +198,9 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         Log.d(TAG, "setProgressBar: called!!");
         int maxValue = 1400000;
 
-        Common.animateTextView(1000, 0, usedExpense, "원", tv_used_expense);
-        Common.animateTextView(1000, 0, maxValue, "원", tv_total_expense);
-        Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage(usedExpense, maxValue)), "%", tv_percentage);
+        Common.animateTextView(1000, 0, usedExpense, moneyUnit, tv_used_expense);
+        Common.animateTextView(1000, 0, maxValue, moneyUnit, tv_total_expense);
+        Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage(usedExpense, maxValue)), percentageSign, tv_percentage);
 
         pb_expense_by_category.setMax(maxValue);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_expense_by_category, "progress", 0, usedExpense);
@@ -196,7 +216,21 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void reloadData(AddTransactionEvent event) {
+    public void reloadDataByInsert(AddTransactionEvent event) {
+        if (event != null) {
+            loadFromDatabase(currentDate);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void reloadDataByUpdate(UpdateTransactionEvent event) {
+        if (event != null) {
+            loadFromDatabase(currentDate);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void reloadDataByDelete(DeleteTransactionEvent event) {
         if (event != null) {
             loadFromDatabase(currentDate);
         }
@@ -208,7 +242,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
             refresh_home_fragment.setRefreshing(false);
         }
 
-        mAdapter = new WeekTransactionAdapter(getContext(), groupedHashMap);
+        mAdapter = new HomeTAGroupListHeaderAdapter(mContext, groupedHashMap);
         rv_transaction.setAdapter(mAdapter);
     }
 
@@ -221,22 +255,22 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         });
 
         home_overview_container.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), OverviewActivity.class);
-            intent.putExtra(OverviewActivity.EXTRA_PASS_DATE, currentDate);
+            Intent intent = new Intent(mContext, OverviewActivity.class);
+            intent.putExtra(OverviewActivity.EXTRA_PASSED_DATE, currentDate);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            getContext().startActivity(intent);
+            mContext.startActivity(intent);
         });
         home_expense_by_category_container.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), ExpenseByCategoryActivity.class);
-            intent.putExtra("passed_date", currentDate);
+            Intent intent = new Intent(mContext, ExpenseByCategoryActivity.class);
+            intent.putExtra(ExpenseByCategoryActivity.EXTRA_PASSED_DATE, currentDate);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            getContext().startActivity(intent);
+            mContext.startActivity(intent);
         });
         home_spending_pattern_container.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), SpendingActivity.class);
+            Intent intent = new Intent(mContext, SpendingActivity.class);
             intent.putExtra("passed_date", currentDate);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            getContext().startActivity(intent);
+            mContext.startActivity(intent);
         });
         refresh_home_fragment.setOnRefreshListener(() -> {
             loadFromDatabase(currentDate);
@@ -286,21 +320,21 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
             }
         }
 
-        Common.animateTextView(1000, 0, total, "원", tv_total_spending);
+        Common.animateTextView(1000, 0, total, moneyUnit, tv_total_spending);
 
         for (SpendingByPattern spendingPattern : spendingPatterns) {
-            if (spendingPattern.getPattern().equals("Normal") && total != 0) {
+            if (spendingPattern.getPattern().equals(patternNormal) && total != 0) {
                 normal_percentage = (int) (spendingPattern.getSum() / total * 100);
-                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), "%", tv_normal);
-                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), "원", tv_normal_sum);
-            } else if (spendingPattern.getPattern().equals("Waste") && total != 0) {
+                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), percentageSign, tv_normal);
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), moneyUnit, tv_normal_sum);
+            } else if (spendingPattern.getPattern().equals(patternWaste) && total != 0) {
                 waste_percentage = (int) (spendingPattern.getSum() / total * 100);
-                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), "%", tv_waste);
-                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), "원", tv_waste_sum);
-            } else if (spendingPattern.getPattern().equals("Invest") && total != 0) {
+                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), percentageSign, tv_waste);
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), moneyUnit, tv_waste_sum);
+            } else if (spendingPattern.getPattern().equals(patternInvest) && total != 0) {
                 invest_percentage = (int) (spendingPattern.getSum() / total * 100);
-                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), "%", tv_invest);
-                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), "원", tv_invest_sum);
+                Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage((int) spendingPattern.getSum(), total)), percentageSign, tv_invest);
+                Common.animateTextView(1000, 0, (int) spendingPattern.getSum(), moneyUnit, tv_invest_sum);
             }
         }
         setCircleProgressbar(normal_percentage, waste_percentage, invest_percentage);
@@ -340,18 +374,12 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     private void loadFromDatabase(String date) {
         Log.d(TAG, "loadFromDatabase: called!!");
-
         DBTransactionUtils.getThisMonthTransactions(MainActivity.db, date, this);
-
-        // Expense By Pattern
         DBTransactionUtils.getThisMonthTransactionByPattern(MainActivity.db, date, this);
 
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(Common.stringToDate(date));
-
-        Log.d(TAG, "loadFromDatabase: compareTo: "+cal1.compareTo(cal2));
-
 
         int todayYear = cal1.get(Calendar.YEAR);
         int todayMonth = cal1.get(Calendar.MONTH)+1;
@@ -394,16 +422,17 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
             Common.TRANSACTION_LIST = transactionItemList;
 
             for (TransactionItem model : transactionItemList) {
-                if (model.getType().equals("Income")) {
+                if (model.getType().equals(typeIncome)) {
                     income += model.getAmount();
-                } else if (model.getType().equals("Expense")) {
+                } else if (model.getType().equals(typeExpense)) {
                     expense += model.getAmount();
                 }
             }
         }
-        Common.animateTextView(1000, 0, income, "원", tv_income_total);
-        Common.animateTextView(1000, 0, expense, "원", tv_expense_total);
-        Common.animateTextView(1000, 0, (income - expense), "원", tv_balance);
+
+        Common.animateTextView(1000, 0, income, moneyUnit, tv_income_total);
+        Common.animateTextView(1000, 0, expense, moneyUnit, tv_expense_total);
+        Common.animateTextView(1000, 0, (income - expense), moneyUnit, tv_balance);
 
         setProgressBar(expense);
     }

@@ -31,11 +31,9 @@ public class TransactionItem implements Parcelable {
     @ColumnInfo(name = "amount")
     private double amount;
 
-    // Income, Expense, Transfer
     @ColumnInfo(name = "type")
     private String type;
 
-    // Normal, Waste, Invest
     @ColumnInfo(name = "pattern")
     private String pattern;
 
@@ -57,6 +55,7 @@ public class TransactionItem implements Parcelable {
     public TransactionItem() {
     }
 
+    @Ignore
     public TransactionItem(int id, String description, double amount, String type, String pattern, String date, String categoryId, String subCategoryId, int accountId, int toAccount) {
         this.id = id;
         this.description = description;
@@ -70,6 +69,7 @@ public class TransactionItem implements Parcelable {
         this.toAccount = toAccount;
     }
 
+    @Ignore
     public TransactionItem(int id, String description, double amount, String type, String pattern, String date, String categoryId, String subCategoryId, int accountId) {
         this.id = id;
         this.description = description;
@@ -165,9 +165,9 @@ public class TransactionItem implements Parcelable {
 
     public String getSubCategoryId() {
         if (subCategoryId == null || subCategoryId.isEmpty()) {
-            return ":other";
+            return categoryId;
         }
-        return categoryId;
+        return subCategoryId;
     }
 
     public void setSubCategoryId(String subCategoryId) {

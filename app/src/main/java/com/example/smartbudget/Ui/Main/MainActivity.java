@@ -38,7 +38,7 @@ import com.example.smartbudget.Ui.Home.HomeFragment;
 import com.example.smartbudget.Ui.Report.ReportActivity;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Ui.Transaction.TransactionActivity;
-import com.example.smartbudget.Ui.Transaction.Transfer.TransferActivity;
+import com.example.smartbudget.Ui.Transfer.TransferActivity;
 import com.example.smartbudget.Utils.Common;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.google.android.material.appbar.AppBarLayout;
@@ -196,12 +196,16 @@ public class MainActivity extends AppCompatActivity
 
         fab_sub1.setOnClickListener(v -> {
             toggleFab();
-            startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
+            Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         });
 
         fab_sub2.setOnClickListener(v -> {
             toggleFab();
-            startActivity(new Intent(MainActivity.this, TransferActivity.class));
+            Intent intent = new Intent(MainActivity.this, TransferActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         });
     }
 
@@ -268,21 +272,29 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent intent = null;
         if (id == R.id.nav_home) {
             clickedNavItem = R.id.nav_home;
             setCurrentDate(new Date());
             drawer_layout.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_account) {
-            startActivity(new Intent(MainActivity.this, AccountActivity.class));
+            intent = new Intent(MainActivity.this, AccountActivity.class);
+            intentStart(intent);
         } else if (id == R.id.nav_budget) {
-            startActivity(new Intent(MainActivity.this, BudgetActivity.class));
+            intent = new Intent(MainActivity.this, BudgetActivity.class);
+            intentStart(intent);
         } else if (id == R.id.nav_transaction) {
-            startActivity(new Intent(MainActivity.this, TransactionActivity.class));
+            intent = new Intent(MainActivity.this, TransactionActivity.class);
+            intentStart(intent);
         } else if (id == R.id.nav_report) {
-            startActivity(new Intent(MainActivity.this, ReportActivity.class));
+            intent = new Intent(MainActivity.this, ReportActivity.class);
+            intentStart(intent);
         } else if (id == R.id.nav_calculator) {
-            startActivity(new Intent(MainActivity.this, CalcActivity.class));
+            intent = new Intent(MainActivity.this, CalcActivity.class);
+            intentStart(intent);
         }
+
+
 
         drawer_layout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -311,6 +323,12 @@ public class MainActivity extends AppCompatActivity
         });
 
         return true;
+    }
+
+    private void intentStart(Intent intent) {
+        Log.d(TAG, "intentStart: called!");
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     private void gotoFragment(String title, Fragment fragment, int currentFragmentNUM) {

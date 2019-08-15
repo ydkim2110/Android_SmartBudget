@@ -39,15 +39,10 @@ public class Common {
 
     // Intent
     public static final String EXTRA_INPUT_ACCOUNT = "INPUT_ACCOUNT";
-
     public static final String EXTRA_PASS_INPUT_NOTE = "PASS_INPUT_NOTE";
     public static final String EXTRA_INPUT_NOTE = "INPUT_NOTE";
-
     public static final String EXTRA_PASS_INPUT_AMOUNT = "PASS_INPUT_AMOUNT";
     public static final String EXTRA_INPUT_AMOUNT = "INPUT_AMOUNT";
-
-    public static final String EXTRA_PASS_BUDGET_CATEGORY = "PASS_BUDGET_CATEGORY";
-
     public static final String EXTRA_EDIT_TRANSACTION = "EDIT_TRANSACTION";
     public static final String EXTRA_EDIT_BUDGET = "EDIT_BUDGET";
 

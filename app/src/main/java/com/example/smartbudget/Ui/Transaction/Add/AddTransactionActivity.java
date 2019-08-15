@@ -29,13 +29,18 @@ import android.widget.Toast;
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
 import com.example.smartbudget.Database.Interface.IAccountLoadListener;
+import com.example.smartbudget.Database.Interface.ITransactionDeleteListener;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
-import com.example.smartbudget.Interface.ITransactionUpdateListener;
+import com.example.smartbudget.Database.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.EventBus.CategorySelectedEvent;
+import com.example.smartbudget.Model.EventBus.DeleteTransactionEvent;
+import com.example.smartbudget.Model.EventBus.DeleteTransactionFromAddEvent;
+import com.example.smartbudget.Model.EventBus.UpdateTransactionEvent;
+import com.example.smartbudget.Model.EventBus.UpdateTransactionFromAddEvent;
 import com.example.smartbudget.Model.SubCategory;
 import com.example.smartbudget.Ui.Input.InputAccountActivity;
 import com.example.smartbudget.Ui.Input.InputAmountActivity;
@@ -43,10 +48,8 @@ import com.example.smartbudget.Ui.Transaction.Add.Category.CategoryDialogFragmen
 import com.example.smartbudget.Ui.Transaction.Add.Category.InputCategoryActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Date.DatePickerDialogFragment;
 import com.example.smartbudget.Ui.Transaction.Add.Date.IDialogSendListener;
-import com.example.smartbudget.Ui.Transaction.Add.Note.InputNoteActivity;
-import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Ui.Input.InputNoteActivity;
 import com.example.smartbudget.Model.CategoryModel;
-import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
@@ -64,23 +67,31 @@ import butterknife.OnClick;
 
 public class AddTransactionActivity extends AppCompatActivity
         implements CategoryDialogFragment.OnDialogSendListener, IDialogSendListener, ITransactionInsertListener,
-        IAccountLoadListener, ITransactionUpdateListener {
+        IAccountLoadListener, ITransactionUpdateListener, ITransactionDeleteListener {
 
     private static final String TAG = AddTransactionActivity.class.getSimpleName();
+    public static final String EXTRA_REQUEST_PAGE = "REQUEST_PAGE";
 
     private static final int INPUT_ACCOUNT_REQUEST = 100;
     private static final int INPUT_CATEGORY_REQUEST = 200;
     private static final int INPUT_NOTE_REQUEST = 300;
     private static final int INPUT_AMOUNT_REQUEST = 400;
 
-    private Toolbar mToolbar;
-    private EditText accountEdt;
-    private EditText categoryEdt;
-    private EditText noteEdt;
-    private EditText dateEdt;
-    private EditText amountEdt;
-    private Button saveBtn;
-    private Button cancelBtn;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.edt_account)
+    EditText edt_account;
+    @BindView(R.id.edt_category)
+    EditText edt_category;
+    @BindView(R.id.edt_amount)
+    EditText edt_amount;
+    @BindView(R.id.edt_description)
+    EditText edt_description;
+    @BindView(R.id.edt_date)
+    EditText edt_date;
+    @BindView(R.id.btn_save)
+    Button btn_save;
+
     private Calendar calendar;
 
     @BindView(R.id.tv_normal)
@@ -96,7 +107,7 @@ public class AddTransactionActivity extends AppCompatActivity
 
     @OnClick(R.id.iv_delete)
     void deleteTransaction() {
-        //DatabaseUtils.deleteTransactionAsync(MainActivity.mDBHelper, mTransactionModel);
+        DBTransactionUtils.deleteTransactionAsync(MainActivity.db, this, mTransactionItem);
         finish();
     }
 
@@ -111,6 +122,7 @@ public class AddTransactionActivity extends AppCompatActivity
     private SubCategory selectedSubCategory = null;
 
     private String selectedPattern = "";
+    private String requestPage = "";
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -128,9 +140,10 @@ public class AddTransactionActivity extends AppCompatActivity
             iv_delete.setVisibility(View.VISIBLE);
 
             getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_edit_transaction));
-            saveBtn.setText(getResources().getString(R.string.btn_update));
+            btn_save.setText(getResources().getString(R.string.btn_update));
 
             TransactionItem transactionItem = getIntent().getParcelableExtra(Common.EXTRA_EDIT_TRANSACTION);
+            requestPage = getIntent().getStringExtra(EXTRA_REQUEST_PAGE);
 
             DBAccountUtils.getAccount(MainActivity.db, transactionItem.getAccountId(), this);
 
@@ -147,7 +160,7 @@ public class AddTransactionActivity extends AppCompatActivity
     private void checkNoEmptyInputs() {
         Log.d(TAG, "checkNoEmptyInputs: called!!");
 
-        accountEdt.addTextChangedListener(new TextWatcher() {
+        edt_account.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -164,7 +177,7 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         });
 
-        categoryEdt.addTextChangedListener(new TextWatcher() {
+        edt_category.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -181,7 +194,7 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         });
 
-        noteEdt.addTextChangedListener(new TextWatcher() {
+        edt_description.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -198,7 +211,7 @@ public class AddTransactionActivity extends AppCompatActivity
             }
         });
 
-        amountEdt.addTextChangedListener(new TextWatcher() {
+        edt_amount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -219,40 +232,32 @@ public class AddTransactionActivity extends AppCompatActivity
     private void checkInputs() {
         Log.d(TAG, "checkInputs: called!!");
 
-        if (!TextUtils.isEmpty(accountEdt.getText())) {
-            if (!TextUtils.isEmpty(categoryEdt.getText())) {
-                if (!TextUtils.isEmpty(noteEdt.getText())) {
-                    if (!TextUtils.isEmpty(amountEdt.getText())) {
-                        saveBtn.setEnabled(true);
+        if (!TextUtils.isEmpty(edt_account.getText())) {
+            if (!TextUtils.isEmpty(edt_category.getText())) {
+                if (!TextUtils.isEmpty(edt_description.getText())) {
+                    if (!TextUtils.isEmpty(edt_amount.getText())) {
+                        btn_save.setEnabled(true);
                     } else {
-                        saveBtn.setEnabled(false);
+                        btn_save.setEnabled(false);
                     }
                 } else {
-                    saveBtn.setEnabled(false);
+                    btn_save.setEnabled(false);
                 }
             } else {
-                saveBtn.setEnabled(false);
+                btn_save.setEnabled(false);
             }
         } else {
-            saveBtn.setEnabled(false);
+            btn_save.setEnabled(false);
         }
     }
 
     @SuppressLint("ResourceAsColor")
     private void initView() {
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        btn_save.setEnabled(false);
+
+        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_add_transaction));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        accountEdt = findViewById(R.id.tv_add_budget_account);
-        categoryEdt = findViewById(R.id.add_transaction_category);
-        noteEdt = findViewById(R.id.add_transaction_description);
-        dateEdt = findViewById(R.id.add_transaction_date);
-        amountEdt = findViewById(R.id.tv_add_budget_amount);
-        cancelBtn = findViewById(R.id.cancel_btn);
-        saveBtn = findViewById(R.id.save_btn);
-        saveBtn.setEnabled(false);
 
         iv_delete.setVisibility(View.GONE);
 
@@ -261,7 +266,7 @@ public class AddTransactionActivity extends AppCompatActivity
         _month = calendar.get(Calendar.MONTH) + 1;
         _day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        dateEdt.setText(Common.dateFormat.format(calendar.getTime()));
+        edt_date.setText(Common.dateFormat.format(calendar.getTime()));
 
         tv_normal.setBackgroundResource(R.drawable.shape_tv_normal_pressed);
         tv_normal.setTextColor(Color.WHITE);
@@ -306,55 +311,53 @@ public class AddTransactionActivity extends AppCompatActivity
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void handleClickEvent() {
-        accountEdt.setOnClickListener(v -> {
+        edt_account.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputAccountActivity.class);
-            if (accountEdt.getText() != null) {
-                intent.putExtra("accountName", accountEdt.getText().toString());
+            if (edt_account.getText() != null) {
+                intent.putExtra("accountName", edt_account.getText().toString());
             }
             startActivityForResult(intent, INPUT_ACCOUNT_REQUEST);
         });
 
-        categoryEdt.setOnClickListener(v -> {
+        edt_category.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputCategoryActivity.class);
             startActivityForResult(intent, INPUT_CATEGORY_REQUEST);
         });
 
-        noteEdt.setOnClickListener(v -> {
+        edt_description.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputNoteActivity.class);
-            if (noteEdt.getText() != null) {
-                intent.putExtra(Common.EXTRA_PASS_INPUT_NOTE, noteEdt.getText().toString());
+            if (edt_description.getText() != null) {
+                intent.putExtra(Common.EXTRA_PASS_INPUT_NOTE, edt_description.getText().toString());
             }
             startActivityForResult(intent, INPUT_NOTE_REQUEST);
         });
 
-        dateEdt.setOnClickListener(v -> {
-            DialogFragment dialogFragment = DatePickerDialogFragment.newInstance(dateEdt.getText().toString());
+        edt_date.setOnClickListener(v -> {
+            DialogFragment dialogFragment = DatePickerDialogFragment.newInstance(edt_date.getText().toString());
             dialogFragment.show(getSupportFragmentManager(), "date picker");
         });
 
-        amountEdt.setOnClickListener(v -> {
+        edt_amount.setOnClickListener(v -> {
             Intent intent = new Intent(AddTransactionActivity.this, InputAmountActivity.class);
-            if (noteEdt.getText() != null) {
-                intent.putExtra(Common.EXTRA_PASS_INPUT_AMOUNT, amountEdt.getText().toString());
+            if (edt_amount.getText() != null) {
+                intent.putExtra(Common.EXTRA_PASS_INPUT_AMOUNT, edt_amount.getText().toString());
             }
             startActivityForResult(intent, INPUT_AMOUNT_REQUEST);
         });
 
-        cancelBtn.setOnClickListener(v -> finish());
-
-        saveBtn.setOnClickListener(v -> {
+        btn_save.setOnClickListener(v -> {
 
             TransactionItem transactionItem = new TransactionItem();
 
-            if (saveBtn.getText().toString().toLowerCase().equals("save")) {
+            if (btn_save.getText().toString().toLowerCase().equals("save")) {
 
-                transactionItem.setDescription(noteEdt.getText().toString());
-                transactionItem.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionItem.setDescription(edt_description.getText().toString());
+                transactionItem.setAmount(Double.parseDouble(Common.removeComma(edt_amount.getText().toString())));
                 transactionItem.setType(selectedType);
                 transactionItem.setPattern(selectedPattern);
-                transactionItem.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionItem.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(edt_date.getText().toString())));
                 transactionItem.setCategoryId(selectedCategory.getCategoryID());
-                transactionItem.setSubCategoryId("");
+                transactionItem.setSubCategoryId(selectedSubCategory != null ? selectedSubCategory.getId() : selectedCategory.getCategoryID());
                 transactionItem.setAccountId(mAccountItem.getId());
 
                 if (selectedType.equals("Expense") || selectedType.equals("Income")) {
@@ -365,26 +368,25 @@ public class AddTransactionActivity extends AppCompatActivity
 
                 }
             }
-            else if (saveBtn.getText().toString().toLowerCase().equals("update")) {
+            else if (btn_save.getText().toString().toLowerCase().equals("update")) {
 
                 transactionItem.setId(mTransactionItem.getId());
-                transactionItem.setDescription(noteEdt.getText().toString());
-                transactionItem.setAmount(Double.parseDouble(Common.removeComma(amountEdt.getText().toString())));
+                transactionItem.setDescription(edt_description.getText().toString());
+                transactionItem.setAmount(Double.parseDouble(Common.removeComma(edt_amount.getText().toString())));
                 transactionItem.setType(selectedType);
                 transactionItem.setPattern(selectedPattern);
-                transactionItem.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(dateEdt.getText().toString())));
+                transactionItem.setDate(DateHelper.changeDateToString(DateHelper.changeStringToDate(edt_date.getText().toString())));
                 transactionItem.setCategoryId(selectedCategory.getCategoryID());
-                transactionItem.setSubCategoryId("");
+                transactionItem.setSubCategoryId(selectedSubCategory != null ? selectedSubCategory.getId() : selectedCategory.getCategoryID());
                 transactionItem.setAccountId(mAccountItem.getId());
 
-                if (selectedType.equals("Expense") || selectedType.equals("Income")) {
+                if (selectedType.equals(getResources().getString(R.string.expense)) || selectedType.equals(getResources().getString(R.string.income))) {
                     DBTransactionUtils.updateTransactionAsync(MainActivity.db, AddTransactionActivity.this, transactionItem);
                 } else if (selectedType.equals("Transfer")) {
                     transactionItem.setToAccount(0);
                     // todo: transfer
                 }
             }
-
 
         });
     }
@@ -397,19 +399,19 @@ public class AddTransactionActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     mAccountItem = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
-                    accountEdt.setText(mAccountItem.getName());
+                    edt_account.setText(mAccountItem.getName());
                 }
             }
         } else if (requestCode == INPUT_NOTE_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    noteEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_NOTE));
+                    edt_description.setText(data.getStringExtra(Common.EXTRA_INPUT_NOTE));
                 }
             }
         } else if (requestCode == INPUT_AMOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    amountEdt.setText(data.getStringExtra(Common.EXTRA_INPUT_AMOUNT));
+                    edt_amount.setText(data.getStringExtra(Common.EXTRA_INPUT_AMOUNT));
                 }
             }
         }
@@ -427,7 +429,7 @@ public class AddTransactionActivity extends AppCompatActivity
 
     @Override
     public void OnSendListener(String result) {
-        dateEdt.setText(result);
+        edt_date.setText(result);
     }
 
     @Override
@@ -442,7 +444,6 @@ public class AddTransactionActivity extends AppCompatActivity
     public void sendResult(CategoryModel categoryModel) {
 
     }
-
 
     @Override
     protected void onStart() {
@@ -463,18 +464,17 @@ public class AddTransactionActivity extends AppCompatActivity
         if (event.isSuccess()) {
             if (event.getCategoryType() == Common.TYPE_CATEGORY) {
                 selectedCategory = event.getCategory();
-                categoryEdt.setText(event.getCategory().getCategoryVisibleName(getApplicationContext()));
-                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getCategory().getIconResourceID(), 0);
+                edt_category.setText(event.getCategory().getCategoryVisibleName(getApplicationContext()));
+                edt_category.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getCategory().getIconResourceID(), 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(event.getCategory().getIconColor()));
+                    edt_category.setCompoundDrawableTintList(ColorStateList.valueOf(event.getCategory().getIconColor()));
                 }
-            }
-            else if (event.getCategoryType() == Common.TYPE_SUB_CATEGORY) {
+            } else if (event.getCategoryType() == Common.TYPE_SUB_CATEGORY) {
                 selectedSubCategory = event.getSubCategory();
-                categoryEdt.setText(event.getSubCategory().getCategoryVisibleName(getApplicationContext()));
-                categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getSubCategory().getIconResourceID(), 0);
+                edt_category.setText(event.getSubCategory().getCategoryVisibleName(getApplicationContext()));
+                edt_category.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, event.getSubCategory().getIconResourceID(), 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(event.getSubCategory().getIconColor()));
+                    edt_category.setCompoundDrawableTintList(ColorStateList.valueOf(event.getSubCategory().getIconColor()));
                 }
             }
 
@@ -482,19 +482,16 @@ public class AddTransactionActivity extends AppCompatActivity
                 selectedType = "Expense";
                 if (ll_pattern_container.getVisibility() == View.GONE)
                     ll_pattern_container.setVisibility(View.VISIBLE);
-            }
-            else if (event.getTransactionType() == Common.TYPE_INCOME_TRANSACTION) {
+            } else if (event.getTransactionType() == Common.TYPE_INCOME_TRANSACTION) {
                 selectedType = "Income";
                 if (ll_pattern_container.getVisibility() == View.VISIBLE)
                     ll_pattern_container.setVisibility(View.GONE);
-            }
-            else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
+            } else if (event.getTransactionType() == Common.TYPE_TRANSFER_TRANSACTION) {
                 selectedType = "Transfer";
                 if (ll_pattern_container.getVisibility() == View.VISIBLE)
                     ll_pattern_container.setVisibility(View.GONE);
             }
-        }
-        else {
+        } else {
             Log.d(TAG, "onEvent: else!!");
         }
     }
@@ -510,9 +507,9 @@ public class AddTransactionActivity extends AppCompatActivity
             Category expenseCategory = Common.getExpenseCategory(mTransactionItem.getCategoryId());
             selectedCategory = expenseCategory;
             passedCategory = expenseCategory.getCategoryVisibleName(this);
-            categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
+            edt_category.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, expenseCategory.getIconResourceID(), 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
+                edt_category.setCompoundDrawableTintList(ColorStateList.valueOf(expenseCategory.getIconColor()));
             }
         } else if (mTransactionItem.getType().equals("Income")) {
             if (ll_pattern_container.getVisibility() == View.VISIBLE)
@@ -520,9 +517,9 @@ public class AddTransactionActivity extends AppCompatActivity
             Category incomeCategory = Common.getIncomeCategory(mTransactionItem.getCategoryId());
             selectedCategory = incomeCategory;
             passedCategory = incomeCategory.getCategoryVisibleName(this);
-            categoryEdt.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
+            edt_category.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, incomeCategory.getIconResourceID(), 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                categoryEdt.setCompoundDrawableTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
+                edt_category.setCompoundDrawableTintList(ColorStateList.valueOf(incomeCategory.getIconColor()));
             }
         }
         String passedAccount = mAccountItem.getName();
@@ -531,25 +528,52 @@ public class AddTransactionActivity extends AppCompatActivity
         String passedPattern = mTransactionItem.getPattern();
         int passedAmount = (int) mTransactionItem.getAmount();
 
-        categoryEdt.setText(passedCategory);
-        accountEdt.setText(passedAccount);
-        noteEdt.setText(passedNote);
-        amountEdt.setText(Common.changeNumberToComma(passedAmount));
-        dateEdt.setText(passedDate);
+        edt_category.setText(passedCategory);
+        edt_account.setText(passedAccount);
+        edt_description.setText(passedNote);
+        edt_amount.setText(Common.changeNumberToComma(passedAmount));
+        edt_date.setText(passedDate);
     }
 
     @Override
     public void onAccountLoadFailed(String message) {
-
+        Log.d(TAG, "onAccountLoadFailed: called!!");
     }
 
     @Override
     public void onTransactionUpdateSuccess(Boolean isInserted) {
+        Log.d(TAG, "onTransactionUpdateSuccess: called!!");
         if (isInserted) {
-            Toast.makeText(this, "[UPDATE!!]", Toast.LENGTH_SHORT).show();
+            if (requestPage.equals("HomeFragment")) {
+                EventBus.getDefault().post(new UpdateTransactionEvent(true));
+            }
+            else if (requestPage.equals("TransactionActivity")) {
+                EventBus.getDefault().postSticky(new UpdateTransactionFromAddEvent(true));
+            }
+        } else {
+            Toast.makeText(this, "Update Failed. Try again!", Toast.LENGTH_SHORT).show();
         }
-        else {
-            Toast.makeText(this, "[UPDATE Fail!!]", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    @Override
+    public void onTransactionDeleteSuccess(boolean isDeleted) {
+        Log.d(TAG, "onTransactionDeleteSuccess: called!!");
+        if (isDeleted) {
+            if (requestPage.equals("HomeFragment")) {
+                EventBus.getDefault().post(new DeleteTransactionEvent(true));
+            }
+            else if (requestPage.equals("TransactionActivity")) {
+                EventBus.getDefault().postSticky(new DeleteTransactionFromAddEvent(true));
+            }
+        } else {
+            Toast.makeText(this, "Delete Failed. Try again!", Toast.LENGTH_SHORT).show();
         }
+        finish();
+    }
+
+    @Override
+    public void onTransactionDeleteFailed(String message) {
+        Log.d(TAG, "onTransactionDeleteSuccess: called!!");
     }
 }

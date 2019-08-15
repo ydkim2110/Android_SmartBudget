@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction;
+package com.example.smartbudget.Ui.Travel;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;

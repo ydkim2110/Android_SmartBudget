@@ -21,9 +21,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TransactionListByCategoryActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
+public class TAListByCategoryActivity extends AppCompatActivity implements IThisMonthTransactionsLoadListener {
 
-    private static final String TAG = TransactionListByCategoryActivity.class.getSimpleName();
+    private static final String TAG = TAListByCategoryActivity.class.getSimpleName();
+
+    public static final String EXTRA_PASSED_DATE = "PASSED_DATE";
+    public static final String EXTRA_CATEGORY_ID = "CATEGORY_ID";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -41,8 +44,8 @@ public class TransactionListByCategoryActivity extends AppCompatActivity impleme
         ButterKnife.bind(this);
 
         if (getIntent() != null) {
-            passed_date= getIntent().getStringExtra("date");
-            categoryId= getIntent().getStringExtra("categoryId");
+            passed_date= getIntent().getStringExtra(EXTRA_PASSED_DATE);
+            categoryId= getIntent().getStringExtra(EXTRA_CATEGORY_ID);
         }
 
         initView();
@@ -80,7 +83,7 @@ public class TransactionListByCategoryActivity extends AppCompatActivity impleme
 
         }
         else {
-            TransactionListByCategoryAdapter adapter = new TransactionListByCategoryAdapter(this, transactionItemList);
+            TAListByCategoryAdapter adapter = new TAListByCategoryAdapter(this, transactionItemList);
             rv_list_by_category.setAdapter(adapter);
         }
     }

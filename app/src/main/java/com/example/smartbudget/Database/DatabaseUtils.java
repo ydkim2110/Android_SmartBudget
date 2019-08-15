@@ -14,7 +14,7 @@ import com.example.smartbudget.Database.Interface.IDBUpdateListener;
 import com.example.smartbudget.Interface.ISumAccountsLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.Interface.IThisMonthTransactionByPatternLoadListener;
-import com.example.smartbudget.Interface.ITransactionUpdateListener;
+import com.example.smartbudget.Database.Interface.ITransactionUpdateListener;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
 import com.example.smartbudget.Interface.IThisWeekTransactionLoadListener;

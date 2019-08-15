@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
@@ -29,14 +28,13 @@ import com.example.smartbudget.Database.Interface.IBudgetDeleteListener;
 import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
 import com.example.smartbudget.Model.EventBus.AddBudgetEvent;
 import com.example.smartbudget.Model.EventBus.AddDeleteEvent;
-import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Input.InputAccountActivity;
 import com.example.smartbudget.Ui.Input.InputAmountActivity;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.Add.Date.DatePickerDialogFragment;
 import com.example.smartbudget.Ui.Transaction.Add.Date.IDialogSendListener;
-import com.example.smartbudget.Ui.Transaction.Add.Note.InputNoteActivity;
+import com.example.smartbudget.Ui.Input.InputNoteActivity;
 import com.example.smartbudget.Utils.Common;
 
 import org.greenrobot.eventbus.EventBus;

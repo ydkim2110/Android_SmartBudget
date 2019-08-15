@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Home;
+package com.example.smartbudget.Ui.Transaction;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 import com.example.smartbudget.Model.Category;
-import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
 import com.example.smartbudget.Utils.Common;
@@ -27,16 +26,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTransactionAdapter.MyViewHolder> {
+public class TAGroupListAdapter extends RecyclerView.Adapter<TAGroupListAdapter.MyViewHolder> {
 
-    private static final String TAG = "WeekSubTransactionAdapter";
+    private static final String TAG = TAGroupListAdapter.class.getSimpleName();
 
     private Context mContext;
     private List<TransactionItem> mTransactionModelList;
+    private String moneyUnit;
 
-    public WeekSubTransactionAdapter(Context mContext, List<TransactionItem> mTransactionModelList) {
+    public TAGroupListAdapter(Context mContext, List<TransactionItem> mTransactionModelList) {
         this.mContext = mContext;
         this.mTransactionModelList = mTransactionModelList;
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
     }
 
     private Category expenseCategory;
@@ -53,7 +54,6 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
     @SuppressLint("LongLogTag")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
         int id = mTransactionModelList.get(position).getId();
         String description = mTransactionModelList.get(position).getDescription();
         int amount = (int) mTransactionModelList.get(position).getAmount();
@@ -72,7 +72,7 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             holder.tv_transaction_category.setText(expenseCategory.getCategoryVisibleName(mContext));
 
             holder.tv_transaction_note.setText(mTransactionModelList.get(position).getDescription());
-            holder.tv_transaction_amount.setText(new StringBuilder("-").append(Common.changeNumberToComma(amount)).append("원"));
+            holder.tv_transaction_amount.setText(new StringBuilder("-").append(Common.changeNumberToComma(amount)).append(moneyUnit));
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorExpense));
         }
         else if (mTransactionModelList.get(position).getType().equals("Income")) {
@@ -83,15 +83,17 @@ public class WeekSubTransactionAdapter extends RecyclerView.Adapter<WeekSubTrans
             holder.tv_transaction_category.setText(incomeCategory.getCategoryVisibleName(mContext));
 
             holder.tv_transaction_note.setText(mTransactionModelList.get(position).getDescription());
-            holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
+            holder.tv_transaction_amount.setText(new StringBuilder(Common.changeNumberToComma(amount)).append(moneyUnit));
             holder.tv_transaction_amount.setTextColor(mContext.getResources().getColor(R.color.colorRevenue));
         }
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
-            TransactionItem transactionModel = new TransactionItem(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
-            Intent editTransactionIntent = new Intent(view.getContext(), AddTransactionActivity.class);
-            editTransactionIntent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transactionModel);
-            view.getContext().startActivity(editTransactionIntent);
+            TransactionItem transactionItem = new TransactionItem(id, description, amount, type, pattern, transactionDate, categoryId, subCategoryId, accountId);
+            Intent intent = new Intent(view.getContext(), AddTransactionActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra(Common.EXTRA_EDIT_TRANSACTION, transactionItem);
+            intent.putExtra(AddTransactionActivity.EXTRA_REQUEST_PAGE, "TransactionActivity");
+            view.getContext().startActivity(intent);
         });
     }
 

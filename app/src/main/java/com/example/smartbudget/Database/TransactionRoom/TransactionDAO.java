@@ -1,7 +1,5 @@
 package com.example.smartbudget.Database.TransactionRoom;
 
-import android.util.Log;
-
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -10,7 +8,6 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
-import com.example.smartbudget.Database.AccountRoom.AccountDAO;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
@@ -83,9 +80,6 @@ public abstract class TransactionDAO {
             + " AND date BETWEEN DATE(:startDate) AND DATE(:endDate)")
     abstract double sumAmountByBudget(String startDate, String endDate, String type, int accountId);
 
-    @Delete
-    abstract void deleteTransaction(TransactionItem transactionItem);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insertTransaction(TransactionItem... transactionItems);
 
@@ -108,6 +102,9 @@ public abstract class TransactionDAO {
     @Update
     abstract void updateTransaction(TransactionItem transactionItem);
 
+    @Delete
+    abstract void deleteTransaction(TransactionItem transactionItem);
+
     @Transaction
     void insertTransactionUpdateAccount(TransactionItem transactionItem) {
         insertTransaction(transactionItem);
@@ -120,4 +117,5 @@ public abstract class TransactionDAO {
         updateTransaction(transactionItem);
         updateAccount(transactionItem.getType(), transactionItem.getAmount(), transactionItem.getAccountId());
     }
+
 }

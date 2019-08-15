@@ -77,9 +77,9 @@ public abstract class BudgetDatabase extends RoomDatabase {
                     + " VALUES ('가스비', 50000, 'Expense', 'Normal', '2019-08-31', ':homeneeds', ':gas_bill', 1, '')");
 
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
-                    + " VALUES ('숙박', 320000, 'Expense', 'Normal', '2019-08-05', ':travel', ':other', 2, '')");
+                    + " VALUES ('숙박', 320000, 'Expense', 'Normal', '2019-08-05', ':travel', ':travel', 2, '')");
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
-                    + " VALUES ('숙박', 320000, 'Expense', 'Normal', '2019-08-05', ':travel', ':other', 2, '')");
+                    + " VALUES ('숙박', 320000, 'Expense', 'Normal', '2019-08-05', ':travel', ':travel', 2, '')");
 
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
                     + " VALUES ('영화', 18000, 'Expense', 'Normal', '2019-08-11', ':entertainment', ':movie', 2, '')");
@@ -96,13 +96,13 @@ public abstract class BudgetDatabase extends RoomDatabase {
                     + " VALUES ('택시', 4500, 'Expense', 'Normal', '2019-08-25', ':transportation', ':taxi', 2, '')");
 
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
-                    + " VALUES ('월급', 4000000, 'Income', '', '2019-08-21', ':salary', ':other', 2, '')");
+                    + " VALUES ('월급', 4000000, 'Income', '', '2019-08-21', ':salary', ':salary', 2, '')");
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
-                    + " VALUES ('월급', 2000000, 'Income', '', '2019-04-22', ':salary', ':other', 1, '')");
+                    + " VALUES ('월급', 2000000, 'Income', '', '2019-04-22', ':salary', ':salary', 1, '')");
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
-                    + " VALUES ('월급', 1000000, 'Income', '', '2019-10-21', ':salary', ':other', 1, '')");
+                    + " VALUES ('월급', 1000000, 'Income', '', '2019-10-21', ':salary', ':salary', 1, '')");
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"
-                    + " VALUES ('배당', 444444, 'Income', 'Normal', '2019-05-02', ':interest&dividend', ':other', 1, '')");
+                    + " VALUES ('배당', 444444, 'Income', 'Normal', '2019-05-02', ':interest&dividend', ':interest&dividend', 1, '')");
 
             db.execSQL("INSERT INTO budget_table (description, amount, start_date, end_date, type, account_id) VALUES(?, ?, ?, ?, ?, ?)",
                     new Object[]{"유럽여행", 5000000, "2019-08-01", "2019-12-31", "Income", 2});

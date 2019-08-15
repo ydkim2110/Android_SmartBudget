@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Budget;
+package com.example.smartbudget.Ui.Home.Category;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -16,14 +16,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
-import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
-import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Ui.Home.Category.ExpenseByCategoryDetailActivity;
-import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
@@ -35,28 +30,31 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder> {
+public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCategoryAdapter.ViewHolder> {
 
-    private static final String TAG = BudgetAdapter.class.getSimpleName();
+    private static final String TAG = ExpenseByCategoryAdapter.class.getSimpleName();
 
     private Context mContext;
     private List<ExpenseByCategory> mExpenseByCategoryList;
     private String passed_date;
+    private String moneyUnit;
+    private String percentageSign;
 
-    public BudgetAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date) {
+    public ExpenseByCategoryAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date) {
         this.mContext = context;
         this.mExpenseByCategoryList = expenseByCategoryList;
         this.passed_date = passed_date;
-        Collections.sort(mExpenseByCategoryList, new Comparator<ExpenseByCategory>() {
-            @Override
-            public int compare(ExpenseByCategory o1, ExpenseByCategory o2) {
-                if (o1.getSumByCategory() > o2.getSumByCategory())
-                    return -1;
-                else if (o1.getSumByCategory() < o2.getSumByCategory())
-                    return 1;
-                else
-                    return 0;
-            }
+
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
+        percentageSign = mContext.getResources().getString(R.string.percentage_sign);
+
+        Collections.sort(mExpenseByCategoryList, (o1, o2) -> {
+            if (o1.getSumByCategory() > o2.getSumByCategory())
+                return -1;
+            else if (o1.getSumByCategory() < o2.getSumByCategory())
+                return 1;
+            else
+                return 0;
         });
     }
 
@@ -82,9 +80,9 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
         holder.pb_budget.setProgressTintList(ColorStateList.valueOf(category.getIconColor()));
 
         holder.tv_budget_category.setText(category.getCategoryVisibleName(mContext));
-        holder.tv_budget_used.setText(new StringBuilder(Common.changeNumberToComma(mExpenseByCategoryList.get(position).getSumByCategory())).append("원"));
-        holder.tv_budget_total.setText(new StringBuilder(Common.changeNumberToComma(amount)).append("원"));
-        holder.tv_budget_percentage.setText(new StringBuilder(Common.calcPercentage(mExpenseByCategoryList.get(position).getSumByCategory(), amount)).append("%"));
+        holder.tv_budget_used.setText(new StringBuilder(Common.changeNumberToComma(mExpenseByCategoryList.get(position).getSumByCategory())).append(moneyUnit));
+        holder.tv_budget_total.setText(new StringBuilder(Common.changeNumberToComma(amount)).append(moneyUnit));
+        holder.tv_budget_percentage.setText(new StringBuilder(Common.calcPercentage(mExpenseByCategoryList.get(position).getSumByCategory(), amount)).append(percentageSign));
         holder.tv_budget_total_count.setText(new StringBuilder("(").append(""+mExpenseByCategoryList.get(position).getCountByCategory()).append(")"));
 
         holder.pb_budget.setMax(amount);
@@ -95,8 +93,9 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Intent intent = new Intent(view.getContext(), ExpenseByCategoryDetailActivity.class);
-            intent.putExtra("passed_date", passed_date);
-            intent.putExtra(Common.EXTRA_PASS_BUDGET_CATEGORY, mExpenseByCategoryList.get(i).getCategoryId());
+            intent.putExtra(ExpenseByCategoryDetailActivity.EXTRA_PASSED_DATE, passed_date);
+            intent.putExtra(ExpenseByCategoryDetailActivity.EXTRA_CATEGORY_ID, mExpenseByCategoryList.get(i).getCategoryId());
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             view.getContext().startActivity(intent);
         });
     }

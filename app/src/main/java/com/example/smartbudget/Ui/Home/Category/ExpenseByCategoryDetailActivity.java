@@ -1,6 +1,9 @@
 package com.example.smartbudget.Ui.Home.Category;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -29,6 +32,9 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
 
     private static final String TAG = ExpenseByCategoryDetailActivity.class.getSimpleName();
 
+    public static final String EXTRA_PASSED_DATE = "PASSED_DATE";
+    public static final String EXTRA_CATEGORY_ID = "CATEGORY_ID";
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_category_detail)
@@ -47,9 +53,9 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
         ButterKnife.bind(this);
 
         if (getIntent() != null) {
-            categoryId = getIntent().getStringExtra(Common.EXTRA_PASS_BUDGET_CATEGORY);
+            categoryId = getIntent().getStringExtra(EXTRA_CATEGORY_ID);
             category = Common.getExpenseCategory(categoryId);
-            passed_date = getIntent().getStringExtra("passed_date");
+            passed_date = getIntent().getStringExtra(EXTRA_PASSED_DATE);
         }
 
         initView();
@@ -79,6 +85,7 @@ public class ExpenseByCategoryDetailActivity extends AppCompatActivity implement
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onThisMonthSumTransactionBySubCategorySuccess(List<SumTransactionBySubCategory> sumTransactionBySumCategoryList) {
         Log.d(TAG, "onThisMonthSumTransactionBySubCategorySuccess: called!!");

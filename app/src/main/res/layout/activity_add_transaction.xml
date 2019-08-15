@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/add_transaction_category"
+                    android:id="@+id/edt_category"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/tv_add_budget_account"
+                    android:id="@+id/edt_account"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/tv_add_budget_amount"
+                    android:id="@+id/edt_amount"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
@@ -124,11 +124,11 @@
 
 
                 <EditText
-                    android:id="@+id/add_transaction_description"
+                    android:id="@+id/edt_description"
                     android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
-                    android:hint="Note"
+                    android:hint="Description"
                     android:drawableRight="@drawable/ic_note_add_black_24dp"
                     android:focusable="false"
                     android:padding="16dp" />
@@ -147,7 +147,7 @@
                     android:layout_height="wrap_content" />
 
                 <EditText
-                    android:id="@+id/add_transaction_date"
+                    android:id="@+id/edt_date"
                     android:focusable="false"
                     android:layout_width="0dp"
                     android:layout_weight="8"
@@ -239,22 +239,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/cancel_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:foreground="?attr/selectableItemBackground"
-            android:text="Cancel" />
-
-        <Button
-            android:id="@+id/save_btn"
+            android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="55dp"
             android:layout_weight="1"
             android:background="@color/colorRevenue"
             android:foreground="?attr/selectableItemBackground"
-            android:text="Save" />
+            android:text="Save"
+            android:textSize="20sp" />
 
     </LinearLayout>
 

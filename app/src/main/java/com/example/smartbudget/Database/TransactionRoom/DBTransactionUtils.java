@@ -1,14 +1,12 @@
 package com.example.smartbudget.Database.TransactionRoom;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.example.smartbudget.Database.DBHelper;
-import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.ILastFewDaysTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
 import com.example.smartbudget.Database.Interface.IThisMonthSumTransactionBySubCategoryListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
+import com.example.smartbudget.Database.Interface.ITransactionDeleteListener;
 import com.example.smartbudget.Database.Interface.ITransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByPatternLoadListener;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
@@ -16,10 +14,8 @@ import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
-import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
-import com.example.smartbudget.Interface.ITransactionUpdateListener;
-import com.example.smartbudget.Model.TransactionModel;
+import com.example.smartbudget.Database.Interface.ITransactionUpdateListener;
 
 
 import java.util.List;
@@ -86,6 +82,12 @@ public class DBTransactionUtils {
         task.execute(transactionItems);
     }
 
+    public static void deleteTransactionAsync(BudgetDatabase db, ITransactionDeleteListener listener, TransactionItem... transactionItems) {
+        DeleteTransactionAsync task = new DeleteTransactionAsync(db, listener);
+        task.execute(transactionItems);
+    }
+
+
     /*
     ============================================================================
     ASYNC TASK DEFINE
@@ -150,6 +152,7 @@ public class DBTransactionUtils {
 
         @Override
         protected List<TransactionItem> doInBackground(Void... voids) {
+
             return mBudgetDatabase.transactionDAO().getThisMonthTransactions(date);
         }
 
@@ -388,6 +391,29 @@ public class DBTransactionUtils {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             mListener.onTransactionUpdateSuccess(aBoolean);
+        }
+    }
+
+    private static class DeleteTransactionAsync extends AsyncTask<TransactionItem, Void, Boolean> {
+
+        BudgetDatabase mBudgetDatabase;
+        ITransactionDeleteListener mListener;
+
+        public DeleteTransactionAsync(BudgetDatabase budgetDatabase, ITransactionDeleteListener listener) {
+            mBudgetDatabase = budgetDatabase;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(TransactionItem... transactionItems) {
+            mBudgetDatabase.transactionDAO().deleteTransaction(transactionItems[0]);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onTransactionDeleteSuccess(aBoolean);
         }
     }
 }

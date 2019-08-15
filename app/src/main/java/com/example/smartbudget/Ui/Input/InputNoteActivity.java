@@ -1,4 +1,4 @@
-package com.example.smartbudget.Ui.Transaction.Add.Note;
+package com.example.smartbudget.Ui.Input;
 
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;

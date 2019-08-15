@@ -22,24 +22,30 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
-import com.example.smartbudget.Interface.IThisMonthTransactionLoadListener;
-import com.example.smartbudget.Model.TransactionModel;
+import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
+import com.example.smartbudget.Model.EventBus.DeleteTransactionFromAddEvent;
+import com.example.smartbudget.Model.EventBus.UpdateTransactionEvent;
+import com.example.smartbudget.Model.EventBus.UpdateTransactionFromAddEvent;
 import com.example.smartbudget.R;
-import com.example.smartbudget.Ui.Home.WeekTransactionAdapter;
+import com.example.smartbudget.Ui.Home.HomeTAGroupListHeaderAdapter;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Ui.Transaction.Add.AddTransactionActivity;
-import com.example.smartbudget.Ui.Transaction.Transfer.TransferActivity;
+import com.example.smartbudget.Ui.Transfer.TransferActivity;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Utils.DateHelper;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,11 +110,15 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     private Animation fabClose;
     private boolean isFabOpen = false;
 
+    private String moneyUnit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
         Log.d(TAG, "onCreate: started!!");
+
+        moneyUnit = getResources().getString(R.string.money_unit);
 
         initView();
 
@@ -119,18 +129,6 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     private void initView() {
         Log.d(TAG, "initView: called!!");
         ButterKnife.bind(this);
-
-        if (app_bar.getLayoutParams() != null) {
-            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) app_bar.getLayoutParams();
-            AppBarLayout.Behavior appBarLayoutBehaviour = new AppBarLayout.Behavior();
-            appBarLayoutBehaviour.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-                @Override
-                public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
-                    return false;
-                }
-            });
-            layoutParams.setBehavior(appBarLayoutBehaviour);
-        }
 
         fabOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open);
         fabClose = AnimationUtils.loadAnimation(this, R.anim.fab_close);
@@ -185,23 +183,6 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         rv_transaction.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void enableScroll() {
-        final AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)
-                collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(
-                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-        );
-        collapsingToolbarLayout.setLayoutParams(params);
-    }
-
-    private void disableScroll() {
-        final AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams)
-                collapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(0);
-        collapsingToolbarLayout.setLayoutParams(params);
-    }
-
     private void toggleFab() {
         Log.d(TAG, "toggleFab: called!!");
         if (isFabOpen) {
@@ -238,7 +219,8 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
             finish();
         } else if (id == R.id.toolbar_transaction_calendar) {
             Intent intent = new Intent(this, CalendarActivity.class);
-            intent.putExtra("date", currentDate);
+            intent.putExtra(CalendarActivity.EXTRA_PASSED_DATE, currentDate);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -304,26 +286,20 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
         int totalIncome = 0;
         int totalExpense = 0;
 
-        if (transactionItemList != null) {
-            for (TransactionItem model : transactionItemList) {
-                if (model.getType().equals("Income")) {
-                    totalIncome = (int) (totalIncome + model.getAmount());
-                    Log.d(TAG, "onTransactionLoadSuccess: income: " + totalIncome);
-                } else if (model.getType().equals("Expense")) {
-                    totalExpense = (int) (totalExpense + model.getAmount());
-                    Log.d(TAG, "onTransactionLoadSuccess: expense: " + totalExpense);
-                }
+        for (TransactionItem model : transactionItemList) {
+            if (model.getType().equals("Income")) {
+                totalIncome = (int) (totalIncome + model.getAmount());
+            } else if (model.getType().equals("Expense")) {
+                totalExpense = (int) (totalExpense + model.getAmount());
             }
         }
 
-        Log.d(TAG, "onTransactionLoadSuccess: Total expense: " + totalExpense);
-
-        Common.animateTextView(500, 0, totalIncome, "원", tv_total_income);
-        Common.animateTextView(500, 0, totalExpense, "원", tv_total_expense);
+        Common.animateTextView(500, 0, totalIncome, moneyUnit, tv_total_income);
+        Common.animateTextView(500, 0, totalExpense, moneyUnit, tv_total_expense);
 
         groupedHashMap = groupDataIntoHashMap(transactionItemList);
 
-        WeekTransactionAdapter adapter = new WeekTransactionAdapter(this, groupedHashMap);
+        TAGroupListHeaderAdapter adapter = new TAGroupListHeaderAdapter(this, groupedHashMap);
         rv_transaction.setAdapter(adapter);
     }
 
@@ -331,4 +307,36 @@ public class TransactionActivity extends AppCompatActivity implements IThisMonth
     public void onThisMonthTransactionsLoadFailed(String message) {
         Log.d(TAG, "onThisMonthTransactionsLoadFailed: called!!");
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    void reloadData(AddTransactionEvent event) {
+        loadData(Common.stringToDate(currentDate));
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void reloadDataByUpdate(UpdateTransactionFromAddEvent event) {
+        if (event.isSuccess()) {
+            loadData(Common.stringToDate(currentDate));
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void reloadDataByDelete(DeleteTransactionFromAddEvent event) {
+        if (event.isSuccess()) {
+            loadData(Common.stringToDate(currentDate));
+        }
+    }
+
 }

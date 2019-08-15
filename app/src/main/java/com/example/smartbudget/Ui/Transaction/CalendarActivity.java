@@ -35,6 +35,8 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
 
     private static final String TAG = CalendarActivity.class.getSimpleName();
 
+    public static final String EXTRA_PASSED_DATE = "PASSED_DATE";
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_calendar)
@@ -55,7 +57,7 @@ public class CalendarActivity extends AppCompatActivity implements IThisMonthTra
 
 
         if (getIntent() != null) {
-            passedDate = getIntent().getStringExtra("date");
+            passedDate = getIntent().getStringExtra(EXTRA_PASSED_DATE);
 
             try {
                 displayDate = Common.dateFormat.parse(passedDate);;

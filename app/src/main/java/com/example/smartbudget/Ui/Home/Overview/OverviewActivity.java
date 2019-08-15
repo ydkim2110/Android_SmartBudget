@@ -24,24 +24,17 @@ import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
 import com.example.smartbudget.Model.Category;
-import com.example.smartbudget.Model.TransactionModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.Utils.Common;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,8 +44,7 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
 
     private static final String TAG = OverviewActivity.class.getSimpleName();
 
-    public static final String EXTRA_PASS_DATE = "pass_date";
-    public static final String EXTRA_TRANSACTION_LIST = "transaction_list";
+    public static final String EXTRA_PASSED_DATE = "PASSED_DATE";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -77,6 +69,10 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
     private String passed_date;
     private int total;
 
+    private String moneyUnit;
+    private String typeIncome;
+    private String typeExpense;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,30 +80,31 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
         Log.d(TAG, "onCreate: started!!");
         ButterKnife.bind(this);
 
+        moneyUnit = getResources().getString(R.string.money_unit);
+        typeIncome = getResources().getString(R.string.type_income);
+        typeExpense = getResources().getString(R.string.type_expense);
+
         if (getIntent() != null) {
-            passed_date = getIntent().getStringExtra(EXTRA_PASS_DATE);
+            passed_date = getIntent().getStringExtra(EXTRA_PASSED_DATE);
             int expense = 0;
             int income = 0;
 
             for (TransactionItem model : Common.TRANSACTION_LIST) {
-                if (model.getType().equals("Income")) {
+                if (model.getType().equals(typeIncome)) {
                     income += model.getAmount();
-                } else if (model.getType().equals("Expense")) {
+                } else if (model.getType().equals(typeExpense)) {
                     expense += model.getAmount();
                 }
             }
 
-            Common.animateTextView(1500, 0, income, "원", tv_income);
-            Common.animateTextView(1500, 0, expense, "원", tv_expense);
-            Common.animateTextView(1500, 0, (income - expense), "원", tv_balance);
+            Common.animateTextView(1500, 0, income, moneyUnit, tv_income);
+            Common.animateTextView(1500, 0, expense, moneyUnit, tv_expense);
+            Common.animateTextView(1500, 0, (income - expense), moneyUnit, tv_balance);
 
             setProgressBar(income, expense);
         }
 
         initView();
-
-        //setUpPieGraph();
-
 
         DBTransactionUtils.getThisMonthTransactionByCategory(MainActivity.db, passed_date, this);
     }
@@ -136,7 +133,6 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
 
     private void initView() {
         Log.d(TAG, "initView: called!!");
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_overview));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -209,8 +205,6 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             // When valuePosition is OutsideSlice, indicates offset as percentage out of the slice size
             // dataSet.setValueLinePart1OffsetPercentage(100f);
 
-
-            //create pie data object
             PieData pieData = new PieData(dataSet);
             pie_chart_overview.setData(pieData);
             pie_chart_overview.getLegend().setEnabled(false);
@@ -230,7 +224,7 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             pie_chart_overview.setRotationAngle(0);
             pie_chart_overview.setRotationEnabled(true);
 
-            StringBuilder sb = new StringBuilder(passed_date).append("\n").append(Common.changeNumberToComma(total)).append("원");
+            StringBuilder sb = new StringBuilder(passed_date).append("\n").append(Common.changeNumberToComma(total)).append(moneyUnit);
 
             pie_chart_overview.setCenterText(sb);
 
@@ -238,13 +232,14 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
 
             pie_chart_overview.invalidate();
 
-            SpendingAdapter adapter = new SpendingAdapter(OverviewActivity.this, expenseByCategoryList, passed_date);
+            OverviewCategoryAdapter adapter = new OverviewCategoryAdapter(OverviewActivity.this, expenseByCategoryList, passed_date);
             rv_spending.setAdapter(adapter);
         }
     }
 
     @Override
     public void onThisMonthTransactionByCategoryLoadFailed(String message) {
-
+        Log.d(TAG, "onThisMonthTransactionByCategoryLoadFailed: called!!");
     }
+
 }

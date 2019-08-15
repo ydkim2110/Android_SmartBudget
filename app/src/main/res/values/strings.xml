@@ -49,11 +49,9 @@
 
     <!-- Toast Message -->
     <string name="toast_on_back_pressed_message">\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.</string>
-    <string name="money_unit">원</string>
     <string name="toolbar_add_transaction">Add Transaction</string>
     <string name="toolbar_edit_transaction">Edit Transaction</string>
     <string name="toolbar_spending_pattern">Spending Pattern</string>
-    <string name="btn_update">Update</string>
     <string name="success_login_message">로그인에 성공 하셨습니다.</string>
     <string name="cancelled_login_message">로그인이 취소되었습니다.</string>
     <string name="tab_title_asset">Asset</string>
@@ -76,11 +74,20 @@
     <string name="invest">Invest</string>
     <string name="expense">Expense</string>
     <string name="income">Income</string>
+    <string name="transfer">Transfer</string>
+    <string name="balance">Balance</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_income">Income</string>
     <string name="toolbar_title_add_category">Add Category</string>
     <string name="toolbar_title_transfer">Transfer</string>
     <string name="toolbar_title_overview">Overview</string>
     <string name="alert_delete_title">Delete</string>
     <string name="alert_delete_message">Warning! If you delete this account, All transactions will be deteled!!</string>
     <string name="toolbar_edit_budget">Edit Budget</string>
+    <string name="money_unit">원</string>
+    <string name="percentage_sign">%</string>
+    <string name="no_transactions">No transactions...</string>
+    <string name="btn_save">save</string>
+    <string name="btn_update">update</string>
 
 </resources>
