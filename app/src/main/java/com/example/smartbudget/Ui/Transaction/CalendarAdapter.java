@@ -116,18 +116,18 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     && displayYear == eventCalendar.get(Calendar.YEAR)) {
                 if (mTransactionList.get(i).getType().equals("Expense")) {
                     expenseTotal.add((int) mTransactionList.get(i).getAmount());
-                    if (expenseTotal.stream().mapToInt(n -> n).sum() > 1000000) {
+                    if (expenseTotal.stream().mapToInt(n -> n).sum() >= 1000000) {
                         holder.tv_expense.setTextSize(10);
-                    } else if (expenseTotal.stream().mapToInt(n -> n).sum() > 10000000) {
+                    } else if (expenseTotal.stream().mapToInt(n -> n).sum() >= 10000000) {
                         holder.tv_expense.setTextSize(8);
                     }
                     holder.tv_expense.setText(Common.changeNumberToComma(expenseTotal.stream().mapToInt(n -> n).sum()) + "원");
                 }
                 else if (mTransactionList.get(i).getType().equals("Income")) {
                     incomeTotal.add((int) mTransactionList.get(i).getAmount());
-                    if (incomeTotal.stream().mapToInt(n -> n).sum() > 1000000) {
+                    if (incomeTotal.stream().mapToInt(n -> n).sum() >= 1000000) {
                         holder.tv_income.setTextSize(10);
-                    } else if (incomeTotal.stream().mapToInt(n -> n).sum() > 10000000) {
+                    } else if (incomeTotal.stream().mapToInt(n -> n).sum() >= 10000000) {
                         holder.tv_income.setTextSize(8);
                     }
                     holder.tv_income.setText(Common.changeNumberToComma(incomeTotal.stream().mapToInt(n -> n).sum()) + "원");

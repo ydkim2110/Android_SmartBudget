@@ -12,15 +12,23 @@ import com.example.smartbudget.Database.AccountRoom.AccountDAO;
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Database.BudgetRoom.BudgetDAO;
 import com.example.smartbudget.Database.BudgetRoom.BudgetItem;
+import com.example.smartbudget.Database.ExpenseBudgetRoom.ExpenseBudgetDAO;
+import com.example.smartbudget.Database.ExpenseBudgetRoom.ExpenseBudgetItem;
 import com.example.smartbudget.Database.TransactionRoom.TransactionDAO;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
+import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.DefaultCategories;
 
-@Database(version = 1, entities = {AccountItem.class, TransactionItem.class, BudgetItem.class}, exportSchema = false)
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+@Database(version = 1, entities = {AccountItem.class, TransactionItem.class, BudgetItem.class, ExpenseBudgetItem.class}, exportSchema = false)
 public abstract class BudgetDatabase extends RoomDatabase {
 
     public abstract AccountDAO accountDAO();
     public abstract TransactionDAO transactionDAO();
     public abstract BudgetDAO budgetDAO();
+    public abstract ExpenseBudgetDAO expenseBudgetDAO();
 
     private static BudgetDatabase instance;
 
@@ -112,6 +120,10 @@ public abstract class BudgetDatabase extends RoomDatabase {
                     new Object[]{"차바꾸기", 400000, "2019-05-01", "2019-07-31", "Income", 1});
             db.execSQL("INSERT INTO budget_table (description, amount, start_date, end_date, type, account_id) VALUES(?, ?, ?, ?, ?, ?)",
                     new Object[]{"밥값줄여보기", 900000, "2019-08-01", "2019-09-30", "Expense", 1});
+
+            for (Category category : Arrays.asList(DefaultCategories.getDefaultExpenseCategories())) {
+                db.execSQL("INSERT INTO expense_budget_table (category_id, amount, create_at) VALUES(?, ?, ?)", new Object[]{category.getCategoryID(), 150000, "2019-08-01"});
+            }
 
         }
     };

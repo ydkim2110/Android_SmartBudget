@@ -195,6 +195,7 @@ public class Common {
 
     public static SubCategory getExpenseSubCategory(String subCategoryId) {
         List<SubCategory> subCategoryList = Arrays.asList(DefaultCategories.getDefaultSubExpenseCategories());
+        List<Category> categoryList = Arrays.asList(DefaultCategories.getDefaultExpenseCategories());
         for (SubCategory subCategory : subCategoryList) {
             if (subCategory.getId().equals(subCategoryId)) {
                 return subCategory;

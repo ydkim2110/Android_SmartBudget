@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.smartbudget.Database.ExpenseBudgetRoom.DBExpenseBudgetUtils;
+import com.example.smartbudget.Database.ExpenseBudgetRoom.ExpenseBudgetItem;
 import com.example.smartbudget.Database.Interface.ILastFewDaysTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByPatternLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
@@ -31,6 +33,7 @@ import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.TransactionRoom.TransactionItem;
 import com.example.smartbudget.Interface.IDateChangeListener;
+import com.example.smartbudget.Interface.IExpenseBudgetLoadListener;
 import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Model.EventBus.AddTransactionEvent;
 import com.example.smartbudget.Model.EventBus.DeleteTransactionEvent;
@@ -62,7 +65,7 @@ import butterknife.Unbinder;
  */
 public class HomeFragment extends Fragment implements IDateChangeListener,
         IThisMonthTransactionsByPatternLoadListener,
-        IThisMonthTransactionsLoadListener, ILastFewDaysTransactionsLoadListener {
+        IThisMonthTransactionsLoadListener, ILastFewDaysTransactionsLoadListener, IExpenseBudgetLoadListener {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -144,6 +147,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     private int normal_percentage = 0;
     private int waste_percentage = 0;
     private int invest_percentage = 0;
+    private int totalExpense;
     private String currentDate = "";
     private Date startDate;
     private Date endDate;
@@ -156,6 +160,8 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     private String patternNormal;
     private String patternWaste;
     private String patternInvest;
+
+    private ArrayList<ExpenseBudgetItem> mExpenseBudgetItemList;
 
     @Override
     public void onAttach(Context context) {
@@ -196,13 +202,12 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     private void setProgressBar(int usedExpense) {
         Log.d(TAG, "setProgressBar: called!!");
-        int maxValue = 1400000;
 
         Common.animateTextView(1000, 0, usedExpense, moneyUnit, tv_used_expense);
-        Common.animateTextView(1000, 0, maxValue, moneyUnit, tv_total_expense);
-        Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage(usedExpense, maxValue)), percentageSign, tv_percentage);
+        Common.animateTextView(1000, 0, totalExpense, moneyUnit, tv_total_expense);
+        Common.animateTextView(1000, 0, Integer.parseInt(Common.calcPercentage(usedExpense, totalExpense)), percentageSign, tv_percentage);
 
-        pb_expense_by_category.setMax(maxValue);
+        pb_expense_by_category.setMax(totalExpense);
         ObjectAnimator progressAnim = ObjectAnimator.ofInt(pb_expense_by_category, "progress", 0, usedExpense);
         progressAnim.setDuration(1000);
         progressAnim.setInterpolator(new LinearInterpolator());
@@ -263,6 +268,7 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         home_expense_by_category_container.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, ExpenseByCategoryActivity.class);
             intent.putExtra(ExpenseByCategoryActivity.EXTRA_PASSED_DATE, currentDate);
+            intent.putParcelableArrayListExtra(ExpenseByCategoryActivity.EXTRA_PASSED_LIST, mExpenseBudgetItemList);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             mContext.startActivity(intent);
         });
@@ -374,8 +380,8 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
 
     private void loadFromDatabase(String date) {
         Log.d(TAG, "loadFromDatabase: called!!");
-        DBTransactionUtils.getThisMonthTransactions(MainActivity.db, date, this);
         DBTransactionUtils.getThisMonthTransactionByPattern(MainActivity.db, date, this);
+        DBExpenseBudgetUtils.getAllExpenseBudget(MainActivity.db, this);
 
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -464,5 +470,20 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
     public void onLastFewDaysTransactionsFailed(String message) {
         Log.d(TAG, "onLastFewDaysTransactionsFailed: called!!");
         Toast.makeText(getContext(), "Failed!!", Toast.LENGTH_SHORT).show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onExpenseBudgetLoadSuccess(List<ExpenseBudgetItem> expenseBudgetItemList) {
+        Log.d(TAG, "onExpenseBudgetLoadSuccess: called!");
+        mExpenseBudgetItemList = (ArrayList<ExpenseBudgetItem>) expenseBudgetItemList;
+        totalExpense = (int) expenseBudgetItemList.stream().mapToDouble(ExpenseBudgetItem::getAmount).sum();
+
+        DBTransactionUtils.getThisMonthTransactions(MainActivity.db, currentDate, this);
+    }
+
+    @Override
+    public void onExpenseBudgetLoadFailed(String message) {
+        Log.d(TAG, "onExpenseBudgetLoadFailed: called!!");
     }
 }

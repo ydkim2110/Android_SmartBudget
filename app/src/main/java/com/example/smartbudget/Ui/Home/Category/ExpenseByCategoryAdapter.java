@@ -16,12 +16,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.smartbudget.Database.ExpenseBudgetRoom.ExpenseBudgetItem;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -37,13 +39,15 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
     private Context mContext;
     private List<ExpenseByCategory> mExpenseByCategoryList;
     private String passed_date;
+    private ArrayList<ExpenseBudgetItem> mExpenseBudgetItemList;
     private String moneyUnit;
     private String percentageSign;
 
-    public ExpenseByCategoryAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date) {
+    public ExpenseByCategoryAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date, ArrayList<ExpenseBudgetItem> expenseBudgetItemList) {
         this.mContext = context;
         this.mExpenseByCategoryList = expenseByCategoryList;
         this.passed_date = passed_date;
+        this.mExpenseBudgetItemList = expenseBudgetItemList;
 
         moneyUnit = mContext.getResources().getString(R.string.money_unit);
         percentageSign = mContext.getResources().getString(R.string.percentage_sign);
@@ -59,6 +63,7 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
     }
 
     private Category category;
+    private int amount;
 
     @NonNull
     @Override
@@ -73,7 +78,11 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
 
         category = Common.getExpenseCategory(mExpenseByCategoryList.get(position).getCategoryId());
 
-        int amount = 500000;
+        for (ExpenseBudgetItem data : mExpenseBudgetItemList) {
+            if (data.getCategoryId().equals(category.getCategoryID())) {
+                amount = (int) data.getAmount();
+            }
+        }
 
         holder.iv_category_icon.setImageResource(category.getIconResourceID());
         holder.iv_category_icon.setColorFilter(category.getIconColor());

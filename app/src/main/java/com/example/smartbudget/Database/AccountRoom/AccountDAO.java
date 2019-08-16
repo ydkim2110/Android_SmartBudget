@@ -43,7 +43,7 @@ public abstract class AccountDAO {
     @Transaction
     void updateAccountByTransfer(double amount, int fromId, int toId) {
         updateFromAccount(amount, fromId);
-        updateFromAccount(amount, toId);
+        updateToAccount(amount, toId);
     }
 
 }

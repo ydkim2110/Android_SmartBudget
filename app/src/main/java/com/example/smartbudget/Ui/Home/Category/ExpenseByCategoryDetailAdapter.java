@@ -3,6 +3,7 @@ package com.example.smartbudget.Ui.Home.Category;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,13 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
+import com.example.smartbudget.Model.Category;
+import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.Model.SubCategory;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +31,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class ExpenseByCategoryDetailAdapter extends RecyclerView.Adapter<ExpenseByCategoryDetailAdapter.MyViewHolder> {
+
+    private static final String TAG = ExpenseByCategoryDetailAdapter.class.getSimpleName();
 
     private Context mContext;
     private List<SumTransactionBySubCategory> mSumTransactionBySubCategoryList;
@@ -54,6 +60,8 @@ public class ExpenseByCategoryDetailAdapter extends RecyclerView.Adapter<Expense
     }
 
     private SubCategory subCategory;
+    private Category category;
+    ;
 
     @NonNull
     @Override
@@ -65,18 +73,24 @@ public class ExpenseByCategoryDetailAdapter extends RecyclerView.Adapter<Expense
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        subCategory = Common.getExpenseSubCategory(mSumTransactionBySubCategoryList.get(position).getSubCategoryId());
 
-        holder.tv_sub_category_name.setText(subCategory.getCategoryVisibleName(mContext));
+        if (Common.getExpenseSubCategory(mSumTransactionBySubCategoryList.get(position).getSubCategoryId()) != null) {
+            subCategory = Common.getExpenseSubCategory(mSumTransactionBySubCategoryList.get(position).getSubCategoryId());
+            holder.tv_sub_category_name.setText(subCategory.getCategoryVisibleName(mContext));
+        } else {
+            category = Common.getExpenseCategory(mSumTransactionBySubCategoryList.get(position).getSubCategoryId());
+            holder.tv_sub_category_name.setText(category.getCategoryVisibleName(mContext));
+        }
+
         holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma((int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory()))
                 .append(moneyUnit));
 
         holder.pb_circle.setMax((int) total);
-    ObjectAnimator progressAnim = ObjectAnimator.ofInt(holder.pb_circle, "progress", 0, (int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory());
+        ObjectAnimator progressAnim = ObjectAnimator.ofInt(holder.pb_circle, "progress", 0, (int) mSumTransactionBySubCategoryList.get(position).getSumBySubCategory());
         progressAnim.setDuration(1500);
         progressAnim.setInterpolator(new LinearInterpolator());
         progressAnim.start();
-}
+    }
 
     @Override
     public int getItemCount() {

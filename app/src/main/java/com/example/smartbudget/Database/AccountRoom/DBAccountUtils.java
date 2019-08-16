@@ -9,6 +9,7 @@ import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.IAccountDeleteListener;
 import com.example.smartbudget.Database.Interface.IAccountLoadListener;
 import com.example.smartbudget.Database.Interface.IAccountsLoadListener;
+import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Model.AccountModel;
 
 import java.util.List;
@@ -32,6 +33,11 @@ public class DBAccountUtils {
 
     public static void getSumAccountsByType(BudgetDatabase db, IAccountsLoadListener listener) {
         GetSumAccountsByTypeAsync task = new GetSumAccountsByTypeAsync(db, listener);
+        task.execute();
+    }
+
+    public static void updateAccountsByTransfer(BudgetDatabase db, double amount, int fromId, int toId, IUpdateAccountListener listener) {
+        UpdateAccountsByTransferAsync task = new UpdateAccountsByTransferAsync(db, amount, fromId, toId, listener);
         task.execute();
     }
 
@@ -137,6 +143,36 @@ public class DBAccountUtils {
             mListener.onAccountsLoadSuccess(accountItemList);
         }
     }
+
+    private static class UpdateAccountsByTransferAsync extends AsyncTask<Void, Void, Boolean> {
+
+        BudgetDatabase mBudgetDatabase;
+        IUpdateAccountListener mListener;
+        double amount;
+        int fromId;
+        int toId;
+
+        public UpdateAccountsByTransferAsync(BudgetDatabase budgetDatabase, double amount, int fromId, int toId, IUpdateAccountListener listener) {
+            this.mBudgetDatabase = budgetDatabase;
+            this.amount = amount;
+            this.fromId = fromId;
+            this.toId = toId;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            mBudgetDatabase.accountDAO().updateAccountByTransfer(amount, fromId, toId);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            mListener.onUpdateAccountSuccess(aBoolean);
+        }
+    }
+
 
     private static class DeleteAccountAsync extends AsyncTask<AccountItem, Void, Boolean> {
 

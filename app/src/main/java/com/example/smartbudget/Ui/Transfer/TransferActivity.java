@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Model.AccountModel;
@@ -47,7 +49,7 @@ public class TransferActivity extends AppCompatActivity implements IUpdateAccoun
     @BindView(R.id.btn_save)
     Button btn_save;
 
-    private AccountModel mAccountModel;
+    private AccountItem mAccountItem;
 
     private int fromAccountId;
     private int toAccountId;
@@ -73,14 +75,17 @@ public class TransferActivity extends AppCompatActivity implements IUpdateAccoun
 
         edt_transfer_amount.setOnClickListener(v -> {
             Intent intent = new Intent(TransferActivity.this, InputAmountActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivityForResult(intent, INPUT_AMOUNT_REQUEST);
         });
         edt_transfer_from.setOnClickListener(v -> {
             Intent intent = new Intent(TransferActivity.this, InputAccountActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivityForResult(intent, INPUT_FROM_ACCOUNT_REQUEST);
         });
         edt_transfer_to.setOnClickListener(v -> {
             Intent intent = new Intent(TransferActivity.this, InputAccountActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivityForResult(intent, INPUT_TO_ACCOUNT_REQUEST);
         });
 
@@ -92,7 +97,7 @@ public class TransferActivity extends AppCompatActivity implements IUpdateAccoun
                 return;
             }
 
-            DatabaseUtils.updateAccountsByTransfer(MainActivity.mDBHelper, Double.parseDouble(edt_transfer_amount.getText().toString()),
+            DBAccountUtils.updateAccountsByTransfer(MainActivity.db, Double.parseDouble(edt_transfer_amount.getText().toString()),
                     fromAccountId, toAccountId, this);
         });
 
@@ -186,18 +191,18 @@ public class TransferActivity extends AppCompatActivity implements IUpdateAccoun
         else if (requestCode == INPUT_FROM_ACCOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    mAccountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
-                    edt_transfer_from.setText(mAccountModel.getName());
-                    fromAccountId = mAccountModel.getId();
+                    mAccountItem = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
+                    edt_transfer_from.setText(mAccountItem.getName());
+                    fromAccountId = mAccountItem.getId();
                 }
             }
         }
         else if (requestCode == INPUT_TO_ACCOUNT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    mAccountModel = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
-                    edt_transfer_to.setText(mAccountModel.getName());
-                    toAccountId = mAccountModel.getId();
+                    mAccountItem = data.getParcelableExtra(Common.EXTRA_INPUT_ACCOUNT);
+                    edt_transfer_to.setText(mAccountItem.getName());
+                    toAccountId = mAccountItem.getId();
                 }
             }
         }
@@ -214,6 +219,7 @@ public class TransferActivity extends AppCompatActivity implements IUpdateAccoun
 
     @Override
     public void onUpdateAccountSuccess(boolean isUpdate) {
+        Log.d(TAG, "onUpdateAccountSuccess: called!!");
         if (isUpdate) {
             finish();
         }
@@ -221,6 +227,6 @@ public class TransferActivity extends AppCompatActivity implements IUpdateAccoun
 
     @Override
     public void onUpdateAccountFailed(String message) {
-
+        Log.d(TAG, "onUpdateAccountFailed: called!!");
     }
 }

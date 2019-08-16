@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.smartbudget.Database.ExpenseBudgetRoom.ExpenseBudgetItem;
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.TransactionRoom.DBTransactionUtils;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
@@ -19,6 +20,7 @@ import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,6 +31,7 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
     private static final String TAG = ExpenseByCategoryActivity.class.getSimpleName();
 
     public static final String EXTRA_PASSED_DATE = "PASSED_DATE";
+    public static final String EXTRA_PASSED_LIST = "PASSED_LIST";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -41,6 +44,8 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
 
     private String passed_date;
 
+    private ArrayList<ExpenseBudgetItem> mExpenseBudgetItemList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,8 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
 
         if (getIntent() != null) {
             passed_date = getIntent().getStringExtra(EXTRA_PASSED_DATE);
+            mExpenseBudgetItemList = getIntent().getParcelableArrayListExtra(EXTRA_PASSED_LIST);
+            Log.d(TAG, "onCreate: size: "+mExpenseBudgetItemList.size());
         }
 
         initView();
@@ -91,7 +98,7 @@ public class ExpenseByCategoryActivity extends AppCompatActivity implements IThi
         } else {
             rv_expense_by_category.setVisibility(View.VISIBLE);
             tv_no_transactions.setVisibility(View.GONE);
-            ExpenseByCategoryAdapter budgetAdapter = new ExpenseByCategoryAdapter(ExpenseByCategoryActivity.this, expenseByCategoryList, passed_date);
+            ExpenseByCategoryAdapter budgetAdapter = new ExpenseByCategoryAdapter(ExpenseByCategoryActivity.this, expenseByCategoryList, passed_date, mExpenseBudgetItemList);
             rv_expense_by_category.setAdapter(budgetAdapter);
         }
     }
