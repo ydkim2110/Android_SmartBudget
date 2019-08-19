@@ -10,4 +10,6 @@
     <dimen name="activity_calculator_display_text_size">56sp</dimen>
     <dimen name="activity_calculator_display_padding">8dp</dimen>
     <dimen name="activity_calculator_button_text_size">30sp</dimen>
+    <dimen name="standard_55">55dp</dimen>
+    <dimen name="standard_105">105dp</dimen>
 </resources>

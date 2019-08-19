@@ -20,9 +20,9 @@ public class ReportActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.tab_report)
+    @BindView(R.id.tab_sub_report)
     TabLayout tab_report;
-    @BindView(R.id.vp_report)
+    @BindView(R.id.vp_sub_report)
     ViewPager vp_report;
 
     @Override
@@ -44,11 +44,7 @@ public class ReportActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-        adapter.addFragment(WeeklyFragment.newInstance(), "Weekly");
-        adapter.addFragment(MonthlyFragment.newInstance(), "Monthly");
-        adapter.addFragment(YearlyFragment.newInstance(), "Yearly");
+        ReportPagerAdapter adapter = new ReportPagerAdapter(getSupportFragmentManager(), this);
 
         vp_report.setAdapter(adapter);
 

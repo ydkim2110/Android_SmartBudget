@@ -52,6 +52,9 @@ public class TransactionItem implements Parcelable {
     @ColumnInfo(name = "to_account")
     private int toAccount;
 
+    @Ignore
+    private double sumByDate;
+
     public TransactionItem() {
     }
 
@@ -188,6 +191,14 @@ public class TransactionItem implements Parcelable {
 
     public void setToAccount(int toAccount) {
         this.toAccount = toAccount;
+    }
+
+    public double getSumByDate() {
+        return sumByDate;
+    }
+
+    public void setSumByDate(double sumByDate) {
+        this.sumByDate = sumByDate;
     }
 
     @Override

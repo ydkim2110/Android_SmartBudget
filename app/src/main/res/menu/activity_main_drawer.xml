@@ -28,6 +28,10 @@
             android:id="@+id/nav_calculator"
             android:icon="@drawable/ic_gradient_black_24dp"
             android:title="@string/menu_calculator" />
+        <item
+            android:id="@+id/nav_backup"
+            android:icon="@drawable/ic_gradient_black_24dp"
+            android:title="@string/menu_back_up" />
     </group>
 
 </menu>

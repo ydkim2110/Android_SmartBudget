@@ -14,12 +14,12 @@ import java.util.List;
 public abstract class AccountDAO {
 
     @Query("SELECT * FROM account_table")
-    abstract List<AccountItem> getAllAccounts();
+    public abstract List<AccountItem> getAllAccounts();
 
     @Query("SELECT * FROM account_table WHERE id = :id")
     abstract AccountItem getAccount(int id);
 
-    @Query("SELECT * FROM account_table WHERE type = :type")
+    @Query("SELECT * FROM account_table WHERE type = :type ORDER BY amount DESC")
     abstract List<AccountItem> getAccountsByType(String type);
 
     @Query("SELECT id, type, SUM(amount) AS amount FROM account_table GROUP BY type")

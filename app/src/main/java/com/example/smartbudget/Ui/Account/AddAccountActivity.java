@@ -13,15 +13,23 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
+import com.example.smartbudget.Database.AccountRoom.DBAccountUtils;
 import com.example.smartbudget.Database.DatabaseUtils;
+import com.example.smartbudget.Database.Interface.IAccountInsertListener;
+import com.example.smartbudget.Database.Interface.IAccountUpdateListener;
 import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
 import com.example.smartbudget.Database.Interface.IDBUpdateListener;
 import com.example.smartbudget.Model.AccountModel;
+import com.example.smartbudget.Model.EventBus.AddAccountEvent;
+import com.example.smartbudget.Model.EventBus.UpdateAccountEvent;
 import com.example.smartbudget.Ui.Main.MainActivity;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -29,14 +37,13 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AddAccountActivity extends AppCompatActivity implements IBudgetInsertListener, IDBUpdateListener {
+public class AddAccountActivity extends AppCompatActivity implements IAccountInsertListener, IAccountUpdateListener {
 
     private static final String TAG = AddAccountActivity.class.getSimpleName();
 
     public static final String EXTRA_TAG = "tag";
-
-    private BSAccountAddFragment mBSAccountAddFragment;
-    private BSAccountMenuFragment mBSAccountMenuFragment;
+    public static final String EXTRA_HIGH_CATEGORY = "HIGH_CATEGORY";
+    public static final String EXTRA_HIGH_CATEGORY_ID = "HIGH_CATEGORY_ID";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -58,6 +65,10 @@ public class AddAccountActivity extends AppCompatActivity implements IBudgetInse
     private boolean hasFractionalPart;
 
     private AccountItem passedAccount;
+    private AccountItem mAccountItem;
+    private String passedHighCategory;
+    private String passedHighCategoryId;
+    private String selectedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,8 @@ public class AddAccountActivity extends AppCompatActivity implements IBudgetInse
         if (getIntent() != null) {
             if (Common.SELECTED_ACCOUNT != null) {
                 passedAccount = Common.SELECTED_ACCOUNT;
+                passedHighCategory = Common.getAccountTitleById(this, passedAccount.getHighCategory());
+                passedHighCategoryId = passedAccount.getHighCategory();
             }
         }
 
@@ -79,10 +92,11 @@ public class AddAccountActivity extends AppCompatActivity implements IBudgetInse
         dfnd = new DecimalFormat("#,###");
         hasFractionalPart = false;
 
-
-
         if (Common.SELECTED_ACCOUNT == null) {
-            tv_high_category.setText(getIntent().getStringExtra("high_category"));
+            passedHighCategory = getIntent().getStringExtra(EXTRA_HIGH_CATEGORY);
+            passedHighCategoryId = getIntent().getStringExtra(EXTRA_HIGH_CATEGORY_ID);
+
+            tv_high_category.setText(passedHighCategory);
         }
 
         watchTextChange();
@@ -93,25 +107,28 @@ public class AddAccountActivity extends AppCompatActivity implements IBudgetInse
             String name = tv_name.getText().toString();
             String description = tv_description.getText().toString();
             double amount = Double.parseDouble(tv_amount.getText().toString());
-            String highCategory = tv_high_category.getText().toString();
-            String type = "";
-            if (tv_high_category.getText().equals("대출") || tv_high_category.getText().equals("기타부채")) {
+            String highCategoryId = passedHighCategoryId;
+            String type;
+
+            if (passedHighCategoryId.equals("debt") || passedHighCategoryId.equals("other_debt")) {
                 type = "debt";
-            } else {
+            }
+            else {
                 type = "asset";
             }
 
             if (save_btn.getText().toString().toUpperCase().equals("SAVE")) {
                 Log.d(TAG, "onClick: save");
-                AccountModel accountModel = new AccountModel(name, description,
-                        amount, highCategory, type, new Date(), "KRW");
-                DatabaseUtils.insertAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
-            } else if (save_btn.getText().toString().toUpperCase().equals("UPDATE")) {
+                mAccountItem = new AccountItem(name, description,
+                        amount, highCategoryId, type, Common.dateFormat.format(new Date()), "KRW");
+                DBAccountUtils.insertAccountAsync(MainActivity.db, AddAccountActivity.this, mAccountItem);
+            }
+            else if (save_btn.getText().toString().toUpperCase().equals("UPDATE")) {
                 Log.d(TAG, "onClick: update");
                 int id = passedAccount.getId();
-                AccountModel accountModel = new AccountModel(id, name, description,
-                        amount, highCategory, type, new Date(), "KRW");
-                DatabaseUtils.updateAccountAsync(MainActivity.mDBHelper, AddAccountActivity.this, accountModel);
+                mAccountItem = new AccountItem(id, name, description,
+                        amount, highCategoryId, type, Common.dateFormat.format(new Date()), "KRW");
+                DBAccountUtils.updateAccountAsync(MainActivity.db, AddAccountActivity.this, mAccountItem);
             }
         });
 
@@ -213,7 +230,7 @@ public class AddAccountActivity extends AppCompatActivity implements IBudgetInse
             tv_name.setText(passedAccount.getName());
             tv_description.setText(passedAccount.getDescription());
             tv_amount.setText(new StringBuilder(String.valueOf((int) passedAccount.getAmount())));
-            tv_high_category.setText(passedAccount.getHighCategory());
+            tv_high_category.setText(passedHighCategory);
         }
         else {
             save_btn.setText("Save");
@@ -232,27 +249,33 @@ public class AddAccountActivity extends AppCompatActivity implements IBudgetInse
     }
 
     @Override
-    public void onDBUpdateSuccess(boolean isUpdated) {
-        Log.d(TAG, "onDBUpdateSuccess: called!!");
-    }
-
-    @Override
-    public void onDBUpdateFailed(String message) {
-        Log.d(TAG, "onDBUpdateFailed: called!!");
-    }
-
-    @Override
-    public void onBudgetInsertSuccess(Boolean isInserted) {
+    public void onAccountInsertSuccess(Boolean isInserted) {
         if (isInserted) {
-            Log.d(TAG, "onDBInsertSuccess: true");
+            EventBus.getDefault().postSticky(new AddAccountEvent(true));
             finish();
         } else {
-            Log.d(TAG, "onDBInsertSuccess: false");
+            Toast.makeText(this, "INSERT FAILED!!", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void onBudgetInsertFailed(String message) {
-        Log.d(TAG, "onBudgetInsertFailed: called!!");
+    public void onAccountInsertFailed(String message) {
+        Log.d(TAG, "onAccountInsertFailed: called!!");
+    }
+
+    @Override
+    public void onAccountUpdateSuccess(boolean isUpdated) {
+        Log.d(TAG, "onAccountUpdateSuccess: called!!");
+        if (isUpdated) {
+            EventBus.getDefault().postSticky(new UpdateAccountEvent(true));
+            finish();
+        } else {
+            Toast.makeText(this, "UPDATE FAILED!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onAccountUpdateFailed(String message) {
+        Log.d(TAG, "onAccountUpdateFailed: called!!");
     }
 }

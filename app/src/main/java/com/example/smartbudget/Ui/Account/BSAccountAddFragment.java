@@ -1,5 +1,6 @@
 package com.example.smartbudget.Ui.Account;
 
+import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,8 +29,16 @@ public class BSAccountAddFragment extends BottomSheetDialogFragment {
     public BSAccountAddFragment() {
     }
 
+    private Context mContext;
     private RecyclerView rv_add_account;
-    private String[] title = {"현금", "수시입출금", "예금", "적금", "주식", "펀드", "보험", "부동산", "기타자산", "대출", "기타부채"};
+    private String[] account_list;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+        account_list = mContext.getResources().getStringArray(R.array.account_list);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +52,7 @@ public class BSAccountAddFragment extends BottomSheetDialogFragment {
 
         rv_add_account = view.findViewById(R.id.rv_add_account);
 
-        BSAccountAddAdapter adapter = new BSAccountAddAdapter(getActivity(), title);
+        BSAccountAddAdapter adapter = new BSAccountAddAdapter(mContext, account_list);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
         rv_add_account.setLayoutManager(layoutManager);

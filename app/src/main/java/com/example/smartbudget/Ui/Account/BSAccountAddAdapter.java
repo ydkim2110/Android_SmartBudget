@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +16,16 @@ import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
 
 public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapter.ViewHolder> {
 
-    private String[] title;
+    private static final String TAG = BSAccountAddAdapter.class.getSimpleName();
+
+    private String[] account_list;
+    private String[] account_list_id;
     private Context mContext;
 
-    public BSAccountAddAdapter(Context context, String[] title) {
+    public BSAccountAddAdapter(Context context, String[] account_list) {
         this.mContext = context;
-        this.title = title;
+        this.account_list = account_list;
+        account_list_id = mContext.getResources().getStringArray(R.array.account_list_id);
     }
 
     private String type;
@@ -34,12 +40,12 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.addTv.setText(title[i]);
-
+        viewHolder.addTv.setText(account_list[i]);
         viewHolder.setIRecyclerItemSelectedListener((view, position) -> {
             Intent intent = new Intent(mContext, AddAccountActivity.class);
             intent.putExtra(AddAccountActivity.EXTRA_TAG, "add");
-            intent.putExtra("high_category", title[position]);
+            intent.putExtra(AddAccountActivity.EXTRA_HIGH_CATEGORY, account_list[position]);
+            intent.putExtra(AddAccountActivity.EXTRA_HIGH_CATEGORY_ID, account_list_id[position]);
             mContext.startActivity(intent);
             AccountActivity.mBSAccountAddFragment.dismiss();
         });
@@ -47,7 +53,7 @@ public class BSAccountAddAdapter extends RecyclerView.Adapter<BSAccountAddAdapte
 
     @Override
     public int getItemCount() {
-        return title.length;
+        return account_list.length;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

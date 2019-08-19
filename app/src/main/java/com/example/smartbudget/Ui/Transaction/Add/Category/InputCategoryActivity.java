@@ -30,7 +30,6 @@ public class InputCategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_category);
         Log.d(TAG, "onCreate: started!!");
-
         ButterKnife.bind(this);
 
         initView();
@@ -44,7 +43,6 @@ public class InputCategoryActivity extends AppCompatActivity {
     private void initView() {
         Log.d(TAG, "initView: called!!");
 
-        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_add_category));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

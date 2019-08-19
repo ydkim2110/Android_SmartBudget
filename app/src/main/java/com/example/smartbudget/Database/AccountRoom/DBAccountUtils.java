@@ -7,8 +7,12 @@ import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Database.DBHelper;
 import com.example.smartbudget.Database.DatabaseUtils;
 import com.example.smartbudget.Database.Interface.IAccountDeleteListener;
+import com.example.smartbudget.Database.Interface.IAccountInsertListener;
 import com.example.smartbudget.Database.Interface.IAccountLoadListener;
+import com.example.smartbudget.Database.Interface.IAccountUpdateListener;
 import com.example.smartbudget.Database.Interface.IAccountsLoadListener;
+import com.example.smartbudget.Database.Interface.IBudgetInsertListener;
+import com.example.smartbudget.Database.Interface.IDBUpdateListener;
 import com.example.smartbudget.Interface.IUpdateAccountListener;
 import com.example.smartbudget.Model.AccountModel;
 
@@ -34,6 +38,16 @@ public class DBAccountUtils {
     public static void getSumAccountsByType(BudgetDatabase db, IAccountsLoadListener listener) {
         GetSumAccountsByTypeAsync task = new GetSumAccountsByTypeAsync(db, listener);
         task.execute();
+    }
+
+    public static void insertAccountAsync(BudgetDatabase db, IAccountInsertListener listener, AccountItem... accountItems) {
+        InsertAccountAsync task = new InsertAccountAsync(db, listener);
+        task.execute(accountItems);
+    }
+
+    public static void updateAccountAsync(BudgetDatabase db, IAccountUpdateListener listener, AccountItem... accountItems) {
+        UpdateAccountAsync task = new UpdateAccountAsync(db, listener);
+        task.execute(accountItems);
     }
 
     public static void updateAccountsByTransfer(BudgetDatabase db, double amount, int fromId, int toId, IUpdateAccountListener listener) {
@@ -141,6 +155,52 @@ public class DBAccountUtils {
         protected void onPostExecute(List<AccountItem> accountItemList) {
             super.onPostExecute(accountItemList);
             mListener.onAccountsLoadSuccess(accountItemList);
+        }
+    }
+
+    private static class InsertAccountAsync extends AsyncTask<AccountItem, Void, Boolean> {
+
+        BudgetDatabase mBudgetDatabase;
+        IAccountInsertListener mListener;
+
+        public InsertAccountAsync(BudgetDatabase budgetDatabase, IAccountInsertListener listener) {
+            this.mBudgetDatabase = budgetDatabase;
+            mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(AccountItem... accountItems) {
+            mBudgetDatabase.accountDAO().insertAccount(accountItems[0]);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isInserted) {
+            super.onPostExecute(isInserted);
+            mListener.onAccountInsertSuccess(isInserted);
+        }
+    }
+
+    public static class UpdateAccountAsync extends AsyncTask<AccountItem, Void, Boolean> {
+
+        BudgetDatabase mBudgetDatabase;
+        IAccountUpdateListener mListener;
+
+        public UpdateAccountAsync(BudgetDatabase budgetDatabase, IAccountUpdateListener listener) {
+            this.mBudgetDatabase = budgetDatabase;
+            this.mListener = listener;
+        }
+
+        @Override
+        protected Boolean doInBackground(AccountItem... accountItems) {
+            mBudgetDatabase.accountDAO().updateAccount(accountItems[0]);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isUpdated) {
+            super.onPostExecute(isUpdated);
+            mListener.onAccountUpdateSuccess(isUpdated);
         }
     }
 

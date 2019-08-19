@@ -1,6 +1,7 @@
 package com.example.smartbudget.Utils;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.widget.TextView;
 
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
@@ -9,6 +10,7 @@ import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.Model.Category;
 import com.example.smartbudget.Model.DefaultCategories;
 import com.example.smartbudget.Model.SubCategory;
+import com.example.smartbudget.R;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,7 +35,6 @@ public class Common {
     public static final int TYPE_INCOME_TRANSACTION = 1;
     public static final int TYPE_TRANSFER_TRANSACTION = 2;
     public static final String LOGGED_KEY = "";
-
     public static AccountItem SELECTED_ACCOUNT = null;
     public static List<TransactionItem> TRANSACTION_LIST = null;
 
@@ -223,5 +224,15 @@ public class Common {
                 textview.setText(new StringBuilder(changeNumberToComma(Integer.parseInt(valueAnimator1.getAnimatedValue().toString()))).append(unit));
         });
         valueAnimator.start();
+    }
+
+    public static String getAccountTitleById(Context context, String id) {
+        int i= -1;
+        for (String listId : context.getResources().getStringArray(R.array.account_list_id)) {
+            i++;
+            if (listId.equals(id))
+                break;
+        }
+        return context.getResources().getStringArray(R.array.account_list)[i];
     }
 }

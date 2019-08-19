@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartbudget.Database.AccountRoom.AccountItem;
 import com.example.smartbudget.Interface.IRecyclerItemSelectedListener;
-import com.example.smartbudget.Model.AccountModel;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Utils.Common;
 
@@ -27,20 +26,26 @@ import butterknife.Unbinder;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
 
-    private Context mContext;
-    private List<AccountItem> mAccountModelList;
+    private static final String TAG = AccountAdapter.class.getSimpleName();
+
     public static BSAccountMenuFragment mBSAccountMenuFragment;
+
+    private Context mContext;
+    private List<AccountItem> mAccountItemList;
 
     private int colorRevenue;
     private int colorExpense;
-    private int balance = 0;
+    private String moneyUnit;
 
-    public AccountAdapter(Context context, List<AccountItem> accountModelList) {
+    public AccountAdapter(Context context, List<AccountItem> accountItemList) {
         mContext = context;
-        mAccountModelList = accountModelList;
+        mAccountItemList = accountItemList;
         colorRevenue = ContextCompat.getColor(mContext, R.color.colorRevenue);
         colorExpense = ContextCompat.getColor(mContext, R.color.colorExpense);
+        moneyUnit = mContext.getResources().getString(R.string.money_unit);
     }
+
+    private int balance = 0;
 
     @NonNull
     @Override
@@ -53,30 +58,30 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        balance = (int) mAccountModelList.get(position).getAmount();
+        balance = (int) mAccountItemList.get(position).getAmount();
 
-        holder.tv_high_category.setText(mAccountModelList.get(position).getHighCategory());
-        holder.tv_name.setText(mAccountModelList.get(position).getName());
-        holder.tv_description.setText(mAccountModelList.get(position).getDescription());
-        holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma(balance)).append("원"));
+        holder.tv_high_category.setText(Common.getAccountTitleById(mContext, mAccountItemList.get(position).getHighCategory()));
+        holder.tv_name.setText(mAccountItemList.get(position).getName());
+        holder.tv_description.setText(mAccountItemList.get(position).getDescription());
+        holder.tv_amount.setText(new StringBuilder(Common.changeNumberToComma(balance)).append(moneyUnit));
 
         holder.tv_more_icon.setOnClickListener(v -> {
-            Common.SELECTED_ACCOUNT = mAccountModelList.get(position);
+            Common.SELECTED_ACCOUNT = mAccountItemList.get(position);
             mBSAccountMenuFragment = BSAccountMenuFragment.getInstance();
             mBSAccountMenuFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(),
                     mBSAccountMenuFragment.getTag());
         });
 
-        if (mAccountModelList.get(position).getType().equals("asset")) {
+        if (mAccountItemList.get(position).getType().equals("asset")) {
             holder.tv_amount.setTextColor(colorRevenue);
         }
-        else if (mAccountModelList.get(position).getType().equals("debt")) {
+        else if (mAccountItemList.get(position).getType().equals("debt")) {
             holder.tv_amount.setTextColor(colorExpense);
         }
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
             Intent intent = new Intent(mContext, AccountDetailActivity.class);
-            intent.putExtra("account_name", mAccountModelList.get(i));
+            intent.putExtra("account_name", mAccountItemList.get(i));
             mContext.startActivity(intent);
         });
 
@@ -117,7 +122,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return mAccountModelList != null ? mAccountModelList.size() : 0;
+        return mAccountItemList != null ? mAccountItemList.size() : 0;
     }
 
 }

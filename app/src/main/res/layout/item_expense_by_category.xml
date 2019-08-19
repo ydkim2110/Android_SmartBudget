@@ -37,12 +37,14 @@
         app:layout_constraintTop_toTopOf="@+id/iv_budget_icon" />
 
 
-    <TextView
-        android:id="@+id/tv_budget_detail"
+    <ImageView
+        android:id="@+id/iv_budget_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Details"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/ic_more_vert_black_24dp"
+        android:padding="2dp"
+        android:tint="@color/dark_gray"
         app:layout_constraintBottom_toBottomOf="@+id/tv_budget_category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_budget_category" />
@@ -63,7 +65,7 @@
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:progress="50"

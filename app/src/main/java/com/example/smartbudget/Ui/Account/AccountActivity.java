@@ -46,8 +46,10 @@ public class AccountActivity extends AppCompatActivity implements IAccountsLoadL
     ViewPager vp_account;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.tv_balance_total)
-    TextView tv_balance_total;
+    @BindView(R.id.tv_total_asset_amount)
+    TextView tv_total_asset_amount;
+    @BindView(R.id.tv_total_net_amount)
+    TextView tv_total_net_amount;
     @BindView(R.id.tv_asset)
     TextView tv_asset;
     @BindView(R.id.tv_debt)
@@ -56,8 +58,10 @@ public class AccountActivity extends AppCompatActivity implements IAccountsLoadL
     int revenueColor;
     int expenseColor;
     int currentTabPosition;
-    int assetTotal = 0;
-    int debtTotal = 0;
+    int totalAsset = 0;
+    int totalDebt = 0;
+    int netAsset = 0;
+    String moneyUnit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,7 @@ public class AccountActivity extends AppCompatActivity implements IAccountsLoadL
         ButterKnife.bind(this);
         revenueColor = ContextCompat.getColor(this,R.color.colorRevenue);
         expenseColor = ContextCompat.getColor(this,R.color.colorExpense);
+        moneyUnit = getResources().getString(R.string.money_unit);
 
         initView();
 
@@ -147,16 +152,17 @@ public class AccountActivity extends AppCompatActivity implements IAccountsLoadL
         if (accountItemList != null) {
             for (int i = 0; i < accountItemList.size(); i++) {
                 if (accountItemList.get(i).getType().equals("asset")) {
-                    assetTotal = (int) accountItemList.get(i).getAmount();
+                    totalAsset = (int) accountItemList.get(i).getAmount();
                 }
                 else if (accountItemList.get(i).getType().equals("debt")) {
-                    debtTotal = (int) accountItemList.get(i).getAmount();
+                    totalDebt = (int) accountItemList.get(i).getAmount();
                 }
             }
         }
-        Common.animateTextView(1000, 0,  assetTotal, "원", tv_asset);
-        Common.animateTextView(1000, 0, debtTotal, "원", tv_debt);
-        Common.animateTextView(1000, 0, (assetTotal - debtTotal), "원", tv_balance_total);
+        Common.animateTextView(1000, 0, totalAsset, moneyUnit, tv_asset);
+        Common.animateTextView(1000, 0, totalDebt, moneyUnit, tv_debt);
+        Common.animateTextView(1000, 0, (totalAsset + totalDebt), moneyUnit, tv_total_asset_amount);
+        Common.animateTextView(1000, 0, (totalAsset - totalDebt), moneyUnit, tv_total_net_amount);
     }
 
     @Override

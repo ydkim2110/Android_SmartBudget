@@ -35,10 +35,10 @@
             android:id="@+id/tv_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:text="내 월급 통장"
             app:layout_constraintBottom_toBottomOf="@+id/tv_high_category"
-            app:layout_constraintStart_toEndOf="@+id/tv_high_category"
+            app:layout_constraintEnd_toStartOf="@+id/tv_more_icon"
             app:layout_constraintTop_toTopOf="@+id/tv_high_category" />
 
         <TextView
@@ -71,7 +71,7 @@
             android:id="@+id/tv_more_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -89,5 +89,34 @@
     <string name="no_transactions">No transactions...</string>
     <string name="btn_save">save</string>
     <string name="btn_update">update</string>
+    <string name="menu_back_up">BackUp</string>
+
+    <string-array name="account_list">
+        <item>현금</item>
+        <item>수시입출금</item>
+        <item>예금</item>
+        <item>적금</item>
+        <item>주식</item>
+        <item>펀드</item>
+        <item>보험</item>
+        <item>부동산</item>
+        <item>기타자산</item>
+        <item>대출</item>
+        <item>기타부채</item>
+    </string-array>
+
+    <string-array name="account_list_id">
+        <item>cash</item>
+        <item>checking_account</item>
+        <item>saving_account</item>
+        <item>installment_saving_account</item>
+        <item>stock</item>
+        <item>fund</item>
+        <item>insurance</item>
+        <item>real_estate</item>
+        <item>other_asset</item>
+        <item>debt</item>
+        <item>other_debt</item>
+    </string-array>
 
 </resources>

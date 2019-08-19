@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.ColorStateList;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +40,11 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
     private Context mContext;
     private List<ExpenseByCategory> mExpenseByCategoryList;
     private String passed_date;
-    private ArrayList<ExpenseBudgetItem> mExpenseBudgetItemList;
+    private List<ExpenseBudgetItem> mExpenseBudgetItemList;
     private String moneyUnit;
     private String percentageSign;
 
-    public ExpenseByCategoryAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date, ArrayList<ExpenseBudgetItem> expenseBudgetItemList) {
+    public ExpenseByCategoryAdapter(Context context, List<ExpenseByCategory> expenseByCategoryList, String passed_date, List<ExpenseBudgetItem> expenseBudgetItemList) {
         this.mContext = context;
         this.mExpenseByCategoryList = expenseByCategoryList;
         this.passed_date = passed_date;
@@ -101,11 +102,32 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
         progressAnim.start();
 
         holder.setIRecyclerItemSelectedListener((view, i) -> {
+            Log.d(TAG, "onBindViewHolder: "+mExpenseByCategoryList.get(i).getCategoryId());
             Intent intent = new Intent(view.getContext(), ExpenseByCategoryDetailActivity.class);
             intent.putExtra(ExpenseByCategoryDetailActivity.EXTRA_PASSED_DATE, passed_date);
             intent.putExtra(ExpenseByCategoryDetailActivity.EXTRA_CATEGORY_ID, mExpenseByCategoryList.get(i).getCategoryId());
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             view.getContext().startActivity(intent);
+        });
+
+        holder.iv_budget_edit.setTag(position);
+        holder.iv_budget_edit.setOnClickListener(v -> {
+            int index = (int) v.getTag();
+            category = Common.getExpenseCategory(mExpenseByCategoryList.get(index).getCategoryId());
+
+            ExpenseBudgetItem expenseBudgetItem = null;
+            for (ExpenseBudgetItem data : mExpenseBudgetItemList) {
+                if (data.getCategoryId().equals(category.getCategoryID())) {
+                    expenseBudgetItem = data;
+                }
+            }
+
+            Log.d(TAG, "onBindViewHolder: "+expenseBudgetItem.getAmount());
+
+            Intent intent = new Intent(mContext, SetExpenseBudgetActivity.class);
+            intent.putExtra(SetExpenseBudgetActivity.EXTRA_EXPENSE_BUDGET_ITEM, expenseBudgetItem);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            mContext.startActivity(intent);
         });
     }
 
@@ -128,10 +150,10 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
         TextView tv_budget_total;
         @BindView(R.id.tv_budget_percentage)
         TextView tv_budget_percentage;
-        @BindView(R.id.tv_budget_detail)
-        TextView tv_budget_detail;
         @BindView(R.id.tv_budget_total_count)
         TextView tv_budget_total_count;
+        @BindView(R.id.iv_budget_edit)
+        ImageView iv_budget_edit;
 
         Unbinder mUnbinder;
 
@@ -147,7 +169,7 @@ public class ExpenseByCategoryAdapter extends RecyclerView.Adapter<ExpenseByCate
             mUnbinder = ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
 
-            tv_budget_detail.setOnClickListener(this);
+            iv_budget_edit.setOnClickListener(this);
         }
 
         @Override

@@ -41,7 +41,6 @@ public class DefaultCategories {
             new SubCategory(":kitchen_products", "주방용품", R.drawable.category_shopping, Color.parseColor("#00796b"), ":homeneeds"),
             new SubCategory(":washroom_products", "욕실용품", R.drawable.category_shopping, Color.parseColor("#00796b"), ":homeneeds"),
             new SubCategory(":miscellaneous", "잡화", R.drawable.category_shopping, Color.parseColor("#00796b"), ":homeneeds"),
-            new SubCategory(":other", "기타", R.drawable.category_clothing, Color.parseColor("#d32f2f"), ":clothing&beauty"),
             new SubCategory(":clothes", "의복", R.drawable.category_clothing, Color.parseColor("#d32f2f"), ":clothing&beauty"),
             new SubCategory(":accessory", "액세서리", R.drawable.category_clothing, Color.parseColor("#d32f2f"), ":clothing&beauty"),
             new SubCategory(":shoes", "신발", R.drawable.category_clothing, Color.parseColor("#d32f2f"), ":clothing&beauty"),

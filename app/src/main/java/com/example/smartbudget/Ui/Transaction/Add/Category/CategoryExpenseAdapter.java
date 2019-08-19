@@ -71,6 +71,7 @@ public class CategoryExpenseAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         switch (item.type) {
             case HEADER:
                 final CategoryViewHolder categoryHolder = (CategoryViewHolder) holder;
+
                 categoryHolder.refferalItem = item;
 
                 categoryHolder.tv_name.setText(item.category.getCategoryVisibleName(mContext));

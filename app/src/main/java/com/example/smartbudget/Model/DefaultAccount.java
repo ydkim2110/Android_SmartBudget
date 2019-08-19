@@ -16,5 +16,4 @@ public class DefaultAccount {
             new Account(11, "other_debt")
     };
 
-
 }

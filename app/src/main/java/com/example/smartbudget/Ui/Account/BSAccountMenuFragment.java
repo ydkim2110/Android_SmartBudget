@@ -46,7 +46,6 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment implements 
         TextView deleteTv = view.findViewById(R.id.delete_tv);
 
         editTv.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "edit", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getContext(), AddAccountActivity.class);
             intent.putExtra(AddAccountActivity.EXTRA_TAG, "edit");
             getContext().startActivity(intent);
@@ -54,7 +53,6 @@ public class BSAccountMenuFragment extends BottomSheetDialogFragment implements 
         });
 
         deleteTv.setOnClickListener(v -> {
-
             AlertDialog.Builder mDialog = new AlertDialog.Builder(getActivity());
             mDialog.setTitle(getContext().getResources().getString(R.string.alert_delete_title))
                     .setMessage(getContext().getResources().getString(R.string.alert_delete_message))

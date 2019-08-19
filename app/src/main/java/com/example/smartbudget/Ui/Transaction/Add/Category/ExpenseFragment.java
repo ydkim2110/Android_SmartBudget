@@ -23,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,20 +45,18 @@ public class ExpenseFragment extends Fragment {
     @BindView(R.id.rv_expense_categories)
     RecyclerView rv_expense_categories;
 
-    private List<CategoryListItem> mConsolidatedList;
     private HashMap<String, List<SubCategory>> groupedHashMap;
 
     private List<CategoryExpenseAdapter.Item> data;
+
+    Unbinder mUnbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_expense, container, false);
 
-        mConsolidatedList = new ArrayList<>();
-        data = new ArrayList<>();
-
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
 
         rv_expense_categories.setHasFixedSize(true);
         rv_expense_categories.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -66,35 +65,34 @@ public class ExpenseFragment extends Fragment {
 
         List<Category> categoryList = Arrays.asList(DefaultCategories.getDefaultExpenseCategories());
 
-        CategoryExpenseAdapter.Item noneExpandableData = new CategoryExpenseAdapter.Item();
-        noneExpandableData.invisibleChildren = new ArrayList<>();
+        data = new ArrayList<>();
+//        CategoryExpenseAdapter.Item noneExpandableData = new CategoryExpenseAdapter.Item();
 
         for (Category category : categoryList) {
-            if (category.getCategoryID().equals(":food&drink")) {
-                Log.d(TAG, "onCreateView: first");
-                data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.HEADER, category));
-
+            //if (category.getCategoryID().equals(":food&drink")) {
+                CategoryExpenseAdapter.Item noneExpandableData = new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.HEADER, category);
+                noneExpandableData.invisibleChildren = new ArrayList<>();
                 if (groupedHashMap.get(category.getCategoryID()) != null) {
                     for (SubCategory subCategory : groupedHashMap.get(category.getCategoryID())) {
                         if (category.getCategoryID().equals(subCategory.getCategoryId())) {
                             Log.d(TAG, "onCreateView: first sub called!! "+subCategory.getId());
-                            data.add(new CategoryExpenseAdapter.Item( CategoryExpenseAdapter.CHILD, subCategory));
+                            noneExpandableData.invisibleChildren.add(new CategoryExpenseAdapter.Item( CategoryExpenseAdapter.CHILD, subCategory));
                         }
                     }
                 }
-            }
-            else {
-                data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.HEADER, category));
-                if (groupedHashMap.get(category.getCategoryID()) != null) {
-                    noneExpandableData.invisibleChildren.clear();
-                    for (SubCategory subCategory : groupedHashMap.get(category.getCategoryID())) {
-                        if (category.getCategoryID().equals(subCategory.getCategoryId())) {
-                            Log.d(TAG, "onCreateView: first sub called!! "+subCategory.getId());
-                            data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.CHILD, subCategory));
-                        }
-                    }
-                }
-            }
+                data.add(noneExpandableData);
+            //}
+//            else {
+//                data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.HEADER, category));
+//                if (groupedHashMap.get(category.getCategoryID()) != null) {
+//                    for (SubCategory subCategory : groupedHashMap.get(category.getCategoryID())) {
+//                        if (category.getCategoryID().equals(subCategory.getCategoryId())) {
+//                            Log.d(TAG, "onCreateView: first sub called!! "+subCategory.getId());
+//                            data.add(new CategoryExpenseAdapter.Item(CategoryExpenseAdapter.CHILD, subCategory));
+//                        }
+//                    }
+//                }
+//            }
         }
 
         CategoryExpenseAdapter adapter = new CategoryExpenseAdapter(getContext(), data);

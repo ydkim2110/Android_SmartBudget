@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.example.smartbudget.Database.Interface.ILastFewDaysTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.ISumAmountByBudgetListener;
+import com.example.smartbudget.Database.Interface.ISumTransactionByDateLoadListener;
 import com.example.smartbudget.Database.Interface.IThisMonthSumTransactionBySubCategoryListener;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsLoadListener;
 import com.example.smartbudget.Database.Interface.ITransactionDeleteListener;
@@ -13,6 +14,7 @@ import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
 import com.example.smartbudget.Database.BudgetDatabase;
 import com.example.smartbudget.Database.Interface.IThisMonthTransactionsByCategoryLoadListener;
+import com.example.smartbudget.Database.Model.SumTransactionByDate;
 import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
 import com.example.smartbudget.Interface.ITransactionInsertListener;
 import com.example.smartbudget.Database.Interface.ITransactionUpdateListener;
@@ -77,6 +79,11 @@ public class DBTransactionUtils {
         task.execute();
     }
 
+    public static void getTransactionsByDate(BudgetDatabase db, String date, ISumTransactionByDateLoadListener listener) {
+        GetTransactionsByDateAsync task = new GetTransactionsByDateAsync(db, date, listener);
+        task.execute();
+    }
+
     public static void updateTransactionAsync(BudgetDatabase db, ITransactionUpdateListener listener, TransactionItem... transactionItems) {
         UpdateTransactionAsync task = new UpdateTransactionAsync(db, listener);
         task.execute(transactionItems);
@@ -86,7 +93,6 @@ public class DBTransactionUtils {
         DeleteTransactionAsync task = new DeleteTransactionAsync(db, listener);
         task.execute(transactionItems);
     }
-
 
     /*
     ============================================================================
@@ -368,6 +374,30 @@ public class DBTransactionUtils {
         protected void onPostExecute(Double aDouble) {
             super.onPostExecute(aDouble);
             mListener.onSumAmountByBudgeSuccess(aDouble);
+        }
+    }
+
+    private static class GetTransactionsByDateAsync extends AsyncTask<Void, Void, List<SumTransactionByDate>> {
+
+        BudgetDatabase mBudgetDatabase;
+        String date;
+        ISumTransactionByDateLoadListener mListener;
+
+        public GetTransactionsByDateAsync(BudgetDatabase budgetDatabase, String date, ISumTransactionByDateLoadListener listener) {
+            mBudgetDatabase = budgetDatabase;
+            this.date = date;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<SumTransactionByDate> doInBackground(Void... voids) {
+            return mBudgetDatabase.transactionDAO().getTransactionsByDate(date);
+        }
+
+        @Override
+        protected void onPostExecute(List<SumTransactionByDate> sumTransactionByDateList) {
+            super.onPostExecute(sumTransactionByDateList);
+            mListener.onSumTransactionByDateLoadSuccess(sumTransactionByDateList);
         }
     }
 

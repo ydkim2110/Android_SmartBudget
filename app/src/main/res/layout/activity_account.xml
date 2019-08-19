@@ -42,64 +42,111 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/tv_balance_total"
+                    android:id="@+id/tv_total_asset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="80dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="60dp"
                     android:gravity="center"
-                    android:text="This is My Account"
+                    android:text="Total Asset: "
                     android:textColor="@android:color/white"
                     android:textSize="30sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_net_asset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center"
+                    android:text="Net Asset: "
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_debt"/>
+
+                <TextView
+                    android:id="@+id/tv_total_asset_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:text="120,000,000원"
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_total_asset"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_total_asset" />
+
+                <TextView
+                    android:id="@+id/tv_total_net_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:text="120,000,000원"
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_net_asset"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_net_asset"
+                    app:layout_constraintVertical_bias="1.0" />
+
 
                 <TextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="Asset"
+                    android:text="Asset: "
                     android:textColor="@android:color/white"
                     app:layout_constraintEnd_toStartOf="@+id/guideline13"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_balance_total" />
+                    app:layout_constraintStart_toEndOf="@+id/tv_total_asset"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_total_asset" />
 
                 <TextView
                     android:id="@+id/tv_target"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Debt"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Debt: "
                     android:textColor="@android:color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline13"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_balance_total" />
+                    app:layout_constraintStart_toStartOf="@+id/textView6"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
                 <TextView
                     android:id="@+id/tv_asset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/zero_money"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/textView6"
-                    app:layout_constraintStart_toStartOf="@+id/textView6"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textView6" />
 
                 <TextView
                     android:id="@+id/tv_debt"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="0원"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_target"
-                    app:layout_constraintStart_toStartOf="@+id/tv_target"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_target" />
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_target"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_target" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline13"

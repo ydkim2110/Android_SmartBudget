@@ -268,7 +268,6 @@ public class HomeFragment extends Fragment implements IDateChangeListener,
         home_expense_by_category_container.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, ExpenseByCategoryActivity.class);
             intent.putExtra(ExpenseByCategoryActivity.EXTRA_PASSED_DATE, currentDate);
-            intent.putParcelableArrayListExtra(ExpenseByCategoryActivity.EXTRA_PASSED_LIST, mExpenseBudgetItemList);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             mContext.startActivity(intent);
         });

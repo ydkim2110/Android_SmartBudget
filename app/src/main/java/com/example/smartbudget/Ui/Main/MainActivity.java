@@ -32,6 +32,7 @@ import com.example.smartbudget.Interface.INSVScrollChangeListener;
 import com.example.smartbudget.Interface.IRVScrollChangeListener;
 import com.example.smartbudget.R;
 import com.example.smartbudget.Ui.Account.AccountActivity;
+import com.example.smartbudget.Ui.Backup.BackUpActivity;
 import com.example.smartbudget.Ui.Budget.BudgetActivity;
 import com.example.smartbudget.Ui.Calculator.CalcActivity;
 import com.example.smartbudget.Ui.Home.HomeFragment;
@@ -73,18 +74,10 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.fab_sub1)
-    FloatingActionButton fab_sub1;
-    @BindView(R.id.fab_sub2)
-    FloatingActionButton fab_sub2;
-    @BindView(R.id.ll_sub1)
-    LinearLayout ll_sub1;
-    @BindView(R.id.ll_sub2)
-    LinearLayout ll_sub2;
-    @BindView(R.id.tv_fab_sub1)
-    TextView tv_fab_sub1;
-    @BindView(R.id.tv_fab_sub2)
-    TextView tv_fab_sub2;
+    @BindView(R.id.fab1)
+    FloatingActionButton fab1;
+    @BindView(R.id.fab2)
+    FloatingActionButton fab2;
 
     @BindView(R.id.compactcalendar_view)
     CompactCalendarView compactcalendar_view;
@@ -191,41 +184,41 @@ public class MainActivity extends AppCompatActivity
         });
 
         fab.setOnClickListener(v -> {
-            toggleFab();
+            if (!isFabOpen) {
+                showFABMenu();
+            }
+            else {
+                closeFABMenu();
+            }
         });
 
-        fab_sub1.setOnClickListener(v -> {
-            toggleFab();
-            Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-        });
-
-        fab_sub2.setOnClickListener(v -> {
-            toggleFab();
-            Intent intent = new Intent(MainActivity.this, TransferActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-        });
+//        fab_sub1.setOnClickListener(v -> {
+//            toggleFab();
+//            Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//            startActivity(intent);
+//        });
+//
+//        fab_sub2.setOnClickListener(v -> {
+//            toggleFab();
+//            Intent intent = new Intent(MainActivity.this, TransferActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//            startActivity(intent);
+//        });
     }
 
-    private void toggleFab() {
-        Log.d(TAG, "toggleFab: called!!");
-        if (isFabOpen) {
-            fab.setImageResource(R.drawable.ic_add_white_24dp);
-            fab_sub1.startAnimation(fabClose);
-            fab_sub2.startAnimation(fabClose);
-            ll_sub1.setVisibility(View.INVISIBLE);
-            ll_sub2.setVisibility(View.INVISIBLE);
-            isFabOpen = false;
-        } else {
-            fab.setImageResource(R.drawable.ic_close_white_24dp);
-            fab_sub1.startAnimation(fabOpen);
-            fab_sub2.startAnimation(fabOpen);
-            ll_sub1.setVisibility(View.VISIBLE);
-            ll_sub2.setVisibility(View.VISIBLE);
-            isFabOpen = true;
-        }
+    private void closeFABMenu() {
+        Log.d(TAG, "closeFABMenu: called!!");
+        isFabOpen = false;
+        fab1.animate().translationY(0);
+        fab2.animate().translationY(0);
+    }
+
+    private void showFABMenu() {
+        Log.d(TAG, "showFABMenu: called!!");
+        isFabOpen = true;
+        fab1.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        fab2.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
     }
 
     private void setCurrentDate(Date date) {
@@ -292,9 +285,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_calculator) {
             intent = new Intent(MainActivity.this, CalcActivity.class);
             intentStart(intent);
+        } else if (id == R.id.nav_backup) {
+            intent = new Intent(MainActivity.this, BackUpActivity.class);
+            intentStart(intent);
         }
-
-
 
         drawer_layout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override

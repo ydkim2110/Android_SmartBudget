@@ -9,12 +9,12 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.smartbudget.R;
 
-public class PagerAdapter extends FragmentPagerAdapter {
+public class SpendingPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
     private String currentDate;
 
-    public PagerAdapter(FragmentManager fm, Context mContext, String currentDate) {
+    public SpendingPagerAdapter(FragmentManager fm, Context mContext, String currentDate) {
         super(fm);
         this.mContext = mContext;
         this.currentDate = currentDate;

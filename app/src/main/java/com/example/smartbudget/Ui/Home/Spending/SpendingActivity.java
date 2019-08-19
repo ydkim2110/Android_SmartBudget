@@ -25,7 +25,7 @@ public class SpendingActivity extends AppCompatActivity {
     @BindView(R.id.vp_spending_pattern)
     ViewPager vp_spending_pattern;
 
-    PagerAdapter adapter;
+    SpendingPagerAdapter adapter;
     private String currentDate;
 
     @Override
@@ -49,7 +49,7 @@ public class SpendingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
 
-        adapter = new PagerAdapter(getSupportFragmentManager(), this, currentDate);
+        adapter = new SpendingPagerAdapter(getSupportFragmentManager(), this, currentDate);
         vp_spending_pattern.setAdapter(adapter);
         tab_spending_pattern.setupWithViewPager(vp_spending_pattern);
     }

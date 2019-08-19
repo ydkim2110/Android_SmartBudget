@@ -12,14 +12,18 @@ import com.example.smartbudget.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MonthlyFragment extends Fragment {
+public class ReportAssetFragment extends Fragment {
 
-    public static MonthlyFragment newInstance() {
-        MonthlyFragment fragment = new MonthlyFragment();
-        return fragment;
+    private static ReportAssetFragment instance;
+
+    public static ReportAssetFragment getInstance() {
+        if (instance == null){
+            instance = new ReportAssetFragment();
+        }
+        return instance;
     }
 
-    public MonthlyFragment() {
+    public ReportAssetFragment() {
         // Required empty public constructor
     }
 
@@ -28,7 +32,7 @@ public class MonthlyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_monthly, container, false);
+        return inflater.inflate(R.layout.fragment_report_asset, container, false);
     }
 
 }

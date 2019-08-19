@@ -10,6 +10,7 @@ import androidx.room.Update;
 
 import com.example.smartbudget.Database.Model.ExpenseByCategory;
 import com.example.smartbudget.Database.Model.SpendingByPattern;
+import com.example.smartbudget.Database.Model.SumTransactionByDate;
 import com.example.smartbudget.Database.Model.SumTransactionBySubCategory;
 
 import java.util.List;
@@ -79,6 +80,13 @@ public abstract class TransactionDAO {
             + " AND account_id LIKE :accountId"
             + " AND date BETWEEN DATE(:startDate) AND DATE(:endDate)")
     abstract double sumAmountByBudget(String startDate, String endDate, String type, int accountId);
+
+    @Query("SELECT id, date, SUM(amount) AS totalAmount FROM transaction_table"
+            + " WHERE date BETWEEN DATE(:date, 'start of month') AND DATE(:date, 'start of month', '+1 months', '-1 day')"
+            + " AND type LIKE 'Expense'"
+            + " GROUP BY date"
+            + " ORDER BY date ASC")
+    public abstract List<SumTransactionByDate> getTransactionsByDate(String date);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insertTransaction(TransactionItem... transactionItems);

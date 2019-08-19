@@ -40,6 +40,27 @@ public class AccountItem implements Parcelable {
     public AccountItem() {
     }
 
+    public AccountItem(int id, String name, String description, double amount, String highCategory, String type, String createAt, String currency) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.amount = amount;
+        this.highCategory = highCategory;
+        this.type = type;
+        this.createAt = createAt;
+        this.currency = currency;
+    }
+
+    public AccountItem(String name, String description, double amount, String highCategory, String type, String createAt, String currency) {
+        this.name = name;
+        this.description = description;
+        this.amount = amount;
+        this.highCategory = highCategory;
+        this.type = type;
+        this.createAt = createAt;
+        this.currency = currency;
+    }
+
     protected AccountItem(Parcel in) {
         id = in.readInt();
         name = in.readString();
