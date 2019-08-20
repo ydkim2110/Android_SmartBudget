@@ -52,6 +52,12 @@ public abstract class BudgetDatabase extends RoomDatabase {
             db.execSQL("INSERT into account_table (name, description, amount, high_category, type, create_at, currency)"
                     + " VALUES ('카카오뱅크', '비상금 통장', 4400000, 'checking_account', 'asset', '2018-04-21', 'KRW')");
             db.execSQL("INSERT into account_table (name, description, amount, high_category, type, create_at, currency)"
+                    + " VALUES ('한국투자증권', '주식', 3500000, 'stock', 'asset', '2019-04-01', 'KRW')");
+            db.execSQL("INSERT into account_table (name, description, amount, high_category, type, create_at, currency)"
+                    + " VALUES ('한국투자증권', '펀드', 1200000, 'fund', 'asset', '2019-04-01', 'KRW')");
+            db.execSQL("INSERT into account_table (name, description, amount, high_category, type, create_at, currency)"
+                    + " VALUES ('삼성생명', '생명보험', 6520000, 'insurance', 'asset', '2019-04-01', 'KRW')");
+            db.execSQL("INSERT into account_table (name, description, amount, high_category, type, create_at, currency)"
                     + " VALUES ('하나은행', '전세자금대출', 120000000, 'debt', 'debt', '2019-04-01', 'KRW')");
 
             db.execSQL("INSERT INTO transaction_table (description, amount, type, pattern, date, category_id, sub_category_id, account_id, to_account)"

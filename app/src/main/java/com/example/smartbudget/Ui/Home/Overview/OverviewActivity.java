@@ -2,9 +2,16 @@ package com.example.smartbudget.Ui.Home.Overview;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -216,17 +223,20 @@ public class OverviewActivity extends AppCompatActivity implements IThisMonthTra
             pie_chart_overview.setTransparentCircleColor(Color.WHITE);
             pie_chart_overview.setTransparentCircleAlpha(110);
 
-            pie_chart_overview.setHoleRadius(58f);
-            pie_chart_overview.setTransparentCircleRadius(61f);
+            pie_chart_overview.setHoleRadius(70f);
+            pie_chart_overview.setTransparentCircleRadius(55f);
 
             pie_chart_overview.setDrawCenterText(true);
 
             pie_chart_overview.setRotationAngle(0);
             pie_chart_overview.setRotationEnabled(true);
 
-            StringBuilder sb = new StringBuilder(passed_date).append("\n").append(Common.changeNumberToComma(total)).append(moneyUnit);
+            SpannableStringBuilder ssb = new SpannableStringBuilder(passed_date).append("\n").append(Common.changeNumberToComma(total)).append(moneyUnit);
+            ssb.setSpan(new StyleSpan(Typeface.BOLD), 10, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.setSpan(new ForegroundColorSpan(Color.RED), 10, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.setSpan(new AbsoluteSizeSpan(50), 10, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            pie_chart_overview.setCenterText(sb);
+            pie_chart_overview.setCenterText(ssb);
 
             pie_chart_overview.animateY(1500, Easing.EaseInOutQuad);
 

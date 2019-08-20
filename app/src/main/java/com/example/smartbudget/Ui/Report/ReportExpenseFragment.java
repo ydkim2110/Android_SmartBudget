@@ -30,7 +30,9 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.tabs.TabLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -111,33 +113,49 @@ public class ReportExpenseFragment extends Fragment implements ISumTransactionBy
 
     private void setUpGraph(List<SumTransactionByDate> sumTransactionByDateList) {
         Log.d(TAG, "setUpGraph: called!!");
+        line_chart_report.getDescription().setEnabled(false);
+
+        line_chart_report.setTouchEnabled(false);
+
+        line_chart_report.setDrawGridBackground(false);
+
         ArrayList<Entry> thisMonthValue = new ArrayList<>();
         ArrayList<Entry> previousMonthValue = new ArrayList<>();
         ArrayList<String> xValue = new ArrayList<>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
         float thisMonthTotal = 0f;
         float previousMonthTotal = 0f;
-        for (int i = 0; i < sumTransactionByDateList.size(); i++) {
-            xValue.add(sumTransactionByDateList.get(i).getDate());
-            thisMonthTotal += (float) sumTransactionByDateList.get(i).getTotalAmount();
-            thisMonthValue.add(new Entry(i, thisMonthTotal));
+        int maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-            previousMonthTotal += (float) sumTransactionByDateList.get(i).getTotalAmount()-30000;
+        for (int i = 0; i < maxDay; i++) {
+            cal.set(Calendar.DAY_OF_MONTH, i+1);
+            String date = Common.dateFormat.format(cal.getTime());
+            xValue.add(sdf.format(cal.getTime()));
+            for (int j = 0; j < sumTransactionByDateList.size(); j++) {
+                if (date.equals(sumTransactionByDateList.get(j).getDate())) {
+                    thisMonthTotal += (float) sumTransactionByDateList.get(j).getTotalAmount();
+                    previousMonthTotal += (float) sumTransactionByDateList.get(j).getTotalAmount()-30000;
+                }
+            }
+            thisMonthValue.add(new Entry(i, thisMonthTotal));
             previousMonthValue.add(new Entry(i, previousMonthTotal));
         }
 
         line_chart_report.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xValue));
-
-        for (int i = 0; i < 30; i++) {
-
-        }
 
         LineDataSet set1;
         LineDataSet set2;
 
         XAxis xAxis = line_chart_report.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setLabelCount(5, true);
+        //xAxis.setLabelCount(5, true);
         xAxis.setTextSize(12f);
+        xAxis.enableAxisLineDashedLine(10f, 10f, 10f);
 
         YAxis yAxisLeft = line_chart_report.getAxisLeft();
         yAxisLeft.setDrawLabels(false);
@@ -149,7 +167,7 @@ public class ReportExpenseFragment extends Fragment implements ISumTransactionBy
         yAxisRight.setDrawGridLines(false);
 
         set1 = new LineDataSet(thisMonthValue, "This Month");
-        set2 = new LineDataSet(previousMonthValue, "Previous Month");
+        set2 = new LineDataSet(previousMonthValue, "Last Month");
 
         set1.setDrawFilled(false); // 바탕색
         set2.setDrawFilled(false); // 바탕색
@@ -157,11 +175,11 @@ public class ReportExpenseFragment extends Fragment implements ISumTransactionBy
         set1.setDrawValues(false);
         set2.setDrawValues(false);
 
-        set1.setLineWidth(4f);
+        set1.setLineWidth(3f);
         set1.setCircleRadius(6f);
         set1.setDrawCircles(false);
 
-        set2.setLineWidth(4f);
+        set2.setLineWidth(3f);
         set2.setCircleRadius(6f);
         set2.setDrawCircles(false);
 
@@ -175,12 +193,15 @@ public class ReportExpenseFragment extends Fragment implements ISumTransactionBy
 
         Legend legend = line_chart_report.getLegend();
         legend.setForm(Legend.LegendForm.LINE);
+        legend.setTextSize(14f);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         dataSets.add(set2);
         LineData data = new LineData(dataSets);
-        line_chart_report.animateX(1000);
+        line_chart_report.animateX(1500);
         line_chart_report.setData(data);
     }
 
