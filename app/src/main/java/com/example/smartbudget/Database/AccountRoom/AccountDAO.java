@@ -25,6 +25,9 @@ public abstract class AccountDAO {
     @Query("SELECT id, type, SUM(amount) AS amount FROM account_table GROUP BY type")
     abstract List<AccountItem> getSumAccountsByType();
 
+    @Query("SELECT id, high_category, type, SUM(amount) AS amount FROM account_table GROUP BY high_category ORDER BY amount DESC")
+    abstract List<AccountItem> getSumAccountsByHighCategory();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insertAccount(AccountItem... accountItems);
 

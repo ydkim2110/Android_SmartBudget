@@ -40,6 +40,11 @@ public class DBAccountUtils {
         task.execute();
     }
 
+    public static void getSumAccountsByHigCategory(BudgetDatabase db, IAccountsLoadListener listener) {
+        GetSumAccountsByHighCategoryAsync task = new GetSumAccountsByHighCategoryAsync(db, listener);
+        task.execute();
+    }
+
     public static void insertAccountAsync(BudgetDatabase db, IAccountInsertListener listener, AccountItem... accountItems) {
         InsertAccountAsync task = new InsertAccountAsync(db, listener);
         task.execute(accountItems);
@@ -149,6 +154,28 @@ public class DBAccountUtils {
         @Override
         protected List<AccountItem> doInBackground(Void... voids) {
             return db.accountDAO().getSumAccountsByType();
+        }
+
+        @Override
+        protected void onPostExecute(List<AccountItem> accountItemList) {
+            super.onPostExecute(accountItemList);
+            mListener.onAccountsLoadSuccess(accountItemList);
+        }
+    }
+
+    private static class GetSumAccountsByHighCategoryAsync extends AsyncTask<Void, Void, List<AccountItem>> {
+
+        BudgetDatabase db;
+        IAccountsLoadListener mListener;
+
+        public GetSumAccountsByHighCategoryAsync(BudgetDatabase db, IAccountsLoadListener listener) {
+            this.db = db;
+            mListener = listener;
+        }
+
+        @Override
+        protected List<AccountItem> doInBackground(Void... voids) {
+            return db.accountDAO().getSumAccountsByHighCategory();
         }
 
         @Override

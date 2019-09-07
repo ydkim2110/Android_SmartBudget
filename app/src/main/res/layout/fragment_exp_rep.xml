@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:text="Test"
+        <include
+            layout="@layout/report_daily_layout"
             android:layout_width="match_parent"
-            android:layout_height="500dp" />
+            android:layout_height="wrap_content" />
 
     </androidx.cardview.widget.CardView>
 
